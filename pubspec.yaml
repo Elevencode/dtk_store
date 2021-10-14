@@ -32,6 +32,7 @@ dependencies:
   freezed: ^0.15.0+1
   freezed_annotation: ^0.15.0
   json_serializable: ^5.0.2
+  graphql: ^5.0.0
 
 
   # The following adds the Cupertino Icons font to your application.

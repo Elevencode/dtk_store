@@ -7,7 +7,7 @@ import 'package:dtk_store/model/order_position.dart';
 // import 'package:dtkdriver/model/status.dart';
 // import 'package:dtkdriver/model/warehouse.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-// import 'package:intl/intl.dart';
+// import 'package:intl/intl.dart':
 
 // import 'driver.dart';
 
@@ -27,7 +27,7 @@ abstract class Order implements _$Order {
     int? plannedDateDuration, //
     // DateTime? deliveredDate,
     // String? umbrellaID,
-    // String? shortCode,
+    String? shortCode,
     // String? statusName,
     // String? reasonRefusal,
     // String? driverID,
