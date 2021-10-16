@@ -46,7 +46,7 @@ abstract class Order implements _$Order {
   // String get orderNumberString => '${shortCode ?? "#$id"} ${client?.address?.district ?? ''}';
 
   /// Get only when [plannedDate] is not null
-  String get plannedTimeRange => (plannedDateDuration ?? 0) == 0
-      ? DateFormat('HH:mm', 'es').format(plannedDate.toLocal())
-      : "${DateFormat('HH:mm', 'es').format(plannedDate.toLocal())} - ${DateFormat('HH:mm', 'es').format(plannedDate.add(Duration(minutes: plannedDateDuration!)).toLocal())}";
+  // String get plannedTimeRange => (plannedDateDuration ?? 0) == 0
+  //     ? DateFormat('HH:mm', 'es').format(plannedDate.toLocal())
+  //     : "${DateFormat('HH:mm', 'es').format(plannedDate.toLocal())} - ${DateFormat('HH:mm', 'es').format(plannedDate.add(Duration(minutes: plannedDateDuration!)).toLocal())}";
 }
