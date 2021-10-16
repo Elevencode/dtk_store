@@ -5,6 +5,8 @@ import 'package:graphql/client.dart';
 import 'package:dtk_store/core/utils/gql/add_nested_typename_visitor.dart'
     as ctv;
 
+import '../../injection.dart';
+
 abstract class OrderDataSource {
   Future<Order> getOrder(String shortCode);
   Future<Client> updateClient(int id);
@@ -13,18 +15,18 @@ abstract class OrderDataSource {
 }
 
 class OrderDataSourceImpl implements OrderDataSource {
-OrderDataSourceImpl({required this.graphQLClient});
+  OrderDataSourceImpl();
 
-  final GraphQLClient graphQLClient;
+  GraphQLClient get client => sl<GraphQLClient>();
 
   // @override
   // Future<Coordinates> createOrUpdateCoordinates(Address address) {
   //     // TODO: implement createOrUpdateCoordinates
   //     throw UnimplementedError();
   //   }
-  
-    @override
-    Future<Order> getOrder(String shortcode) async {
+
+  @override
+  Future<Order> getOrder(String shortcode) async {
     const query = r'''
           query GetOrder($shortCode: String!) {
       order(where: {shortCode: {_eq: $shortCode}}) {
@@ -58,7 +60,7 @@ OrderDataSourceImpl({required this.graphQLClient});
     }
     ''';
 
-    final result = await graphQLClient
+    final result = await client
         .query(
           QueryOptions(
             document: ctv.gql(query),
@@ -93,7 +95,7 @@ OrderDataSourceImpl({required this.graphQLClient});
     }
     ''';
 
-    final result = await graphQLClient
+    final result = await client
         .mutate(
           MutationOptions(
             document: ctv.gql(mutation),
@@ -109,6 +111,7 @@ OrderDataSourceImpl({required this.graphQLClient});
     }
     return Address.fromJson(result.data!['address_by_pk']);
   }
+
   //TODO: Зачем мы вообще апдейтим клиента? Нужно ли апдейтить его в бд или только в проекте уже?
   @override
   Future<Client> updateClient(int id) async {
@@ -129,7 +132,7 @@ OrderDataSourceImpl({required this.graphQLClient});
       }
     ''';
 
-    final result = await graphQLClient
+    final result = await client
         .mutate(
           MutationOptions(
             document: ctv.gql(mutation),
