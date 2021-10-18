@@ -17,7 +17,7 @@ abstract class OrderDataSource {
 class OrderDataSourceImpl implements OrderDataSource {
   OrderDataSourceImpl();
 
-  GraphQLClient get client => sl<GraphQLClient>();
+  // GraphQLClient get client => sl<GraphQLClient>();
 
   // @override
   // Future<Coordinates> createOrUpdateCoordinates(Address address) {

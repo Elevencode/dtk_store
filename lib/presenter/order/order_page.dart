@@ -1,3 +1,4 @@
+import 'package:dtk_store/presenter/address/address_page.dart';
 import 'package:dtk_store/presenter/promo_box.dart';
 import 'package:flutter/material.dart';
 
@@ -284,7 +285,7 @@ class HomePage extends StatelessWidget {
                       Expanded(
                         child: ElevatedButton(
                           onPressed: () {},
-                          child: Text(
+                          child: const Text(
                             'EDITAR LA DIRECCION',
                             textAlign: TextAlign.center,
                             style: TextStyle(
@@ -295,15 +296,21 @@ class HomePage extends StatelessWidget {
                           style: ElevatedButton.styleFrom(
                             minimumSize:
                                 Size(MediaQuery.of(context).size.width, 80),
-                            primary: Color(0XFF557EF1),
+                            primary: const Color(0XFF557EF1),
                           ),
                         ),
                       ),
                       SizedBox(width: 24),
                       Expanded(
                         child: ElevatedButton(
-                          onPressed: () {},
-                          child: Text(
+                          //todo: открывать страницу карты
+                          onPressed: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (_) => AddressPage()));
+                          },
+                          child: const Text(
                             'CONFIRMAR LA DIRECCION',
                             textAlign: TextAlign.center,
                             style: TextStyle(
@@ -314,7 +321,7 @@ class HomePage extends StatelessWidget {
                           style: ElevatedButton.styleFrom(
                             minimumSize:
                                 Size(MediaQuery.of(context).size.width, 80),
-                            primary: Color(0XFF67C99C),
+                            primary: const Color(0XFF67C99C),
                           ),
                         ),
                       ),
