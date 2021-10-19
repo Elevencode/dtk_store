@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 // import 'package:google_maps_flutter_web/google_maps_flutter_web.dart';
 
@@ -13,19 +14,94 @@ class AddressPage extends StatefulWidget {
 
 class _AddressPageState extends State<AddressPage> {
   final Completer<GoogleMapController> _mapController = Completer();
-  // Map<MarkerId, Marker> _markers = <MarkerId, Marker>{};
-  final _markers = <Marker>[
-    Marker(
-      draggable: true,
-      markerId: MarkerId("1"),
-      position: LatLng(-12.046374, -77.042793),
-    ),
-  ];
+  final Map<MarkerId, Marker> _markers = {};
+  int _markerIdCounter = 0;
 
-  final CameraPosition _initialCameraPosition = const CameraPosition(
-    target: LatLng(-12.046374, -77.042793),
-    zoom: 14.4746,
-  );
+  LatLng _initialPosition = LatLng(-12.046374, -77.042793);
+
+  void _addMarker(LatLng location, MarkerId markerId) {
+    setState(() {
+      _markers[markerId] = (Marker(
+        markerId: markerId,
+        position: _initialPosition,
+        draggable: false,
+      ));
+    });
+  }
+
+  void _getUserLocation() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      return Future.error('Location services are disabled.');
+    }
+
+    permission = await Geolocator.checkPermission();
+
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        return Future.error('Location permissions are denied');
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      // Permissions are denied forever, handle appropriately.
+      return Future.error(
+          'Location permissions are permanently denied, we cannot request permissions.');
+    }
+
+    Position currentPosition = await Geolocator.getCurrentPosition();
+
+    setState(() {
+      _initialPosition =
+          LatLng(currentPosition.latitude, currentPosition.longitude);
+      // _locationController.text = placemark[0].name!;
+    });
+
+    MarkerId markerId = MarkerId(_markerIdVal());
+
+    _addMarker(_initialPosition, markerId);
+
+    Future.delayed(const Duration(milliseconds: 50), () async {
+      GoogleMapController controller = await _mapController.future;
+      controller.animateCamera(
+        CameraUpdate.newCameraPosition(
+          CameraPosition(
+            target: _initialPosition,
+            zoom: 17.0,
+          ),
+        ),
+      );
+    });
+  }
+
+  String _markerIdVal({bool increment = false}) {
+    String val = 'marker_id_$_markerIdCounter';
+    if (increment) _markerIdCounter++;
+    return val;
+  }
+
+  void _onCameraMove(CameraPosition position) {
+    MarkerId markerId = MarkerId(_markerIdVal());
+    Marker marker = _markers[markerId]!;
+    Marker updatedMarker = marker.copyWith(positionParam: position.target);
+
+    setState(() {
+      _markers[markerId] = updatedMarker;
+    });
+
+    print(_markers);
+    print(_markers.length);
+  }
+
+  @override
+  void initState() {
+    _getUserLocation();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -41,11 +117,14 @@ class _AddressPageState extends State<AddressPage> {
           Expanded(
             child: Stack(children: [
               GoogleMap(
-                  markers: Set<Marker>.of(_markers),
-                  mapType: MapType.normal,
-                  initialCameraPosition: _initialCameraPosition,
-                  onMapCreated: _onMapCreated,
-                  onCameraMove: ((_position) => _updatePosition(_position))),
+                mapType: MapType.normal,
+                initialCameraPosition:
+                    CameraPosition(target: _initialPosition, zoom: 17.0),
+                onCameraMove: _onCameraMove,
+                onMapCreated: (controller) =>
+                    _mapController.complete(controller),
+                markers: Set.of(_markers.values),
+              ),
               Positioned(
                 bottom: 20,
                 child: Padding(
@@ -90,36 +169,5 @@ class _AddressPageState extends State<AddressPage> {
         ],
       ),
     );
-  }
-
-  void _updatePosition(CameraPosition _position) {
-    var newMarkerPosition = {
-      "latitude": _position.target.latitude,
-      "longitude": _position.target.longitude
-    };
-    Marker marker = _markers[0];
-
-    setState(() {
-      _markers[0] = marker.copyWith(
-          positionParam: LatLng(
-              newMarkerPosition["latitude"]!, newMarkerPosition["longitude"]!));
-    });
-  }
-
-  void _onMapCreated(GoogleMapController controller) async {
-    _mapController.complete(controller);
-    LatLng position = const LatLng(-12.046374, -77.042793);
-
-    Future.delayed(Duration(seconds: 1), () async {
-      GoogleMapController controller = await _mapController.future;
-      controller.animateCamera(
-        CameraUpdate.newCameraPosition(
-          CameraPosition(
-            target: position,
-            zoom: 17.0,
-          ),
-        ),
-      );
-    });
   }
 }
