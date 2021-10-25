@@ -17,9 +17,10 @@ final _privateConstructorUsedError = UnsupportedError(
 class _$OrderEventTearOff {
   const _$OrderEventTearOff();
 
-  _Started started(String shortCode) {
+  _Started started(String shortCode, String phone) {
     return _Started(
       shortCode,
+      phone,
     );
   }
 
@@ -29,8 +30,13 @@ class _$OrderEventTearOff {
     );
   }
 
-  _SavingAddressStarted savingAddressStarted({required Address newAddress}) {
+  _SavingAddressStarted savingAddressStarted(
+      {required String shortCode,
+      required String phone,
+      required Address newAddress}) {
     return _SavingAddressStarted(
+      shortCode: shortCode,
+      phone: phone,
       newAddress: newAddress,
     );
   }
@@ -49,25 +55,29 @@ const $OrderEvent = _$OrderEventTearOff();
 mixin _$OrderEvent {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function(String shortCode) started,
+    required TResult Function(String shortCode, String phone) started,
     required TResult Function(Address? address) editAddressStarted,
-    required TResult Function(Address newAddress) savingAddressStarted,
+    required TResult Function(
+            String shortCode, String phone, Address newAddress)
+        savingAddressStarted,
     required TResult Function(Address address) confirmStarted,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult Function(String shortCode)? started,
+    TResult Function(String shortCode, String phone)? started,
     TResult Function(Address? address)? editAddressStarted,
-    TResult Function(Address newAddress)? savingAddressStarted,
+    TResult Function(String shortCode, String phone, Address newAddress)?
+        savingAddressStarted,
     TResult Function(Address address)? confirmStarted,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function(String shortCode)? started,
+    TResult Function(String shortCode, String phone)? started,
     TResult Function(Address? address)? editAddressStarted,
-    TResult Function(Address newAddress)? savingAddressStarted,
+    TResult Function(String shortCode, String phone, Address newAddress)?
+        savingAddressStarted,
     TResult Function(Address address)? confirmStarted,
     required TResult orElse(),
   }) =>
@@ -119,7 +129,7 @@ class _$OrderEventCopyWithImpl<$Res> implements $OrderEventCopyWith<$Res> {
 abstract class _$StartedCopyWith<$Res> {
   factory _$StartedCopyWith(_Started value, $Res Function(_Started) then) =
       __$StartedCopyWithImpl<$Res>;
-  $Res call({String shortCode});
+  $Res call({String shortCode, String phone});
 }
 
 /// @nodoc
@@ -134,11 +144,16 @@ class __$StartedCopyWithImpl<$Res> extends _$OrderEventCopyWithImpl<$Res>
   @override
   $Res call({
     Object? shortCode = freezed,
+    Object? phone = freezed,
   }) {
     return _then(_Started(
       shortCode == freezed
           ? _value.shortCode
           : shortCode // ignore: cast_nullable_to_non_nullable
+              as String,
+      phone == freezed
+          ? _value.phone
+          : phone // ignore: cast_nullable_to_non_nullable
               as String,
     ));
   }
@@ -147,14 +162,16 @@ class __$StartedCopyWithImpl<$Res> extends _$OrderEventCopyWithImpl<$Res>
 /// @nodoc
 
 class _$_Started implements _Started {
-  const _$_Started(this.shortCode);
+  const _$_Started(this.shortCode, this.phone);
 
   @override
   final String shortCode;
+  @override
+  final String phone;
 
   @override
   String toString() {
-    return 'OrderEvent.started(shortCode: $shortCode)';
+    return 'OrderEvent.started(shortCode: $shortCode, phone: $phone)';
   }
 
   @override
@@ -163,11 +180,12 @@ class _$_Started implements _Started {
         (other.runtimeType == runtimeType &&
             other is _Started &&
             (identical(other.shortCode, shortCode) ||
-                other.shortCode == shortCode));
+                other.shortCode == shortCode) &&
+            (identical(other.phone, phone) || other.phone == phone));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, shortCode);
+  int get hashCode => Object.hash(runtimeType, shortCode, phone);
 
   @JsonKey(ignore: true)
   @override
@@ -177,36 +195,40 @@ class _$_Started implements _Started {
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function(String shortCode) started,
+    required TResult Function(String shortCode, String phone) started,
     required TResult Function(Address? address) editAddressStarted,
-    required TResult Function(Address newAddress) savingAddressStarted,
+    required TResult Function(
+            String shortCode, String phone, Address newAddress)
+        savingAddressStarted,
     required TResult Function(Address address) confirmStarted,
   }) {
-    return started(shortCode);
+    return started(shortCode, phone);
   }
 
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult Function(String shortCode)? started,
+    TResult Function(String shortCode, String phone)? started,
     TResult Function(Address? address)? editAddressStarted,
-    TResult Function(Address newAddress)? savingAddressStarted,
+    TResult Function(String shortCode, String phone, Address newAddress)?
+        savingAddressStarted,
     TResult Function(Address address)? confirmStarted,
   }) {
-    return started?.call(shortCode);
+    return started?.call(shortCode, phone);
   }
 
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function(String shortCode)? started,
+    TResult Function(String shortCode, String phone)? started,
     TResult Function(Address? address)? editAddressStarted,
-    TResult Function(Address newAddress)? savingAddressStarted,
+    TResult Function(String shortCode, String phone, Address newAddress)?
+        savingAddressStarted,
     TResult Function(Address address)? confirmStarted,
     required TResult orElse(),
   }) {
     if (started != null) {
-      return started(shortCode);
+      return started(shortCode, phone);
     }
     return orElse();
   }
@@ -250,9 +272,10 @@ class _$_Started implements _Started {
 }
 
 abstract class _Started implements OrderEvent {
-  const factory _Started(String shortCode) = _$_Started;
+  const factory _Started(String shortCode, String phone) = _$_Started;
 
   String get shortCode;
+  String get phone;
   @JsonKey(ignore: true)
   _$StartedCopyWith<_Started> get copyWith =>
       throw _privateConstructorUsedError;
@@ -335,9 +358,11 @@ class _$_EditAddressStarted implements _EditAddressStarted {
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function(String shortCode) started,
+    required TResult Function(String shortCode, String phone) started,
     required TResult Function(Address? address) editAddressStarted,
-    required TResult Function(Address newAddress) savingAddressStarted,
+    required TResult Function(
+            String shortCode, String phone, Address newAddress)
+        savingAddressStarted,
     required TResult Function(Address address) confirmStarted,
   }) {
     return editAddressStarted(address);
@@ -346,9 +371,10 @@ class _$_EditAddressStarted implements _EditAddressStarted {
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult Function(String shortCode)? started,
+    TResult Function(String shortCode, String phone)? started,
     TResult Function(Address? address)? editAddressStarted,
-    TResult Function(Address newAddress)? savingAddressStarted,
+    TResult Function(String shortCode, String phone, Address newAddress)?
+        savingAddressStarted,
     TResult Function(Address address)? confirmStarted,
   }) {
     return editAddressStarted?.call(address);
@@ -357,9 +383,10 @@ class _$_EditAddressStarted implements _EditAddressStarted {
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function(String shortCode)? started,
+    TResult Function(String shortCode, String phone)? started,
     TResult Function(Address? address)? editAddressStarted,
-    TResult Function(Address newAddress)? savingAddressStarted,
+    TResult Function(String shortCode, String phone, Address newAddress)?
+        savingAddressStarted,
     TResult Function(Address address)? confirmStarted,
     required TResult orElse(),
   }) {
@@ -421,7 +448,7 @@ abstract class _$SavingAddressStartedCopyWith<$Res> {
   factory _$SavingAddressStartedCopyWith(_SavingAddressStarted value,
           $Res Function(_SavingAddressStarted) then) =
       __$SavingAddressStartedCopyWithImpl<$Res>;
-  $Res call({Address newAddress});
+  $Res call({String shortCode, String phone, Address newAddress});
 
   $AddressCopyWith<$Res> get newAddress;
 }
@@ -439,9 +466,19 @@ class __$SavingAddressStartedCopyWithImpl<$Res>
 
   @override
   $Res call({
+    Object? shortCode = freezed,
+    Object? phone = freezed,
     Object? newAddress = freezed,
   }) {
     return _then(_SavingAddressStarted(
+      shortCode: shortCode == freezed
+          ? _value.shortCode
+          : shortCode // ignore: cast_nullable_to_non_nullable
+              as String,
+      phone: phone == freezed
+          ? _value.phone
+          : phone // ignore: cast_nullable_to_non_nullable
+              as String,
       newAddress: newAddress == freezed
           ? _value.newAddress
           : newAddress // ignore: cast_nullable_to_non_nullable
@@ -460,14 +497,19 @@ class __$SavingAddressStartedCopyWithImpl<$Res>
 /// @nodoc
 
 class _$_SavingAddressStarted implements _SavingAddressStarted {
-  const _$_SavingAddressStarted({required this.newAddress});
+  const _$_SavingAddressStarted(
+      {required this.shortCode, required this.phone, required this.newAddress});
 
+  @override
+  final String shortCode;
+  @override
+  final String phone;
   @override
   final Address newAddress;
 
   @override
   String toString() {
-    return 'OrderEvent.savingAddressStarted(newAddress: $newAddress)';
+    return 'OrderEvent.savingAddressStarted(shortCode: $shortCode, phone: $phone, newAddress: $newAddress)';
   }
 
   @override
@@ -475,12 +517,15 @@ class _$_SavingAddressStarted implements _SavingAddressStarted {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _SavingAddressStarted &&
+            (identical(other.shortCode, shortCode) ||
+                other.shortCode == shortCode) &&
+            (identical(other.phone, phone) || other.phone == phone) &&
             (identical(other.newAddress, newAddress) ||
                 other.newAddress == newAddress));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, newAddress);
+  int get hashCode => Object.hash(runtimeType, shortCode, phone, newAddress);
 
   @JsonKey(ignore: true)
   @override
@@ -491,36 +536,40 @@ class _$_SavingAddressStarted implements _SavingAddressStarted {
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function(String shortCode) started,
+    required TResult Function(String shortCode, String phone) started,
     required TResult Function(Address? address) editAddressStarted,
-    required TResult Function(Address newAddress) savingAddressStarted,
+    required TResult Function(
+            String shortCode, String phone, Address newAddress)
+        savingAddressStarted,
     required TResult Function(Address address) confirmStarted,
   }) {
-    return savingAddressStarted(newAddress);
+    return savingAddressStarted(shortCode, phone, newAddress);
   }
 
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult Function(String shortCode)? started,
+    TResult Function(String shortCode, String phone)? started,
     TResult Function(Address? address)? editAddressStarted,
-    TResult Function(Address newAddress)? savingAddressStarted,
+    TResult Function(String shortCode, String phone, Address newAddress)?
+        savingAddressStarted,
     TResult Function(Address address)? confirmStarted,
   }) {
-    return savingAddressStarted?.call(newAddress);
+    return savingAddressStarted?.call(shortCode, phone, newAddress);
   }
 
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function(String shortCode)? started,
+    TResult Function(String shortCode, String phone)? started,
     TResult Function(Address? address)? editAddressStarted,
-    TResult Function(Address newAddress)? savingAddressStarted,
+    TResult Function(String shortCode, String phone, Address newAddress)?
+        savingAddressStarted,
     TResult Function(Address address)? confirmStarted,
     required TResult orElse(),
   }) {
     if (savingAddressStarted != null) {
-      return savingAddressStarted(newAddress);
+      return savingAddressStarted(shortCode, phone, newAddress);
     }
     return orElse();
   }
@@ -564,9 +613,13 @@ class _$_SavingAddressStarted implements _SavingAddressStarted {
 }
 
 abstract class _SavingAddressStarted implements OrderEvent {
-  const factory _SavingAddressStarted({required Address newAddress}) =
-      _$_SavingAddressStarted;
+  const factory _SavingAddressStarted(
+      {required String shortCode,
+      required String phone,
+      required Address newAddress}) = _$_SavingAddressStarted;
 
+  String get shortCode;
+  String get phone;
   Address get newAddress;
   @JsonKey(ignore: true)
   _$SavingAddressStartedCopyWith<_SavingAddressStarted> get copyWith =>
@@ -645,9 +698,11 @@ class _$_ConfirmStarted implements _ConfirmStarted {
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function(String shortCode) started,
+    required TResult Function(String shortCode, String phone) started,
     required TResult Function(Address? address) editAddressStarted,
-    required TResult Function(Address newAddress) savingAddressStarted,
+    required TResult Function(
+            String shortCode, String phone, Address newAddress)
+        savingAddressStarted,
     required TResult Function(Address address) confirmStarted,
   }) {
     return confirmStarted(address);
@@ -656,9 +711,10 @@ class _$_ConfirmStarted implements _ConfirmStarted {
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult Function(String shortCode)? started,
+    TResult Function(String shortCode, String phone)? started,
     TResult Function(Address? address)? editAddressStarted,
-    TResult Function(Address newAddress)? savingAddressStarted,
+    TResult Function(String shortCode, String phone, Address newAddress)?
+        savingAddressStarted,
     TResult Function(Address address)? confirmStarted,
   }) {
     return confirmStarted?.call(address);
@@ -667,9 +723,10 @@ class _$_ConfirmStarted implements _ConfirmStarted {
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function(String shortCode)? started,
+    TResult Function(String shortCode, String phone)? started,
     TResult Function(Address? address)? editAddressStarted,
-    TResult Function(Address newAddress)? savingAddressStarted,
+    TResult Function(String shortCode, String phone, Address newAddress)?
+        savingAddressStarted,
     TResult Function(Address address)? confirmStarted,
     required TResult orElse(),
   }) {

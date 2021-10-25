@@ -7,10 +7,12 @@ import 'package:dtk_store/model/order.dart';
 import 'package:flutter/material.dart';
 
 abstract class OrderRepository {
-  Future<Order> getOrder(String shortdcode);
-  Future<Client> updateClient(int id);
+  Future<Order> getOrder(String shortCode, String phone);
+  Future<Client> updateClient(
+      {required String shortCode, required String phone, required Client client});
   // Future<Coordinates> createOrUpdateCoordinates(Address address);
-  Future<Address> updateAddress(Address address);
+  Future<Address> updateAddress(
+      {required String shortCode, required String phone, required Address address});
 }
 
 class OrderRepositoryImpl implements OrderRepository {
@@ -23,12 +25,16 @@ class OrderRepositoryImpl implements OrderRepository {
   //     await dataSource.createOrUpdateCoordinates(address);
 
   @override
-  Future<Order> getOrder(String shortdcode) async => await dataSource.getOrder(shortdcode);
+  Future<Order> getOrder(String shortCode, String phone) async =>
+      await dataSource.getOrder(shortCode, phone);
 
   @override
-  Future<Address> updateAddress(Address address) async => await dataSource.updateAddress(address);
+  Future<Client> updateClient(
+          {required String shortCode, required String phone, required Client client}) async =>
+      await dataSource.updateClient(shortCode: shortCode, phone: phone, client: client);
 
   @override
-  Future<Client> updateClient(int id) async => await dataSource.updateClient(id);
-
+  Future<Address> updateAddress(
+          {required String shortCode, required String phone, required Address address}) async =>
+      await dataSource.updateAddress(shortCode: shortCode, phone: phone, address: address);
 }

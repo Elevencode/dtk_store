@@ -20,7 +20,7 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
       started: (event) async* {
         yield _LoadInProgress();
         try {
-          final order = await orderRepository.getOrder(event.shortCode);
+          final order = await orderRepository.getOrder(event.shortCode, event.phone);
           yield _LoadSuccess(order);
         } catch (e) {
           yield _LoadFailure("$e");
@@ -39,7 +39,8 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
       savingAddressStarted: (event) async* {
         yield _LoadInProgress();
         try {
-          final address = orderRepository.updateAddress(event.newAddress);
+          final address = orderRepository.updateAddress(
+              shortCode: event.shortCode, phone: event.phone, address: event.newAddress);
         } catch (e) {
           yield _LoadFailure('$e');
         }
