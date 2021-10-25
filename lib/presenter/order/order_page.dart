@@ -1,11 +1,25 @@
 import 'package:dtk_store/model/order.dart';
 import 'package:dtk_store/presenter/address/address_page.dart';
 import 'package:dtk_store/presenter/promo_box.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class HomePage extends StatelessWidget {
   HomePage({Key? key, required this.order}) : super(key: key);
   final Order order;
+
+  ScrollController _positionsScrollContorller = ScrollController();
+
+  Map productImagePath = {
+    'Alpha Man': 'assets/images/Alphaman_small.png',
+    'Bioprost': 'assets/images/Bioprost_bottle_big.png',
+    'Cardiox': 'assets/images/Cardiox_bottle_big.png',
+    'Flexacil': 'assets/images/Flexacil_es2.png',
+    'Glyconorm': 'assets/images/Glyconorm_bottle_small.png',
+    'Turboslim': 'assets/images/Turboslim_20.png',
+    'Gialuron Revita': 'assets/images/Placeholder.png',
+  };
 
   @override
   Widget build(BuildContext context) {
@@ -28,20 +42,19 @@ class HomePage extends StatelessWidget {
                   ),
                   Wrap(
                     children: [
-                      ...order.positions!
-                      .map((item) {
-                        //TODO: убрать последний +
+                      ...order.positions!.asMap().entries.map((item) {
+                        int itemIndex = item.key;
+                        String productName = item.value.product.name;
                         return Text(
-                            item.product.name + ' + ',
-                            style: TextStyle(
-                              fontSize: 32,
-                              color: Color(0XFF557EF1),
-                              fontWeight: FontWeight.bold,
-                            ),
-                          );
-                      },)
-                      .toList(),
-                      ],
+                          '$productName${itemIndex == order.positions!.length-1 ? '' : ' + '}',
+                          style: TextStyle(
+                            fontSize: 32,
+                            color: Color(0XFF557EF1),
+                            fontWeight: FontWeight.bold,
+                          ),
+                        );
+                      })
+                    ],
                   ),
                 ],
               ),
@@ -126,40 +139,30 @@ class HomePage extends StatelessWidget {
             Stack(
               clipBehavior: Clip.none,
               children: [
-                Row(
-                  // [
-                  //     ...order.positions!
-                  //     .map((item) {
-                  //       //TODO: убрать последний +
-                  //       return Text(
-                  //           item.product.name + ' + ',
-                  //           style: TextStyle(
-                  //             fontSize: 32,
-                  //             color: Color(0XFF557EF1),
-                  //             fontWeight: FontWeight.bold,
-                  //           ),
-                  //         );
-                  //     },)
-                  //     .toList(),
-                  //     ],
-                  children: [
-                    SizedBox(
-                      width: 160,
-                      height: 240,
-                      child:
-                          Image.asset('assets/images/Bioprost_bottle_big.png'),
+                SizedBox(
+                  width: 480,
+                  height: 240,
+                  child: ScrollConfiguration(
+                    behavior: PositionsScrollBehavior(),
+                    child: ListView(
+                      scrollDirection: Axis.horizontal,
+                      controller: _positionsScrollContorller,
+                      physics: PageScrollPhysics(),
+                      children: [
+                        ...order.positions!
+                            .map(
+                              (items) => SizedBox(
+                                width: 160,
+                                height: 240,
+                                child: Image.asset(
+                                  productImagePath[items.product.name],
+                                ),
+                              ),
+                            )
+                            .toList(),
+                      ],
                     ),
-                    SizedBox(
-                      width: 160,
-                      height: 240,
-                      child: Image.asset('assets/images/Alphaman_small.png'),
-                    ),
-                    SizedBox(
-                      width: 160,
-                      height: 240,
-                      child: Image.asset('assets/images/Turboslim_20.png'),
-                    ),
-                  ],
+                  ),
                 ),
                 Positioned(
                   bottom: -40,
@@ -184,7 +187,7 @@ class HomePage extends StatelessWidget {
                               fontSize: 18, fontWeight: FontWeight.bold),
                         ),
                         TextSpan(
-                          text: 'Gabriel Garcia Marces Bernal',
+                          text: order.client!.fullname,
                           style: TextStyle(fontSize: 18),
                         ),
                       ],
@@ -199,7 +202,7 @@ class HomePage extends StatelessWidget {
                               fontSize: 18, fontWeight: FontWeight.bold),
                         ),
                         TextSpan(
-                          text: 'San Juan De Lurigancho',
+                          text: order.client!.address!.district,
                           style: TextStyle(fontSize: 18),
                         ),
                       ],
@@ -214,7 +217,7 @@ class HomePage extends StatelessWidget {
                               fontSize: 18, fontWeight: FontWeight.bold),
                         ),
                         TextSpan(
-                          text: 'Lima',
+                          text: order.client!.address!.city,
                           style: TextStyle(fontSize: 18),
                         ),
                       ],
@@ -229,7 +232,7 @@ class HomePage extends StatelessWidget {
                               fontSize: 18, fontWeight: FontWeight.bold),
                         ),
                         TextSpan(
-                          text: 'De La Fuente 303, 405',
+                          text: order.client!.address!.street,
                           style: TextStyle(fontSize: 18),
                         ),
                       ],
@@ -244,7 +247,7 @@ class HomePage extends StatelessWidget {
                               fontSize: 18, fontWeight: FontWeight.bold),
                         ),
                         TextSpan(
-                          text: 'Puerto rojo',
+                          text: order.client!.address!.country,
                           style: TextStyle(fontSize: 18),
                         ),
                       ],
@@ -263,14 +266,14 @@ class HomePage extends StatelessWidget {
                       Column(
                         children: [
                           Text(
-                            'Planned time',
+                            'Planned date',
                             style: TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
                           Text(
-                            '22 oct (Today)',
+                            '${DateFormat.MMMMd().format(order.plannedDate)} ${order.plannedDate == DateTime.now() ? '(Today)' : ''}',
                             textAlign: TextAlign.end,
                             style: TextStyle(
                               fontSize: 18,
@@ -289,7 +292,7 @@ class HomePage extends StatelessWidget {
                             ),
                           ),
                           Text(
-                            '22 oct (Today)',
+                            '${DateFormat.Hm().format(order.plannedDate)} - ${DateFormat.Hm().format(order.plannedDate.add(Duration(minutes: 90)))}',
                             textAlign: TextAlign.end,
                             style: TextStyle(
                               fontSize: 18,
@@ -379,4 +382,13 @@ class HomePage extends StatelessWidget {
       ),
     );
   }
+}
+
+//Без этого класса не работал скролл в ListView
+class PositionsScrollBehavior extends MaterialScrollBehavior {
+  @override
+  Set<PointerDeviceKind> get dragDevices => {
+        PointerDeviceKind.touch,
+        PointerDeviceKind.mouse,
+      };
 }
