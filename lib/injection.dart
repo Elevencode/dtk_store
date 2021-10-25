@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:dtk_store/data/datasource/order_datasource.dart';
 import 'package:dtk_store/data/repository/order_repository.dart';
+import 'package:dtk_store/presenter/order/bloc/order_bloc.dart';
 import 'package:get_it/get_it.dart';
 
 final sl = GetIt.instance;
@@ -19,6 +20,12 @@ Future<void> init() async {
 
   sl.registerLazySingleton(() => Dio(options));
   // registerHasuraClient();
+}
+
+void registerBloc() {
+  sl.registerLazySingleton(() => OrderBloc());
+
+  // sl.registerLazySingleton(() => OrderListBloc());
 }
 
 // void registerHasuraClient() {

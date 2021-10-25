@@ -83,7 +83,7 @@ class _AddressPageState extends State<AddressPage> {
               const Align(
                 alignment: Alignment.center,
                 child: Icon(
-                  Icons.person_pin_circle,
+                  Icons.add_location,
                   size: 40.0,
                   color: Colors.purple,
                 ),

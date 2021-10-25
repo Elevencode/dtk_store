@@ -1,9 +1,11 @@
+import 'package:dtk_store/model/order.dart';
 import 'package:dtk_store/presenter/address/address_page.dart';
 import 'package:dtk_store/presenter/promo_box.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatelessWidget {
-  HomePage({Key? key}) : super(key: key);
+  HomePage({Key? key, required this.order}) : super(key: key);
+  final Order order;
 
   @override
   Widget build(BuildContext context) {
@@ -17,20 +19,29 @@ class HomePage extends StatelessWidget {
               child: Column(
                 children: [
                   Text(
-                    'YOUR ORDER #WER-235-009',
+                    'YOUR ORDER ${order.shortCode}',
                     style: TextStyle(
                       fontSize: 32,
                       color: Color(0XFF557EF1),
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  Text(
-                    'BIOPROST X3 + ALPHAMAN X1',
-                    style: TextStyle(
-                      fontSize: 32,
-                      color: Color(0XFF557EF1),
-                      fontWeight: FontWeight.bold,
-                    ),
+                  Wrap(
+                    children: [
+                      ...order.positions!
+                      .map((item) {
+                        //TODO: убрать последний +
+                        return Text(
+                            item.product.name + ' + ',
+                            style: TextStyle(
+                              fontSize: 32,
+                              color: Color(0XFF557EF1),
+                              fontWeight: FontWeight.bold,
+                            ),
+                          );
+                      },)
+                      .toList(),
+                      ],
                   ),
                 ],
               ),
@@ -63,7 +74,7 @@ class HomePage extends StatelessWidget {
                       ),
                       const SizedBox(width: 8),
                       Text(
-                        '840/s',
+                        '${order.totalCents! * 2.8}/s',
                         style: TextStyle(
                           fontSize: 48,
                           fontWeight: FontWeight.bold,
@@ -98,7 +109,8 @@ class HomePage extends StatelessWidget {
                       ),
                       const SizedBox(width: 8),
                       Text(
-                        '279/s',
+                        //TODO: Цена со скидкой
+                        '${order.totalCents}/s',
                         style: TextStyle(
                           fontSize: 48,
                           fontWeight: FontWeight.bold,
@@ -115,6 +127,21 @@ class HomePage extends StatelessWidget {
               clipBehavior: Clip.none,
               children: [
                 Row(
+                  // [
+                  //     ...order.positions!
+                  //     .map((item) {
+                  //       //TODO: убрать последний +
+                  //       return Text(
+                  //           item.product.name + ' + ',
+                  //           style: TextStyle(
+                  //             fontSize: 32,
+                  //             color: Color(0XFF557EF1),
+                  //             fontWeight: FontWeight.bold,
+                  //           ),
+                  //         );
+                  //     },)
+                  //     .toList(),
+                  //     ],
                   children: [
                     SizedBox(
                       width: 160,
