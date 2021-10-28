@@ -11,10 +11,10 @@ import '../../injection.dart';
 
 abstract class OrderDataSource {
   Future<Order> getOrder(String shortCode, String phone);
-  Future<Client> updateClient(
+  Future<void> updateClient(
       {required String shortCode, required String phone, required Client client});
   // Future<Coordinates> createOrUpdateCoordinates(Address address);
-  Future<Address> updateAddress(
+  Future<void> updateAddress(
       {required String shortCode, required String phone, required Address address});
 }
 
@@ -42,12 +42,13 @@ class OrderDataSourceImpl implements OrderDataSource {
     if (response.statusCode == 200) {
       return Order.fromJson(json.decode(response.data!));
     } else {
+      print(response.statusCode);
       throw ex.ServerException(exception: response);
     }
   }
 
   @override
-  Future<Client> updateClient(
+  Future<void> updateClient(
       {required String shortCode, required String phone, required Client client}) async {
     final response = await http.post(
       Uri.parse('https://api.zaslogistica.com/store/update-client'),
@@ -59,7 +60,7 @@ class OrderDataSourceImpl implements OrderDataSource {
     );
 
     if (response.statusCode == 200) {
-      return Client.fromJson(json.decode(response.body));
+      return;
     } else {
       print(response.statusCode);
       throw ex.ServerException(exception: response);
@@ -67,7 +68,7 @@ class OrderDataSourceImpl implements OrderDataSource {
   }
 
   @override
-  Future<Address> updateAddress(
+  Future<void> updateAddress(
       {required String shortCode, required String phone, required Address address}) async {
     final response = await http.post(
       Uri.parse('https://api.zaslogistica.com/store/update-address'),
@@ -77,11 +78,11 @@ class OrderDataSourceImpl implements OrderDataSource {
         'address': address.toJson(),
       }),
     );
-    print(response);
 
     if (response.statusCode == 200) {
-      return Address.fromJson(json.decode(response.body));
+      return;
     } else {
+      print(response.statusCode);
       throw ex.ServerException(exception: response);
     }
   }

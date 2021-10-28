@@ -1,5 +1,4 @@
 import 'package:dtk_store/injection.dart' show init, sl;
-import 'package:dtk_store/model/address.dart';
 import 'package:dtk_store/model/order.dart';
 import 'package:dtk_store/presenter/order/bloc/order_bloc.dart';
 import 'package:dtk_store/presenter/order/order_page.dart';
