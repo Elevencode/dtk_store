@@ -98,6 +98,7 @@ class _AddressPageState extends State<AddressPage> {
                     child: ElevatedButton(
                       onPressed: () {
                         final Address address = Address(
+                          id: widget.order.client!.address!.id,
                           city: widget.order.client!.address!.city,
                           street: widget.order.client!.address!.street,
                           country: widget.order.client!.address!.country,
