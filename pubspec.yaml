@@ -46,6 +46,7 @@ dependencies:
   geolocator: ^7.7.0
   http: ^0.13.4
   intl: ^0.17.0
+  mockito: ^5.0.16
 
 dev_dependencies:
   flutter_test:
