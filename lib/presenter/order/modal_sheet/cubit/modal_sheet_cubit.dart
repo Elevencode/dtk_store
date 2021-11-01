@@ -1,0 +1,30 @@
+import 'package:bloc/bloc.dart';
+import 'package:dtk_store/data/repository/order_repository.dart';
+import 'package:dtk_store/model/address.dart';
+
+import '../../../../injection.dart';
+
+part 'modal_sheet_state.dart';
+
+class ModalSheetCubit extends Cubit<ModalSheetState> {
+  ModalSheetCubit() : super(ModalSheetInitialState());
+  final OrderRepository repository = sl();
+
+  void sendData({required int id, required String city, required String street, required String country}) async {
+    print('send data');
+    emit(ModalSheetSendDataInProgressState());
+    final Address address = Address(id: id, city: city, street: street, country: country);
+    try {
+      final result = await repository.updateAddress(address: address, phone: '+555555975', shortCode: '137');
+      print('succes');
+      emit(ModalSheetSendDataSuccessState());
+      
+    } catch (e) {
+      print(e.toString());
+      print('error');
+      emit(ModalSheetSendDataFailedState(e.toString()));
+
+    }
+ 
+  }
+}

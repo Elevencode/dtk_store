@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:dtk_store/model/address.dart';
 import 'package:dtk_store/model/order.dart';
 import 'package:dtk_store/presenter/address/cubit/adress_cubit.dart';
+import 'package:dtk_store/presenter/order/cubit/order_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -11,7 +12,10 @@ import 'package:location/location.dart';
 
 class AddressPage extends StatefulWidget {
   final Order order;
-  const AddressPage({Key? key, required this.order}) : super(key: key);
+  final OrderCubit orderCubit;
+
+  const AddressPage({Key? key, required this.order, required this.orderCubit})
+      : super(key: key);
 
   @override
   State<AddressPage> createState() => _AddressPageState();
@@ -36,8 +40,13 @@ class _AddressPageState extends State<AddressPage> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider<AdressCubit>(
-      create: (context) => AdressCubit(),
+    return BlocListener<AdressCubit, AdressState>(
+      listener: (context, state) {
+        if (state is AdressLoadSuccess) {
+          Navigator.pop(context);
+          widget.orderCubit.getOrder();
+        }
+      },
       child: Scaffold(
         appBar: AppBar(
           title: const Text(
