@@ -11,23 +11,20 @@ import '../../injection.dart';
 
 abstract class OrderDataSource {
   Future<Order> getOrder(String shortCode, String phone);
-  Future<Client> updateClient(
-      {required String shortCode, required String phone, required Client client});
-  // Future<Coordinates> createOrUpdateCoordinates(Address address);
-  Future<Address> updateAddress(
-      {required String shortCode, required String phone, required Address address});
+  Future<void> updateClient(
+      {required String shortCode,
+      required String phone,
+      required Client client});
+  Future<void> updateAddress(
+      {required String shortCode,
+      required String phone,
+      required Address address});
 }
 
 class OrderDataSourceImpl implements OrderDataSource {
   OrderDataSourceImpl();
 
   Dio get dioClient => sl();
-
-  // @override
-  // Future<Coordinates> createOrUpdateCoordinates(Address address) {
-  //     // TODO: implement createOrUpdateCoordinates
-  //     throw UnimplementedError();
-  //   }
 
   @override
   Future<Order> getOrder(String shortCode, String phone) async {
@@ -47,8 +44,10 @@ class OrderDataSourceImpl implements OrderDataSource {
   }
 
   @override
-  Future<Client> updateClient(
-      {required String shortCode, required String phone, required Client client}) async {
+  Future<void> updateClient(
+      {required String shortCode,
+      required String phone,
+      required Client client}) async {
     final response = await http.post(
       Uri.parse('https://api.zaslogistica.com/store/update-client'),
       body: jsonEncode({
@@ -59,16 +58,18 @@ class OrderDataSourceImpl implements OrderDataSource {
     );
 
     if (response.statusCode == 200) {
-      return Client.fromJson(json.decode(response.body));
     } else {
       print(response.statusCode);
       throw ex.ServerException(exception: response);
     }
   }
 
+  //TODO: void
   @override
-  Future<Address> updateAddress(
-      {required String shortCode, required String phone, required Address address}) async {
+  Future<void> updateAddress(
+      {required String shortCode,
+      required String phone,
+      required Address address}) async {
     final response = await http.post(
       Uri.parse('https://api.zaslogistica.com/store/update-address'),
       body: jsonEncode({
@@ -77,11 +78,11 @@ class OrderDataSourceImpl implements OrderDataSource {
         'address': address.toJson(),
       }),
     );
-    print(response);
 
     if (response.statusCode == 200) {
-      return Address.fromJson(json.decode(response.body));
+      return;
     } else {
+      print(response.statusCode);
       throw ex.ServerException(exception: response);
     }
   }

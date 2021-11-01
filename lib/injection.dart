@@ -1,12 +1,13 @@
 import 'package:dio/dio.dart';
 import 'package:dtk_store/data/datasource/order_datasource.dart';
 import 'package:dtk_store/data/repository/order_repository.dart';
-import 'package:dtk_store/presenter/order/bloc/order_bloc.dart';
+import 'package:dtk_store/presenter/order/cubit/order_cubit.dart';
 import 'package:get_it/get_it.dart';
 
 final sl = GetIt.instance;
 
 Future<void> init() async {
+  registerBloc();
   // //! Repository
   sl.registerLazySingleton<OrderRepository>(() => OrderRepositoryImpl(dataSource: sl()));
 
@@ -23,7 +24,7 @@ Future<void> init() async {
 }
 
 void registerBloc() {
-  sl.registerLazySingleton(() => OrderBloc());
+  sl.registerLazySingleton(() => OrderCubit());
 
   // sl.registerLazySingleton(() => OrderListBloc());
 }

@@ -45,7 +45,7 @@ class _AddressPageState extends State<AddressPage> {
                 initialCameraPosition: _initialCameraPosition,
                 // onMapCreated: _onMapCreated,
                 onMapCreated: (controller) {
-                  final marker = Marker(
+                  const marker = Marker(
                     markerId: MarkerId('0'),
                     position: LatLng(-12.046374, -77.042793),
                     visible: false,

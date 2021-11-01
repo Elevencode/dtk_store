@@ -1,45 +1,28 @@
-import 'package:dtk_store/injection.dart' show init, sl;
-import 'package:dtk_store/model/address.dart';
-import 'package:dtk_store/model/order.dart';
-import 'package:dtk_store/presenter/order/bloc/order_bloc.dart';
-import 'package:dtk_store/presenter/order/order_page.dart';
+//Convention: необходимо разделять иvпорты - отдельно библиотеки, отдель файлы из проекта
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'data/repository/order_repository.dart';
+//Convention: при импорте файлов проекта использовать короткую форму записи, без 'package:...'
+import 'injection.dart' show init, sl;
+import 'presenter/order/order_page.dart';
+import 'presenter/order/cubit/order_cubit.dart';
 
 void main() async {
   await init();
-  final OrderRepository repository = sl();
-  late Order order;
-  try {
-    final result = await repository.getOrder('137', '+555555975');
-    print(result);
-    order = result;
-  } catch (e) {
-    print(e.toString());
-  }
-  runApp(MyApp(
-    order: order,
-  ));
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  final Order order;
-  const MyApp({Key? key, required this.order}) : super(key: key);
+  const MyApp({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider(create: (BuildContext context) => sl<OrderBloc>()),
-      ],
+    return BlocProvider(
+      create: (BuildContext context) => sl<OrderCubit>()..getOrder(),
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         home: SafeArea(
           child: Scaffold(
-            body: HomePage(
-              order: order,
-            ),
+            body: HomePage(),
           ),
         ),
       ),
