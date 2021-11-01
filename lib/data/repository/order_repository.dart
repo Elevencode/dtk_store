@@ -9,10 +9,14 @@ import 'package:flutter/material.dart';
 abstract class OrderRepository {
   Future<Order> getOrder(String shortCode, String phone);
   Future<void> updateClient(
-      {required String shortCode, required String phone, required Client client});
+      {required String shortCode,
+      required String phone,
+      required Client client});
   // Future<Coordinates> createOrUpdateCoordinates(Address address);
   Future<void> updateAddress(
-      {required String shortCode, required String phone, required Address address});
+      {required String shortCode,
+      required String phone,
+      required Address address});
 }
 
 class OrderRepositoryImpl implements OrderRepository {
@@ -20,21 +24,23 @@ class OrderRepositoryImpl implements OrderRepository {
 
   final OrderDataSource dataSource;
 
-  // @override
-  // Future<Coordinates> createOrUpdateCoordinates(Address address) async =>
-  //     await dataSource.createOrUpdateCoordinates(address);
-
   @override
   Future<Order> getOrder(String shortCode, String phone) async =>
       await dataSource.getOrder(shortCode, phone);
 
   @override
   Future<void> updateClient(
-          {required String shortCode, required String phone, required Client client}) async =>
-      await dataSource.updateClient(shortCode: shortCode, phone: phone, client: client);
+          {required String shortCode,
+          required String phone,
+          required Client client}) async =>
+      await dataSource.updateClient(
+          shortCode: shortCode, phone: phone, client: client);
 
   @override
   Future<void> updateAddress(
-          {required String shortCode, required String phone, required Address address}) async =>
-      await dataSource.updateAddress(shortCode: shortCode, phone: phone, address: address);
+          {required String shortCode,
+          required String phone,
+          required Address address}) async =>
+      await dataSource.updateAddress(
+          shortCode: shortCode, phone: phone, address: address);
 }
