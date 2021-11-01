@@ -12,10 +12,14 @@ import '../../injection.dart';
 abstract class OrderDataSource {
   Future<Order> getOrder(String shortCode, String phone);
   Future<Client> updateClient(
-      {required String shortCode, required String phone, required Client client});
+      {required String shortCode,
+      required String phone,
+      required Client client});
   // Future<Coordinates> createOrUpdateCoordinates(Address address);
   Future<Address> updateAddress(
-      {required String shortCode, required String phone, required Address address});
+      {required String shortCode,
+      required String phone,
+      required Address address});
 }
 
 class OrderDataSourceImpl implements OrderDataSource {
@@ -48,7 +52,9 @@ class OrderDataSourceImpl implements OrderDataSource {
 
   @override
   Future<Client> updateClient(
-      {required String shortCode, required String phone, required Client client}) async {
+      {required String shortCode,
+      required String phone,
+      required Client client}) async {
     final response = await http.post(
       Uri.parse('https://api.zaslogistica.com/store/update-client'),
       body: jsonEncode({
@@ -68,7 +74,9 @@ class OrderDataSourceImpl implements OrderDataSource {
 
   @override
   Future<Address> updateAddress(
-      {required String shortCode, required String phone, required Address address}) async {
+      {required String shortCode,
+      required String phone,
+      required Address address}) async {
     final response = await http.post(
       Uri.parse('https://api.zaslogistica.com/store/update-address'),
       body: jsonEncode({
