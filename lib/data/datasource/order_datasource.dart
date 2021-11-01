@@ -12,6 +12,7 @@ import '../../injection.dart';
 abstract class OrderDataSource {
   Future<Order> getOrder(String shortCode, String phone);
   Future<void> updateClient(
+<<<<<<< HEAD
       {required String shortCode,
       required String phone,
       required Client client});
@@ -19,6 +20,12 @@ abstract class OrderDataSource {
       {required String shortCode,
       required String phone,
       required Address address});
+=======
+      {required String shortCode, required String phone, required Client client});
+  // Future<Coordinates> createOrUpdateCoordinates(Address address);
+  Future<void> updateAddress(
+      {required String shortCode, required String phone, required Address address});
+>>>>>>> 3994cc22f3c384e30160f648a6e60b4461db8ebd
 }
 
 class OrderDataSourceImpl implements OrderDataSource {
@@ -39,15 +46,20 @@ class OrderDataSourceImpl implements OrderDataSource {
     if (response.statusCode == 200) {
       return Order.fromJson(json.decode(response.data!));
     } else {
+      print(response.statusCode);
       throw ex.ServerException(exception: response);
     }
   }
 
   @override
   Future<void> updateClient(
+<<<<<<< HEAD
       {required String shortCode,
       required String phone,
       required Client client}) async {
+=======
+      {required String shortCode, required String phone, required Client client}) async {
+>>>>>>> 3994cc22f3c384e30160f648a6e60b4461db8ebd
     final response = await http.post(
       Uri.parse('https://api.zaslogistica.com/store/update-client'),
       body: jsonEncode({
@@ -58,6 +70,10 @@ class OrderDataSourceImpl implements OrderDataSource {
     );
 
     if (response.statusCode == 200) {
+<<<<<<< HEAD
+=======
+      return;
+>>>>>>> 3994cc22f3c384e30160f648a6e60b4461db8ebd
     } else {
       print(response.statusCode);
       throw ex.ServerException(exception: response);
@@ -67,9 +83,13 @@ class OrderDataSourceImpl implements OrderDataSource {
   //TODO: void
   @override
   Future<void> updateAddress(
+<<<<<<< HEAD
       {required String shortCode,
       required String phone,
       required Address address}) async {
+=======
+      {required String shortCode, required String phone, required Address address}) async {
+>>>>>>> 3994cc22f3c384e30160f648a6e60b4461db8ebd
     final response = await http.post(
       Uri.parse('https://api.zaslogistica.com/store/update-address'),
       body: jsonEncode({
