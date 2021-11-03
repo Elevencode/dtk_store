@@ -2,6 +2,7 @@ import 'package:dtk_store/injection.dart' show init, sl;
 import 'package:dtk_store/presenter/order/order_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 //Convention: при импорте файлов проекта использовать короткую форму записи, без 'package:...'
 import 'injection.dart' show init, sl;
@@ -10,6 +11,7 @@ import 'presenter/order/cubit/order_cubit.dart';
 
 void main() async {
   await init();
+  await initializeDateFormatting('pt_BR', null);
   runApp(const MyApp());
 }
 

@@ -83,106 +83,79 @@ class _AddressPageState extends State<AddressPage> {
                 widget.orderCubit.getOrder();
               }
             },
-            child: Scaffold(
-              appBar: AppBar(
-                title: const Text(
-                  "POR FAVOR AYUDANOS A ENCONTRAR\nTU UBICACION EXACTA",
-                  textAlign: TextAlign.center,
-                ),
-              ),
-              body: Column(
-                children: [
-                  Expanded(
-                    child: Stack(children: [
-                      GoogleMap(
-                        // markers: Set<Marker>.of(_markers.values),
-                        markers: _markers.toSet(),
-                        mapType: MapType.normal,
-                        initialCameraPosition: _initialCameraPosition,
-                        // onMapCreated: _onMapCreated,
-                        onMapCreated: (controller) {
-                          final marker = Marker(
-                            markerId: MarkerId('0'),
-                            position: LatLng(_locationData!.latitude!,
-                                _locationData!.longitude!),
-                            visible: false,
-                          );
-                          _markers.add(marker);
-                          _completer.complete(controller);
-                          _controller = controller;
-                        },
-                        myLocationEnabled: true,
-                        // onCameraMove: ((_position) => _updatePosition(_position)),
-                        onCameraMove: (CameraPosition position) {
-                          setState(() {
-                            _markers.first = _markers.first
-                                .copyWith(positionParam: position.target);
-                          });
-                        },
+            child: Column(
+              children: [
+                Expanded(
+                  child: Stack(children: [
+                    GoogleMap(
+                      // markers: Set<Marker>.of(_markers.values),
+                      markers: _markers.toSet(),
+                      mapType: MapType.normal,
+                      initialCameraPosition: _initialCameraPosition,
+                      // onMapCreated: _onMapCreated,
+                      onMapCreated: (controller) {
+                        final marker = Marker(
+                          markerId: MarkerId('0'),
+                          position: LatLng(_locationData!.latitude!,
+                              _locationData!.longitude!),
+                          visible: false,
+                        );
+                        _markers.add(marker);
+                        _completer.complete(controller);
+                        _controller = controller;
+                      },
+                      myLocationEnabled: true,
+                      // onCameraMove: ((_position) => _updatePosition(_position)),
+                      onCameraMove: (CameraPosition position) {
+                        setState(() {
+                          _markers.first = _markers.first
+                              .copyWith(positionParam: position.target);
+                        });
+                      },
+                    ),
+                    const Align(
+                      alignment: Alignment.center,
+                      child: Icon(
+                        Icons.add_location,
+                        size: 40.0,
+                        color: Colors.purple,
                       ),
-                      const Align(
-                        alignment: Alignment.center,
-                        child: Icon(
-                          Icons.add_location,
-                          size: 40.0,
-                          color: Colors.purple,
-                        ),
-                      ),
-                      Positioned(
-                        bottom: 20,
-                        child: Padding(
-                          padding: const EdgeInsets.all(10),
-                          child: ElevatedButton(
-                            onPressed: () {
-                              final Address address = Address(
-                                id: widget.order.client!.address!.id,
-                                city: widget.order.client!.address!.city,
-                                street: widget.order.client!.address!.street,
-                                country: widget.order.client!.address!.country,
-                                lat: _markers.first.position.latitude,
-                                lng: _markers.first.position.longitude,
-                              );
-                              BlocProvider.of<AdressCubit>(context)
-                                  .updateAdress(address);
-                            },
-                            child: const Text(
-                              'CONFIRMAR LA\nUBICACION EXACTA',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontSize: 15,
-                                fontWeight: FontWeight.bold,
-                              ),
+                    ),
+                    Positioned(
+                      bottom: 20,
+                      child: Padding(
+                        padding: const EdgeInsets.all(10),
+                        child: ElevatedButton(
+                          onPressed: () {
+                            final Address address = Address(
+                              id: widget.order.client!.address!.id,
+                              city: widget.order.client!.address!.city,
+                              street: widget.order.client!.address!.street,
+                              country: widget.order.client!.address!.country,
+                              lat: _markers.first.position.latitude,
+                              lng: _markers.first.position.longitude,
+                            );
+                            BlocProvider.of<AdressCubit>(context)
+                                .updateAdress(address);
+                          },
+                          child: const Text(
+                            'CONFIRMAR LA\nUBICACION EXACTA',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold,
                             ),
-                            style: ElevatedButton.styleFrom(
-                              minimumSize: const Size(50, 70),
-                              primary: const Color(0XFF67C99C),
-                            ),
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            minimumSize: const Size(50, 70),
+                            primary: const Color(0XFF67C99C),
                           ),
                         ),
                       ),
-                    ]),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(10),
-                    child: ElevatedButton(
-                      onPressed: () {},
-                      child: const Text(
-                        'LLAMA A MI ACCESOR',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      style: ElevatedButton.styleFrom(
-                        minimumSize:
-                            Size(MediaQuery.of(context).size.width, 70),
-                        primary: const Color(0XFF557EF1),
-                      ),
                     ),
-                  ),
-                ],
-              ),
+                  ]),
+                ),
+              ],
             ),
           );
   }
