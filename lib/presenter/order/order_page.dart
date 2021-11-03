@@ -655,7 +655,7 @@ class _OrderDataPickerState extends State<OrderDataPicker> {
                 context: context,
                 initialDate: DateTime.now(),
                 firstDate: DateTime(2021),
-                lastDate: DateTime(2021).add(const Duration(days: 365)),
+                lastDate: DateTime.now().add(const Duration(days: 365)),
               ).then((newDate) {
                 setState(() {
                   _pickedDate = newDate!;
