@@ -38,7 +38,12 @@ class _EditAddressModalBottomSheetState
       listener: (context, state) {
         if (state is ModalSheetSendDataSuccessState) {
           Navigator.pop(context);
-          widget.orderCubit.getOrder(); //зачем вызывать getOrder, если мы передаем order?
+
+          final phone = BlocProvider.of<OrderCubit>(context).localPhone;
+          final shortCode = BlocProvider.of<OrderCubit>(context).localShortCode;
+
+          //? зачем вызывать getOrder, если мы передаем order?
+          widget.orderCubit.getOrder(shortCode, phone);
         } else if (state is ModalSheetSendDataInProgressState) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Processing Data')),
