@@ -38,7 +38,8 @@ class _EditAddressModalBottomSheetState
       listener: (context, state) {
         if (state is ModalSheetSendDataSuccessState) {
           Navigator.pop(context);
-          widget.orderCubit.getOrder(); //зачем вызывать getOrder, если мы передаем order?
+          widget.orderCubit
+              .getOrder(); //зачем вызывать getOrder, если мы передаем order?
         } else if (state is ModalSheetSendDataInProgressState) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Processing Data')),
@@ -58,24 +59,31 @@ class _EditAddressModalBottomSheetState
               AddressTextFormField(
                 hint: widget.order.client!.fullname,
                 controller: fullnameTextController,
+                label: 'Name',
               ),
               const SizedBox(height: 10.0),
               AddressTextFormField(
-                hint: widget.order.client!.address!.district!,
-                controller: districtTextController,
+                  hint: widget.order.client!.address!.district!,
+                  controller: districtTextController,
+                  label: 'Distrito'),
+              const SizedBox(height: 10.0),
+              AddressTextFormField(
+                hint: widget.order.client!.address!.city,
+                controller: cityTextController,
+                label: 'Province',
               ),
               const SizedBox(height: 10.0),
               AddressTextFormField(
-                  hint: widget.order.client!.address!.city,
-                  controller: cityTextController),
+                hint: widget.order.client!.address!.street,
+                controller: streetTextController,
+                label: 'Direccion',
+              ),
               const SizedBox(height: 10.0),
               AddressTextFormField(
-                  hint: widget.order.client!.address!.street,
-                  controller: streetTextController),
-              const SizedBox(height: 10.0),
-              AddressTextFormField(
-                  hint: widget.order.client!.address!.country,
-                  controller: countryTextController),
+                hint: widget.order.client!.address!.country,
+                controller: countryTextController,
+                label: 'Referencia',
+              ),
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 20.0),
                 child: ElevatedButton(
