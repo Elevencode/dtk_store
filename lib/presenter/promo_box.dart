@@ -11,8 +11,8 @@ class PromoBox extends StatefulWidget {
 
 class _PromoBoxState extends State<PromoBox> {
   bool _wantPromo = false;
-  int _minutes = 1;
-  int _seconds = 5;
+  int _minutes = 59;
+  int _seconds = 59;
 
   _timerStart() {
     var _timer = Timer.periodic(Duration(seconds: 1), (_) {
@@ -20,7 +20,7 @@ class _PromoBoxState extends State<PromoBox> {
         if (_seconds >= 1) {
           _seconds -= 1;
         } else if (_minutes > 0 && _seconds == 0) {
-          _seconds = 7;
+          _seconds = 59;
           _minutes -= 1;
         }
       });
