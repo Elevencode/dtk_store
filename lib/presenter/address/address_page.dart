@@ -80,6 +80,7 @@ class _AddressPageState extends State<AddressPage> {
             listener: (context, state) {
               if (state is AdressLoadSuccess) {
                 Navigator.pop(context);
+                //? зачем вызывать getOrder, если мы передаем order?
                 widget.orderCubit.getOrder();
               }
             },
@@ -102,7 +103,7 @@ class _AddressPageState extends State<AddressPage> {
                         // onMapCreated: _onMapCreated,
                         onMapCreated: (controller) {
                           final marker = Marker(
-                            markerId: MarkerId('0'),
+                            markerId: const MarkerId('0'),
                             position: LatLng(_locationData!.latitude!,
                                 _locationData!.longitude!),
                             visible: false,

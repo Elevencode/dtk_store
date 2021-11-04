@@ -21,7 +21,7 @@ abstract class Order implements _$Order {
   factory Order({
     required int id, //
     // required Status status, //
-    required DateTime plannedDate, //
+    DateTime? plannedDate, //
     // required DateTime createdAt,
     // @JsonKey(defaultValue: false) bool? important, //
     int? plannedDateDuration, //

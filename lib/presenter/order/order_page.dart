@@ -12,8 +12,8 @@ import '/presenter/promo_box.dart';
 
 import 'modal_sheet/cubit/modal_sheet_cubit.dart';
 
-class HomePage extends StatelessWidget {
-  HomePage({Key? key}) : super(key: key);
+class OrderPage extends StatelessWidget {
+  OrderPage({Key? key}) : super(key: key);
 
   final ScrollController _positionsScrollContorller = ScrollController();
 
@@ -58,7 +58,7 @@ class HomePage extends StatelessWidget {
 
                               return Text(
                                 '$productName${itemIndex == order.positions!.length - 1 ? '' : ' + '}',
-                                style: TextStyle(
+                                style: const TextStyle(
                                   fontSize: 32,
                                   color: Color(0XFF557EF1),
                                   fontWeight: FontWeight.bold,
@@ -79,7 +79,7 @@ class HomePage extends StatelessWidget {
                           children: [
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.end,
-                              children: [
+                              children: const [
                                 Text(
                                   'PRECIO',
                                   style: TextStyle(
@@ -99,7 +99,7 @@ class HomePage extends StatelessWidget {
                             const SizedBox(width: 8),
                             Text(
                               '${order.totalCents! * 2.8}/s',
-                              style: TextStyle(
+                              style: const TextStyle(
                                 fontSize: 48,
                                 fontWeight: FontWeight.bold,
                                 color: Colors.red,
@@ -114,7 +114,7 @@ class HomePage extends StatelessWidget {
                           children: [
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.end,
-                              children: [
+                              children: const [
                                 Text(
                                   'PRECIO',
                                   style: TextStyle(
@@ -135,7 +135,7 @@ class HomePage extends StatelessWidget {
                             Text(
                               //TODO: Цена со скидкой
                               '${order.totalCents}/s',
-                              style: TextStyle(
+                              style: const TextStyle(
                                 fontSize: 48,
                                 fontWeight: FontWeight.bold,
                                 color: Colors.green,
@@ -146,7 +146,7 @@ class HomePage extends StatelessWidget {
                       ),
                     ],
                   ),
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
                   Stack(
                     clipBehavior: Clip.none,
                     children: [
@@ -158,7 +158,7 @@ class HomePage extends StatelessWidget {
                           child: ListView(
                             scrollDirection: Axis.horizontal,
                             controller: _positionsScrollContorller,
-                            physics: PageScrollPhysics(),
+                            physics: const PageScrollPhysics(),
                             children: [
                               ...order.positions!
                                   .map(
@@ -175,13 +175,13 @@ class HomePage extends StatelessWidget {
                           ),
                         ),
                       ),
-                      Positioned(
+                      const Positioned(
                         bottom: -40,
                         child: PromoBox(),
                       )
                     ],
                   ),
-                  SizedBox(height: 40),
+                  const SizedBox(height: 40),
                   Container(
                     padding: const EdgeInsets.all(12),
                     width: MediaQuery.of(context).size.width,
@@ -192,14 +192,14 @@ class HomePage extends StatelessWidget {
                         RichText(
                           text: TextSpan(
                             children: [
-                              TextSpan(
+                              const TextSpan(
                                 text: 'Name: ',
                                 style: TextStyle(
                                     fontSize: 18, fontWeight: FontWeight.bold),
                               ),
                               TextSpan(
                                 text: order.client!.fullname,
-                                style: TextStyle(fontSize: 18),
+                                style: const TextStyle(fontSize: 18),
                               ),
                             ],
                           ),
@@ -207,14 +207,14 @@ class HomePage extends StatelessWidget {
                         RichText(
                           text: TextSpan(
                             children: [
-                              TextSpan(
+                              const TextSpan(
                                 text: 'Distrito: ',
                                 style: TextStyle(
                                     fontSize: 18, fontWeight: FontWeight.bold),
                               ),
                               TextSpan(
                                 text: order.client!.address!.district,
-                                style: TextStyle(fontSize: 18),
+                                style: const TextStyle(fontSize: 18),
                               ),
                             ],
                           ),
@@ -222,14 +222,14 @@ class HomePage extends StatelessWidget {
                         RichText(
                           text: TextSpan(
                             children: [
-                              TextSpan(
+                              const TextSpan(
                                 text: 'Province: ',
                                 style: TextStyle(
                                     fontSize: 18, fontWeight: FontWeight.bold),
                               ),
                               TextSpan(
                                 text: order.client!.address!.city,
-                                style: TextStyle(fontSize: 18),
+                                style: const TextStyle(fontSize: 18),
                               ),
                             ],
                           ),
@@ -237,14 +237,14 @@ class HomePage extends StatelessWidget {
                         RichText(
                           text: TextSpan(
                             children: [
-                              TextSpan(
+                              const TextSpan(
                                 text: 'Direccion: ',
                                 style: TextStyle(
                                     fontSize: 18, fontWeight: FontWeight.bold),
                               ),
                               TextSpan(
                                 text: order.client!.address!.street,
-                                style: TextStyle(fontSize: 18),
+                                style: const TextStyle(fontSize: 18),
                               ),
                             ],
                           ),
@@ -252,14 +252,14 @@ class HomePage extends StatelessWidget {
                         RichText(
                           text: TextSpan(
                             children: [
-                              TextSpan(
+                              const TextSpan(
                                 text: 'Referencia: ',
                                 style: TextStyle(
                                     fontSize: 18, fontWeight: FontWeight.bold),
                               ),
                               TextSpan(
                                 text: order.client!.address!.country,
-                                style: TextStyle(fontSize: 18),
+                                style: const TextStyle(fontSize: 18),
                               ),
                             ],
                           ),
@@ -268,7 +268,7 @@ class HomePage extends StatelessWidget {
                     ),
                   ),
                   Container(
-                    padding: EdgeInsets.symmetric(horizontal: 12),
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
                     color: Colors.grey[200],
                     child: Column(
                       children: [
@@ -276,39 +276,43 @@ class HomePage extends StatelessWidget {
                           children: [
                             Column(
                               children: [
-                                Text(
+                                const Text(
                                   'Planned date',
                                   style: TextStyle(
                                     fontSize: 20,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
-                                Text(
-                                  '${DateFormat.MMMMd().format(order.plannedDate)} ${order.plannedDate == DateTime.now() ? '(Today)' : ''}',
-                                  textAlign: TextAlign.end,
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                  ),
-                                ),
+                                (order.plannedDate != null)
+                                    ? Text(
+                                        '${DateFormat.MMMMd().format(order.plannedDate!)} ${order.plannedDate == DateTime.now() ? '(Today)' : ''}',
+                                        textAlign: TextAlign.end,
+                                        style: const TextStyle(
+                                          fontSize: 18,
+                                        ),
+                                      )
+                                    : const Text('Please confirmed'),
                               ],
                             ),
-                            SizedBox(width: 132),
+                            const SizedBox(width: 132),
                             Column(
                               children: [
-                                Text(
+                                const Text(
                                   'Planned time',
                                   style: TextStyle(
                                     fontSize: 20,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
-                                Text(
-                                  '${DateFormat.Hm().format(order.plannedDate)} - ${DateFormat.Hm().format(order.plannedDate.add(Duration(minutes: 90)))}',
-                                  textAlign: TextAlign.end,
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                  ),
-                                ),
+                                (order.plannedDate != null)
+                                    ? Text(
+                                        '${DateFormat.Hm().format(order.plannedDate!)} - ${DateFormat.Hm().format(order.plannedDate!.add(Duration(minutes: 90)))}',
+                                        textAlign: TextAlign.end,
+                                        style: const TextStyle(
+                                          fontSize: 18,
+                                        ),
+                                      )
+                                    : const Text('Please confirmed'),
                               ],
                             ),
                           ],
