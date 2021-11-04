@@ -43,7 +43,7 @@ class _EditAddressModalBottomSheetState
           final shortCode = BlocProvider.of<OrderCubit>(context).localShortCode;
 
           //? зачем вызывать getOrder, если мы передаем order?
-          widget.orderCubit.getOrder(shortCode, phone);
+          widget.orderCubit.getOrder();
         } else if (state is ModalSheetSendDataInProgressState) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Processing Data')),

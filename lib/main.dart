@@ -29,19 +29,21 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         initialRoute: '/',
         onGenerateRoute: (RouteSettings settings) {
-          var name = settings.name!;
+          var name = settings.name;
 
           ///Создаём [_rootWidget]
-          if (name.contains('phone') && name.contains('code')) {
+          if (name != null && name.contains('phone') && name.contains('code')) {
             var shortCode = Uri.parse(name).queryParameters['code'];
             var phone = Uri.parse(name).queryParameters['phone'];
 
             _rootWidget = Builder(
               builder: (context) {
-                BlocProvider.of<OrderCubit>(context).getOrder(
-                  shortCode!,
-                  '+${phone!}',
-                );
+                BlocProvider.of<OrderCubit>(context)
+                  ..initOrderCubit(
+                    shortCode!,
+                    '+${phone!}',
+                  )
+                  ..getOrder();
 
                 return OrderPage();
               },

@@ -80,12 +80,8 @@ class _AddressPageState extends State<AddressPage> {
             listener: (context, state) {
               if (state is AdressLoadSuccess) {
                 Navigator.pop(context);
-                final phone = BlocProvider.of<OrderCubit>(context).localPhone;
-                final shortCode =
-                    BlocProvider.of<OrderCubit>(context).localShortCode;
-
                 //? зачем вызывать getOrder, если мы передаем order?
-                widget.orderCubit.getOrder(shortCode, phone);
+                widget.orderCubit.getOrder();
               }
             },
             child: Scaffold(
@@ -107,7 +103,7 @@ class _AddressPageState extends State<AddressPage> {
                         // onMapCreated: _onMapCreated,
                         onMapCreated: (controller) {
                           final marker = Marker(
-                            markerId: MarkerId('0'),
+                            markerId: const MarkerId('0'),
                             position: LatLng(_locationData!.latitude!,
                                 _locationData!.longitude!),
                             visible: false,

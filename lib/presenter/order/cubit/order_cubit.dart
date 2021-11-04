@@ -14,14 +14,16 @@ class OrderCubit extends Cubit<OrderState> {
   late String localShortCode;
   late String localPhone;
 
-  void getOrder(String shortCode, String phone) async {
+  void initOrderCubit(String shortCode, String phone) {
     localShortCode = shortCode;
     localPhone = phone;
+  }
 
+  void getOrder() async {
     late Order order;
     emit(OrderLoadingState());
     try {
-      final result = await repository.getOrder(shortCode, phone);
+      final result = await repository.getOrder(localShortCode, localPhone);
       order = result;
       emit(OrderLoadSuccessState(order: order));
     } catch (e) {
