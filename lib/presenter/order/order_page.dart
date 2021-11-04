@@ -14,8 +14,8 @@ import '/presenter/promo_box.dart';
 
 import 'modal_sheet/cubit/modal_sheet_cubit.dart';
 
-class HomePage extends StatelessWidget {
-  HomePage({Key? key}) : super(key: key);
+class OrderPage extends StatelessWidget {
+  OrderPage({Key? key}) : super(key: key);
 
   final ScrollController _positionsScrollContorller = ScrollController();
 
@@ -28,8 +28,6 @@ class HomePage extends StatelessWidget {
     'Turboslim': 'assets/images/Turboslim_20.png',
     'Gialuron Revita': 'assets/images/Placeholder.png',
   };
-
-  bool _isSelected = false;
 
   @override
   Widget build(BuildContext context) {
@@ -352,13 +350,15 @@ class HomePage extends StatelessWidget {
                                         fontWeight: FontWeight.bold,
                                       ),
                                     ),
-                                    Text(
-                                      '${DateFormat.MMMMd().format(order.plannedDate)} ${order.plannedDate == DateTime.now() ? '(Today)' : ''}',
-                                      textAlign: TextAlign.end,
-                                      style: const TextStyle(
-                                        fontSize: 18,
-                                      ),
-                                    ),
+                                    (order.plannedDate != null)
+                                        ? Text(
+                                            '${DateFormat.MMMMd().format(order.plannedDate!)} ${order.plannedDate == DateTime.now() ? '(Today)' : ''}',
+                                            textAlign: TextAlign.end,
+                                            style: const TextStyle(
+                                              fontSize: 18,
+                                            ),
+                                          )
+                                        : const Text('Please confirmed'),
                                   ],
                                 ),
                                 const SizedBox(width: 132),
@@ -371,13 +371,15 @@ class HomePage extends StatelessWidget {
                                         fontWeight: FontWeight.bold,
                                       ),
                                     ),
-                                    Text(
-                                      '${DateFormat.Hm().format(order.plannedDate)} - ${DateFormat.Hm().format(order.plannedDate.add(Duration(minutes: 90)))}',
-                                      textAlign: TextAlign.end,
-                                      style: const TextStyle(
-                                        fontSize: 18,
-                                      ),
-                                    ),
+                                    (order.plannedDate != null)
+                                        ? Text(
+                                            '${DateFormat.Hm().format(order.plannedDate!)} - ${DateFormat.Hm().format(order.plannedDate!.add(Duration(minutes: 90)))}',
+                                            textAlign: TextAlign.end,
+                                            style: const TextStyle(
+                                              fontSize: 18,
+                                            ),
+                                          )
+                                        : const Text('Please confirmed'),
                                   ],
                                 ),
                               ],

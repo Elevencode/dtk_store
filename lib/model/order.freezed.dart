@@ -23,7 +23,7 @@ class _$OrderTearOff {
 
   _Order call(
       {required int id,
-      required DateTime plannedDate,
+      DateTime? plannedDate,
       int? plannedDateDuration,
       required String shortCode,
       required int totalCents,
@@ -54,7 +54,7 @@ const $Order = _$OrderTearOff();
 mixin _$Order {
   int get id => throw _privateConstructorUsedError; //
 // required Status status, //
-  DateTime get plannedDate => throw _privateConstructorUsedError; //
+  DateTime? get plannedDate => throw _privateConstructorUsedError; //
 // required DateTime createdAt,
 // @JsonKey(defaultValue: false) bool? important, //
   int? get plannedDateDuration => throw _privateConstructorUsedError; //
@@ -81,7 +81,7 @@ abstract class $OrderCopyWith<$Res> {
       _$OrderCopyWithImpl<$Res>;
   $Res call(
       {int id,
-      DateTime plannedDate,
+      DateTime? plannedDate,
       int? plannedDateDuration,
       String shortCode,
       int totalCents,
@@ -119,7 +119,7 @@ class _$OrderCopyWithImpl<$Res> implements $OrderCopyWith<$Res> {
       plannedDate: plannedDate == freezed
           ? _value.plannedDate
           : plannedDate // ignore: cast_nullable_to_non_nullable
-              as DateTime,
+              as DateTime?,
       plannedDateDuration: plannedDateDuration == freezed
           ? _value.plannedDateDuration
           : plannedDateDuration // ignore: cast_nullable_to_non_nullable
@@ -162,7 +162,7 @@ abstract class _$OrderCopyWith<$Res> implements $OrderCopyWith<$Res> {
   @override
   $Res call(
       {int id,
-      DateTime plannedDate,
+      DateTime? plannedDate,
       int? plannedDateDuration,
       String shortCode,
       int totalCents,
@@ -202,7 +202,7 @@ class __$OrderCopyWithImpl<$Res> extends _$OrderCopyWithImpl<$Res>
       plannedDate: plannedDate == freezed
           ? _value.plannedDate
           : plannedDate // ignore: cast_nullable_to_non_nullable
-              as DateTime,
+              as DateTime?,
       plannedDateDuration: plannedDateDuration == freezed
           ? _value.plannedDateDuration
           : plannedDateDuration // ignore: cast_nullable_to_non_nullable
@@ -236,7 +236,7 @@ class __$OrderCopyWithImpl<$Res> extends _$OrderCopyWithImpl<$Res>
 class _$_Order extends _Order {
   _$_Order(
       {required this.id,
-      required this.plannedDate,
+      this.plannedDate,
       this.plannedDateDuration,
       required this.shortCode,
       required this.totalCents,
@@ -252,7 +252,7 @@ class _$_Order extends _Order {
   final int id;
   @override //
 // required Status status, //
-  final DateTime plannedDate;
+  final DateTime? plannedDate;
   @override //
 // required DateTime createdAt,
 // @JsonKey(defaultValue: false) bool? important, //
@@ -323,7 +323,7 @@ class _$_Order extends _Order {
 abstract class _Order extends Order {
   factory _Order(
       {required int id,
-      required DateTime plannedDate,
+      DateTime? plannedDate,
       int? plannedDateDuration,
       required String shortCode,
       required int totalCents,
@@ -338,7 +338,7 @@ abstract class _Order extends Order {
   int get id;
   @override //
 // required Status status, //
-  DateTime get plannedDate;
+  DateTime? get plannedDate;
   @override //
 // required DateTime createdAt,
 // @JsonKey(defaultValue: false) bool? important, //

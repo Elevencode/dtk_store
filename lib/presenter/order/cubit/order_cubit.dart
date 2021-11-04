@@ -11,11 +11,19 @@ class OrderCubit extends Cubit<OrderState> {
   OrderCubit() : super(OrderInitialState());
   final OrderRepository repository = sl();
 
+  late String localShortCode;
+  late String localPhone;
+
+  void initOrderCubit(String shortCode, String phone) {
+    localShortCode = shortCode;
+    localPhone = phone;
+  }
+
   void getOrder() async {
     late Order order;
     emit(OrderLoadingState());
     try {
-      final result = await repository.getOrder('137', '+555555975');
+      final result = await repository.getOrder(localShortCode, localPhone);
       order = result;
       emit(OrderLoadSuccessState(order: order));
     } catch (e) {
