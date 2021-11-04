@@ -79,7 +79,6 @@ class _AddressPageState extends State<AddressPage> {
         : BlocListener<AdressCubit, AdressState>(
             listener: (context, state) {
               if (state is AdressLoadSuccess) {
-                Navigator.pop(context);
                 widget.orderCubit.getOrder();
               }
             },
