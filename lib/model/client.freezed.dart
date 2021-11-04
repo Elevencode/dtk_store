@@ -24,8 +24,8 @@ class _$ClientTearOff {
   _Client call(
       {required String phone,
       required String fullname,
-      Address? address,
-      int? id}) {
+      required Address address,
+      required int id}) {
     return _Client(
       phone: phone,
       fullname: fullname,
@@ -46,8 +46,8 @@ const $Client = _$ClientTearOff();
 mixin _$Client {
   String get phone => throw _privateConstructorUsedError;
   String get fullname => throw _privateConstructorUsedError;
-  Address? get address => throw _privateConstructorUsedError;
-  int? get id => throw _privateConstructorUsedError;
+  Address get address => throw _privateConstructorUsedError;
+  int get id => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -58,9 +58,9 @@ mixin _$Client {
 abstract class $ClientCopyWith<$Res> {
   factory $ClientCopyWith(Client value, $Res Function(Client) then) =
       _$ClientCopyWithImpl<$Res>;
-  $Res call({String phone, String fullname, Address? address, int? id});
+  $Res call({String phone, String fullname, Address address, int id});
 
-  $AddressCopyWith<$Res>? get address;
+  $AddressCopyWith<$Res> get address;
 }
 
 /// @nodoc
@@ -90,21 +90,17 @@ class _$ClientCopyWithImpl<$Res> implements $ClientCopyWith<$Res> {
       address: address == freezed
           ? _value.address
           : address // ignore: cast_nullable_to_non_nullable
-              as Address?,
+              as Address,
       id: id == freezed
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
-              as int?,
+              as int,
     ));
   }
 
   @override
-  $AddressCopyWith<$Res>? get address {
-    if (_value.address == null) {
-      return null;
-    }
-
-    return $AddressCopyWith<$Res>(_value.address!, (value) {
+  $AddressCopyWith<$Res> get address {
+    return $AddressCopyWith<$Res>(_value.address, (value) {
       return _then(_value.copyWith(address: value));
     });
   }
@@ -115,10 +111,10 @@ abstract class _$ClientCopyWith<$Res> implements $ClientCopyWith<$Res> {
   factory _$ClientCopyWith(_Client value, $Res Function(_Client) then) =
       __$ClientCopyWithImpl<$Res>;
   @override
-  $Res call({String phone, String fullname, Address? address, int? id});
+  $Res call({String phone, String fullname, Address address, int id});
 
   @override
-  $AddressCopyWith<$Res>? get address;
+  $AddressCopyWith<$Res> get address;
 }
 
 /// @nodoc
@@ -149,11 +145,11 @@ class __$ClientCopyWithImpl<$Res> extends _$ClientCopyWithImpl<$Res>
       address: address == freezed
           ? _value.address
           : address // ignore: cast_nullable_to_non_nullable
-              as Address?,
+              as Address,
       id: id == freezed
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
-              as int?,
+              as int,
     ));
   }
 }
@@ -162,7 +158,10 @@ class __$ClientCopyWithImpl<$Res> extends _$ClientCopyWithImpl<$Res>
 @JsonSerializable()
 class _$_Client extends _Client {
   _$_Client(
-      {required this.phone, required this.fullname, this.address, this.id})
+      {required this.phone,
+      required this.fullname,
+      required this.address,
+      required this.id})
       : super._();
 
   factory _$_Client.fromJson(Map<String, dynamic> json) =>
@@ -173,9 +172,9 @@ class _$_Client extends _Client {
   @override
   final String fullname;
   @override
-  final Address? address;
+  final Address address;
   @override
-  final int? id;
+  final int id;
 
   @override
   String toString() {
@@ -212,8 +211,8 @@ abstract class _Client extends Client {
   factory _Client(
       {required String phone,
       required String fullname,
-      Address? address,
-      int? id}) = _$_Client;
+      required Address address,
+      required int id}) = _$_Client;
   _Client._() : super._();
 
   factory _Client.fromJson(Map<String, dynamic> json) = _$_Client.fromJson;
@@ -223,9 +222,9 @@ abstract class _Client extends Client {
   @override
   String get fullname;
   @override
-  Address? get address;
+  Address get address;
   @override
-  int? get id;
+  int get id;
   @override
   @JsonKey(ignore: true)
   _$ClientCopyWith<_Client> get copyWith => throw _privateConstructorUsedError;

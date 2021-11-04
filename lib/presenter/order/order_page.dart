@@ -4,15 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
-import 'package:intl/date_symbol_data_local.dart';
 
 import '/model/order.dart';
 import '/presenter/address/address_page.dart';
 import '/presenter/order/cubit/order_cubit.dart';
 import '/presenter/order/modal_sheet/edit_address_modal.dart';
 import '/presenter/promo_box.dart';
-
-import 'modal_sheet/cubit/modal_sheet_cubit.dart';
 
 class HomePage extends StatelessWidget {
   HomePage({Key? key}) : super(key: key);
@@ -67,13 +64,13 @@ class HomePage extends StatelessWidget {
                                 Wrap(
                                   alignment: WrapAlignment.center,
                                   children: [
-                                    ...order.positions!.asMap().entries.map(
+                                    ...order.positions.asMap().entries.map(
                                       (item) {
                                         int itemIndex = item.key;
                                         String productName =
                                             item.value.product.name;
                                         return Text(
-                                          '$productName${itemIndex == order.positions!.length - 1 ? '' : ' + '}',
+                                          '$productName${itemIndex == order.positions.length - 1 ? '' : ' + '}',
                                           style: const TextStyle(
                                             fontSize: 24,
                                             color: Color(0XFF557EF1),
@@ -118,7 +115,7 @@ class HomePage extends StatelessWidget {
                                     ),
                                     const SizedBox(width: 8),
                                     Text(
-                                      '${(order.totalCents! * 2.8).round()}/s',
+                                      '${(order.totalCents * 2.8).round()}/s',
                                       style: GoogleFonts.oswald(
                                         fontSize: 48,
                                         color: Colors.red,
@@ -157,7 +154,7 @@ class HomePage extends StatelessWidget {
                                     const SizedBox(width: 8),
                                     Text(
                                       //TODO: Цена со скидкой
-                                      '${order.totalCents!.round()}/s',
+                                      '${order.totalCents.round()}/s',
                                       style: GoogleFonts.oswald(
                                         fontSize: 48,
                                         color: Colors.green,
@@ -184,7 +181,7 @@ class HomePage extends StatelessWidget {
                                     controller: _positionsScrollContorller,
                                     physics: const PageScrollPhysics(),
                                     children: [
-                                      ...order.positions!
+                                      ...order.positions
                                           .map(
                                             (items) => Stack(
                                               clipBehavior: Clip.none,
@@ -247,7 +244,7 @@ class HomePage extends StatelessWidget {
                                         ),
                                       ),
                                       TextSpan(
-                                        text: order.client!.fullname,
+                                        text: order.client.fullname,
                                         style: const TextStyle(
                                           fontSize: 18,
                                           color: Colors.black,
@@ -268,7 +265,7 @@ class HomePage extends StatelessWidget {
                                         ),
                                       ),
                                       TextSpan(
-                                        text: order.client!.address!.district,
+                                        text: order.client.address.district,
                                         style: const TextStyle(
                                           fontSize: 18,
                                           color: Colors.black,
@@ -289,7 +286,7 @@ class HomePage extends StatelessWidget {
                                         ),
                                       ),
                                       TextSpan(
-                                        text: order.client!.address!.city,
+                                        text: order.client.address.city,
                                         style: const TextStyle(
                                           fontSize: 18,
                                           color: Colors.black,
@@ -310,7 +307,7 @@ class HomePage extends StatelessWidget {
                                         ),
                                       ),
                                       TextSpan(
-                                        text: order.client!.address!.street,
+                                        text: order.client.address.street,
                                         style: const TextStyle(
                                           fontSize: 18,
                                           color: Colors.black,
@@ -331,7 +328,7 @@ class HomePage extends StatelessWidget {
                                         ),
                                       ),
                                       TextSpan(
-                                        text: order.client!.address!.country,
+                                        text: order.client.address.country,
                                         style: const TextStyle(
                                           fontSize: 18,
                                           color: Colors.black,
@@ -407,16 +404,11 @@ class HomePage extends StatelessWidget {
                                             isScrollControlled: true,
                                             context: context,
                                             builder: (context) =>
-                                                BlocProvider<ModalSheetCubit>(
-                                              create: (context) =>
-                                                  ModalSheetCubit(),
-                                              child:
-                                                  EditAddressModalBottomSheet(
-                                                order: order,
-                                                orderCubit:
-                                                    BlocProvider.of<OrderCubit>(
-                                                        context),
-                                              ),
+                                                EditAddressModalBottomSheet(
+                                              order: order,
+                                              orderCubit:
+                                                  BlocProvider.of<OrderCubit>(
+                                                      context),
                                             ),
                                           );
                                         },
@@ -516,13 +508,10 @@ class HomePage extends StatelessWidget {
                                   width: 480,
                                   height: 400,
                                   child: Center(
-                                    child: BlocProvider<AdressCubit>(
-                                      create: (context) => AdressCubit(),
-                                      child: AddressPage(
-                                        order: state.order,
-                                        orderCubit: BlocProvider.of<OrderCubit>(
-                                            context),
-                                      ),
+                                    child: AddressPage(
+                                      order: state.order,
+                                      orderCubit:
+                                          BlocProvider.of<OrderCubit>(context),
                                     ),
                                   ),
                                 ),

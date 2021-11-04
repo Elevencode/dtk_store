@@ -11,8 +11,8 @@ abstract class Client implements _$Client {
   factory Client({
     required String phone,
     required String fullname,
-    Address? address,
-    int? id,
+    required Address address,
+    required int id,
   }) = _Client;
 
   factory Client.fromJson(Map<String, dynamic> json) => _$ClientFromJson(json);

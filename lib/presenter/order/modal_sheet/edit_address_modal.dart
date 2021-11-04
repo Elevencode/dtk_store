@@ -21,15 +21,15 @@ class EditAddressModalBottomSheet extends StatefulWidget {
 class _EditAddressModalBottomSheetState
     extends State<EditAddressModalBottomSheet> {
   late final fullnameTextController =
-      TextEditingController(text: widget.order.client!.fullname);
+      TextEditingController(text: widget.order.client.fullname);
   late final districtTextController =
-      TextEditingController(text: widget.order.client!.address!.district!);
+      TextEditingController(text: widget.order.client.address.district);
   late final cityTextController =
-      TextEditingController(text: widget.order.client!.address!.city);
+      TextEditingController(text: widget.order.client.address.city);
   late final streetTextController =
-      TextEditingController(text: widget.order.client!.address!.street);
+      TextEditingController(text: widget.order.client.address.street);
   late final countryTextController =
-      TextEditingController(text: widget.order.client!.address!.country);
+      TextEditingController(text: widget.order.client.address.country);
   final _formKey = GlobalKey<FormState>();
 
   @override
@@ -56,25 +56,25 @@ class _EditAddressModalBottomSheetState
           child: Column(
             children: [
               AddressTextFormField(
-                hint: widget.order.client!.fullname,
+                hint: widget.order.client.fullname,
                 controller: fullnameTextController,
               ),
               const SizedBox(height: 10.0),
               AddressTextFormField(
-                hint: widget.order.client!.address!.district!,
+                hint: widget.order.client.address.district,
                 controller: districtTextController,
               ),
               const SizedBox(height: 10.0),
               AddressTextFormField(
-                  hint: widget.order.client!.address!.city,
+                  hint: widget.order.client.address.city,
                   controller: cityTextController),
               const SizedBox(height: 10.0),
               AddressTextFormField(
-                  hint: widget.order.client!.address!.street,
+                  hint: widget.order.client.address.street,
                   controller: streetTextController),
               const SizedBox(height: 10.0),
               AddressTextFormField(
-                  hint: widget.order.client!.address!.country,
+                  hint: widget.order.client.address.country,
                   controller: countryTextController),
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 20.0),
@@ -82,7 +82,8 @@ class _EditAddressModalBottomSheetState
                   onPressed: () {
                     if (_formKey.currentState!.validate()) {
                       BlocProvider.of<ModalSheetCubit>(context).sendData(
-                          id: widget.order.client!.address!.id!,
+                          id: widget.order.client.address.id,
+                          district: widget.order.client.address.district,
                           city: cityTextController.text,
                           country: countryTextController.text,
                           street: streetTextController.text);

@@ -6,6 +6,8 @@ import 'package:intl/date_symbol_data_local.dart';
 
 //Convention: при импорте файлов проекта использовать короткую форму записи, без 'package:...'
 import 'injection.dart' show init, sl;
+import 'presenter/address/cubit/adress_cubit.dart';
+import 'presenter/order/modal_sheet/cubit/modal_sheet_cubit.dart';
 import 'presenter/order/order_page.dart';
 import 'presenter/order/cubit/order_cubit.dart';
 
@@ -19,8 +21,18 @@ class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (BuildContext context) => sl<OrderCubit>()..getOrder(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<OrderCubit>(
+          create: (BuildContext context) => sl<OrderCubit>()..getOrder(),
+        ),
+        BlocProvider<AdressCubit>(
+          create: (context) => AdressCubit(),
+        ),
+        BlocProvider<ModalSheetCubit>(
+          create: (context) => ModalSheetCubit(),
+        ),
+      ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         home: SafeArea(
