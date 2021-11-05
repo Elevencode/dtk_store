@@ -1,22 +1,29 @@
-import 'package:dtk_store/presenter/address/cubit/adress_cubit.dart';
+import 'package:dtk_store/presenter/address/cubit/map_widget_cubit.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:indexed/indexed.dart';
 import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
 import '/model/order.dart';
-import '/presenter/address/address_page.dart';
+import '../address/map_widget.dart';
 import '/presenter/order/cubit/order_cubit.dart';
 import '/presenter/order/modal_sheet/edit_address_modal.dart';
 import '/presenter/promo_box.dart';
 
 import 'modal_sheet/cubit/modal_sheet_cubit.dart';
 
-class OrderPage extends StatelessWidget {
+class OrderPage extends StatefulWidget {
   OrderPage({Key? key}) : super(key: key);
 
+  @override
+  State<OrderPage> createState() => _OrderPageState();
+}
+
+class _OrderPageState extends State<OrderPage> {
   final ScrollController _positionsScrollContorller = ScrollController();
 
   final Map productImagePath = {
@@ -28,6 +35,8 @@ class OrderPage extends StatelessWidget {
     'Turboslim': 'assets/images/Turboslim_20.png',
     'Gialuron Revita': 'assets/images/Placeholder.png',
   };
+
+  bool _isMapVisible = true;
 
   @override
   Widget build(BuildContext context) {
@@ -50,13 +59,22 @@ class OrderPage extends StatelessWidget {
                           children: [
                             const SizedBox(height: 12),
                             Text(
-                              'YOUR ORDER ${order.shortCode}',
+                              'YOUR ORDER #${order.shortCode}',
                               style: const TextStyle(
                                 fontSize: 32,
                                 color: Color(0XFF557EF1),
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
+                            //TODO: Если статус заказ доставляется:
+                            // const Text(
+                            //   'заказ доставляется!',
+                            //   style: TextStyle(
+                            //     fontSize: 16,
+                            //     color: Colors.blue,
+                            //     fontWeight: FontWeight.bold,
+                            //   ),
+                            // ),
                             Divider(),
                             Wrap(
                               alignment: WrapAlignment.center,
@@ -232,6 +250,7 @@ class OrderPage extends StatelessWidget {
                                   const TextSpan(
                                     text: 'Name: ',
                                     style: TextStyle(
+                                      height: 1.41,
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold,
                                       color: Colors.black,
@@ -253,6 +272,7 @@ class OrderPage extends StatelessWidget {
                                   const TextSpan(
                                     text: 'Distrito: ',
                                     style: TextStyle(
+                                      height: 1.41,
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold,
                                       color: Colors.black,
@@ -274,6 +294,7 @@ class OrderPage extends StatelessWidget {
                                   const TextSpan(
                                     text: 'Province: ',
                                     style: TextStyle(
+                                      height: 1.41,
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold,
                                       color: Colors.black,
@@ -295,6 +316,7 @@ class OrderPage extends StatelessWidget {
                                   const TextSpan(
                                     text: 'Direccion: ',
                                     style: TextStyle(
+                                      height: 1.41,
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold,
                                       color: Colors.black,
@@ -316,6 +338,7 @@ class OrderPage extends StatelessWidget {
                                   const TextSpan(
                                     text: 'Referencia: ',
                                     style: TextStyle(
+                                      height: 1.41,
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold,
                                       color: Colors.black,
@@ -460,6 +483,7 @@ class OrderPage extends StatelessWidget {
                             //     ),
                             //   ],
                             // ),
+
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: [
@@ -482,10 +506,13 @@ class OrderPage extends StatelessWidget {
                               child: Center(
                                 child: BlocProvider<AdressCubit>(
                                   create: (context) => AdressCubit(),
-                                  child: AddressPage(
-                                    order: state.order,
-                                    orderCubit:
-                                        BlocProvider.of<OrderCubit>(context),
+                                  child: Visibility(
+                                    visible: _isMapVisible,
+                                    child: MapWidget(
+                                      order: state.order,
+                                      orderCubit:
+                                          BlocProvider.of<OrderCubit>(context),
+                                    ),
                                   ),
                                 ),
                               ),
@@ -507,8 +534,182 @@ class OrderPage extends StatelessWidget {
                               ],
                             ),
                             Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 12, vertical: 16),
+                              padding: const EdgeInsets.symmetric(vertical: 24),
+                              child: ElevatedButton(
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(
+                                      '${DateFormat.Hm().format(order.plannedDate!)} - ${DateFormat.Hm().format(order.plannedDate!.add(Duration(minutes: 90)))}',
+                                      style: const TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.w600),
+                                    ),
+                                    SizedBox(width: 12),
+                                    Icon(Icons.arrow_drop_down)
+                                  ],
+                                ),
+                                style: ElevatedButton.styleFrom(
+                                  minimumSize: Size(120, 50),
+                                  padding: EdgeInsets.symmetric(horizontal: 12),
+                                  primary: Colors.white,
+                                  onPrimary: const Color(0XFF557EF1),
+                                  side: const BorderSide(
+                                      color: Color(0XFF557EF1)),
+                                ),
+                                onPressed: () {
+                                  setState(() {
+                                    _isMapVisible = false;
+                                  });
+                                  showCupertinoModalPopup(
+                                    context: context,
+                                    builder: (BuildContext context) =>
+                                        CupertinoActionSheet(
+                                      actions: <Widget>[
+                                        Container(
+                                          color: Colors.white,
+                                          child: CupertinoActionSheetAction(
+                                            child: const Text(
+                                              '08:30 - 10:00',
+                                            ),
+                                            onPressed: () {
+                                              setState(() {
+                                                _isMapVisible = true;
+                                              });
+                                              Navigator.pop(context);
+                                            },
+                                          ),
+                                        ),
+                                        Container(
+                                          color: Colors.white,
+                                          child: CupertinoActionSheetAction(
+                                            child: const Text(
+                                              '09:00 - 11:00',
+                                            ),
+                                            onPressed: () {
+                                              setState(() {
+                                                _isMapVisible = true;
+                                              });
+                                              Navigator.pop(context);
+                                            },
+                                          ),
+                                        ),
+                                        Container(
+                                          color: Colors.white,
+                                          child: CupertinoActionSheetAction(
+                                            child: const Text(
+                                              '10:00 - 12:00',
+                                            ),
+                                            onPressed: () {
+                                              setState(() {
+                                                _isMapVisible = true;
+                                              });
+                                              Navigator.pop(context);
+                                            },
+                                          ),
+                                        ),
+                                        Container(
+                                          color: Colors.white,
+                                          child: CupertinoActionSheetAction(
+                                            child: const Text(
+                                              '11:00 - 13:00',
+                                            ),
+                                            onPressed: () {
+                                              setState(() {
+                                                _isMapVisible = true;
+                                              });
+                                              Navigator.pop(context);
+                                            },
+                                          ),
+                                        ),
+                                        Container(
+                                          color: Colors.white,
+                                          child: CupertinoActionSheetAction(
+                                            child: const Text(
+                                              '12:00 - 14:00',
+                                            ),
+                                            onPressed: () {
+                                              setState(() {
+                                                _isMapVisible = true;
+                                              });
+                                              Navigator.pop(context);
+                                            },
+                                          ),
+                                        ),
+                                        Container(
+                                          color: Colors.white,
+                                          child: CupertinoActionSheetAction(
+                                            child: const Text(
+                                              '13:00 - 15:00',
+                                            ),
+                                            onPressed: () {
+                                              setState(() {
+                                                _isMapVisible = true;
+                                              });
+                                              Navigator.pop(context);
+                                            },
+                                          ),
+                                        ),
+                                        Container(
+                                          color: Colors.white,
+                                          child: CupertinoActionSheetAction(
+                                            child: const Text(
+                                              '14:00 - 16:00',
+                                            ),
+                                            onPressed: () {
+                                              setState(() {
+                                                _isMapVisible = true;
+                                              });
+                                              Navigator.pop(context);
+                                            },
+                                          ),
+                                        ),
+                                        Container(
+                                          color: Colors.white,
+                                          child: CupertinoActionSheetAction(
+                                            child: const Text(
+                                              '15:00 - 17:00',
+                                            ),
+                                            onPressed: () {
+                                              setState(() {
+                                                _isMapVisible = true;
+                                              });
+                                              Navigator.pop(context);
+                                            },
+                                          ),
+                                        ),
+                                        Container(
+                                          color: Colors.white,
+                                          child: CupertinoActionSheetAction(
+                                            child: const Text(
+                                              '16:00 - 18:00',
+                                            ),
+                                            onPressed: () {
+                                              setState(() {
+                                                _isMapVisible = true;
+                                              });
+                                              Navigator.pop(context);
+                                            },
+                                          ),
+                                        ),
+                                      ],
+                                      cancelButton: CupertinoActionSheetAction(
+                                        child: const Text('Cancel'),
+                                        isDefaultAction: true,
+                                        onPressed: () {
+                                          setState(() {
+                                            _isMapVisible = true;
+                                          });
+                                          Navigator.pop(context);
+                                        },
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(12, 0, 12, 16),
                               child: ElevatedButton(
                                 onPressed: () {},
                                 child: const Text(
@@ -526,18 +727,7 @@ class OrderPage extends StatelessWidget {
                                 ),
                               ),
                             ),
-                            const Text(
-                              'OR',
-                              style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            Padding(
-                              padding:
-                                  const EdgeInsets.only(top: 8, bottom: 16),
-                              child: TimePickerChips(),
-                            ),
+
                             ElevatedButton(
                               onPressed: () {},
                               child: const Text(
@@ -558,6 +748,7 @@ class OrderPage extends StatelessWidget {
                                 ),
                               ),
                             ),
+                            SizedBox(height: 12),
                           ],
                         ),
                       ),
@@ -708,19 +899,26 @@ class _PickedTimeDropDownState extends State<PickedTimeDropDown> {
 
   @override
   Widget build(BuildContext context) {
-    return DropdownButton<String>(
-      underline: SizedBox(),
-      isDense: true,
-      value: dropDownValue,
-      onChanged: (String? newValue) {
-        setState(() {
-          dropDownValue = newValue!;
-        });
-      },
-      items: timeRangeList
-          .map((timeRange) => DropdownMenuItem<String>(
-              value: timeRange, child: Text(timeRange)))
-          .toList(),
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      margin: EdgeInsets.only(top: 16, bottom: 24),
+      decoration: BoxDecoration(
+          border: Border.all(), borderRadius: BorderRadius.circular(4)),
+      child: DropdownButton<String>(
+        elevation: 12,
+        underline: SizedBox(),
+        isDense: true,
+        value: dropDownValue,
+        onChanged: (String? newValue) {
+          setState(() {
+            dropDownValue = newValue!;
+          });
+        },
+        items: timeRangeList
+            .map((timeRange) => DropdownMenuItem<String>(
+                value: timeRange, child: Text(timeRange)))
+            .toList(),
+      ),
     );
   }
 }

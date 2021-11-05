@@ -1,4 +1,4 @@
-part of 'adress_cubit.dart';
+part of 'map_widget_cubit.dart';
 
 abstract class AdressState {}
 
