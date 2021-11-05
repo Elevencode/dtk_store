@@ -1,22 +1,29 @@
-import 'package:dtk_store/presenter/address/cubit/adress_cubit.dart';
+import 'package:dtk_store/presenter/address/cubit/map_widget_cubit.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:indexed/indexed.dart';
 import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
 import '/model/order.dart';
-import '/presenter/address/address_page.dart';
+import '../address/map_widget.dart';
 import '/presenter/order/cubit/order_cubit.dart';
 import '/presenter/order/modal_sheet/edit_address_modal.dart';
 import '/presenter/promo_box.dart';
 
 import 'modal_sheet/cubit/modal_sheet_cubit.dart';
 
-class OrderPage extends StatelessWidget {
+class OrderPage extends StatefulWidget {
   OrderPage({Key? key}) : super(key: key);
 
+  @override
+  State<OrderPage> createState() => _OrderPageState();
+}
+
+class _OrderPageState extends State<OrderPage> {
   final ScrollController _positionsScrollContorller = ScrollController();
 
   final Map productImagePath = {
@@ -29,6 +36,8 @@ class OrderPage extends StatelessWidget {
     'Gialuron Revita': 'assets/images/Placeholder.png',
   };
 
+  bool _isMapVisible = true;
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<OrderCubit, OrderState>(
@@ -38,6 +47,7 @@ class OrderPage extends StatelessWidget {
           return SizedBox(
             width: 480,
             child: Scaffold(
+              backgroundColor: Colors.grey[200],
               body: ScrollConfiguration(
                 behavior:
                     ScrollConfiguration.of(context).copyWith(scrollbars: false),
@@ -45,178 +55,199 @@ class OrderPage extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Center(
+                      Container(
+                        color: Colors.white,
                         child: Column(
                           children: [
-                            const SizedBox(height: 12),
-                            Text(
-                              'YOUR ORDER ${order.shortCode}',
-                              style: const TextStyle(
-                                fontSize: 32,
-                                color: Color(0XFF557EF1),
-                                fontWeight: FontWeight.bold,
+                            Center(
+                              child: Column(
+                                children: [
+                                  const SizedBox(height: 12),
+                                  Text(
+                                    'YOUR ORDER #${order.shortCode}',
+                                    style: const TextStyle(
+                                      fontSize: 32,
+                                      color: Color(0XFF557EF1),
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  //TODO: Если статус заказ доставляется:
+                                  // const Text(
+                                  //   'заказ доставляется!',
+                                  //   style: TextStyle(
+                                  //     fontSize: 16,
+                                  //     color: Colors.blue,
+                                  //     fontWeight: FontWeight.bold,
+                                  //   ),
+                                  // ),
+                                  Divider(),
+                                  Wrap(
+                                    alignment: WrapAlignment.center,
+                                    children: [
+                                      ...order.positions.asMap().entries.map(
+                                        (item) {
+                                          int itemIndex = item.key;
+                                          String productName =
+                                              item.value.product.name;
+                                          return Text(
+                                            '$productName${itemIndex == order.positions.length - 1 ? '' : ' + '}',
+                                            style: const TextStyle(
+                                              fontSize: 24,
+                                              color: Color(0XFF557EF1),
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                ],
                               ),
                             ),
-                            Divider(),
-                            Wrap(
-                              alignment: WrapAlignment.center,
+                            const SizedBox(height: 16),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: [
-                                ...order.positions.asMap().entries.map(
-                                  (item) {
-                                    int itemIndex = item.key;
-                                    String productName =
-                                        item.value.product.name;
-                                    return Text(
-                                      '$productName${itemIndex == order.positions.length - 1 ? '' : ' + '}',
-                                      style: const TextStyle(
-                                        fontSize: 24,
-                                        color: Color(0XFF557EF1),
-                                        fontWeight: FontWeight.bold,
+                                Container(
+                                  child: Row(
+                                    children: [
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.end,
+                                        children: [
+                                          Text(
+                                            'PRECIO',
+                                            style: GoogleFonts.oswald(
+                                              fontSize: 18,
+                                              color: Colors.red,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          Text(
+                                            'REGULAR',
+                                            style: GoogleFonts.oswald(
+                                              fontSize: 18,
+                                              color: Colors.red,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ],
                                       ),
-                                    );
-                                  },
+                                      const SizedBox(width: 8),
+                                      Text(
+                                        '${(order.totalCents * 2.8).round()}/s',
+                                        style: GoogleFonts.oswald(
+                                          fontSize: 48,
+                                          color: Colors.red,
+                                          fontWeight: FontWeight.bold,
+                                          decoration:
+                                              TextDecoration.lineThrough,
+                                        ),
+                                      )
+                                    ],
+                                  ),
                                 ),
+                                Container(
+                                  child: Row(
+                                    children: [
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.end,
+                                        children: [
+                                          Text(
+                                            'PRECIO',
+                                            style: GoogleFonts.oswald(
+                                              fontSize: 18,
+                                              color: Colors.green,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          Text(
+                                            'PARA TI',
+                                            style: GoogleFonts.oswald(
+                                              fontSize: 18,
+                                              color: Colors.green,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(width: 8),
+                                      Text(
+                                        //TODO: Цена со скидкой
+                                        '${order.totalCents.round()}/s',
+                                        style: GoogleFonts.oswald(
+                                          fontSize: 48,
+                                          color: Colors.green,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 16),
+                            Stack(
+                              clipBehavior: Clip.none,
+                              children: [
+                                SizedBox(
+                                  width: 480,
+                                  height: 220,
+                                  child: ScrollConfiguration(
+                                    behavior: PositionsScrollBehavior(),
+                                    child: ListView(
+                                      scrollDirection: Axis.horizontal,
+                                      clipBehavior: Clip.none,
+                                      controller: _positionsScrollContorller,
+                                      physics: const PageScrollPhysics(),
+                                      children: [
+                                        ...order.positions
+                                            .map(
+                                              (items) => Stack(
+                                                clipBehavior: Clip.none,
+                                                children: [
+                                                  Image.asset(
+                                                    productImagePath[
+                                                        items.product.name],
+                                                    width: 145,
+                                                    height: 240,
+                                                  ),
+                                                  Positioned(
+                                                    top: -10,
+                                                    left: 15,
+                                                    child: CircleAvatar(
+                                                      radius: 20,
+                                                      child: Text(
+                                                        'x${items.quantity}',
+                                                        style: const TextStyle(
+                                                          fontSize: 20,
+                                                          fontWeight:
+                                                              FontWeight.w500,
+                                                          color: Colors.white,
+                                                        ),
+                                                      ),
+                                                      backgroundColor:
+                                                          const Color(
+                                                              0xFF73B488),
+                                                    ),
+                                                  )
+                                                ],
+                                              ),
+                                            )
+                                            .toList(),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                Positioned(
+                                  bottom: -30,
+                                  child: PromoBox(),
+                                )
                               ],
                             ),
                           ],
                         ),
-                      ),
-                      const SizedBox(height: 16),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          Container(
-                            child: Row(
-                              children: [
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.end,
-                                  children: [
-                                    Text(
-                                      'PRECIO',
-                                      style: GoogleFonts.oswald(
-                                        fontSize: 18,
-                                        color: Colors.red,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    Text(
-                                      'REGULAR',
-                                      style: GoogleFonts.oswald(
-                                        fontSize: 18,
-                                        color: Colors.red,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(width: 8),
-                                Text(
-                                  '${(order.totalCents * 2.8).round()}/s',
-                                  style: GoogleFonts.oswald(
-                                    fontSize: 48,
-                                    color: Colors.red,
-                                    fontWeight: FontWeight.bold,
-                                    decoration: TextDecoration.lineThrough,
-                                  ),
-                                )
-                              ],
-                            ),
-                          ),
-                          Container(
-                            child: Row(
-                              children: [
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.end,
-                                  children: [
-                                    Text(
-                                      'PRECIO',
-                                      style: GoogleFonts.oswald(
-                                        fontSize: 18,
-                                        color: Colors.green,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    Text(
-                                      'PARA TI',
-                                      style: GoogleFonts.oswald(
-                                        fontSize: 18,
-                                        color: Colors.green,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(width: 8),
-                                Text(
-                                  //TODO: Цена со скидкой
-                                  '${order.totalCents.round()}/s',
-                                  style: GoogleFonts.oswald(
-                                    fontSize: 48,
-                                    color: Colors.green,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                )
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 16),
-                      Stack(
-                        clipBehavior: Clip.none,
-                        children: [
-                          SizedBox(
-                            width: 480,
-                            height: 220,
-                            child: ScrollConfiguration(
-                              behavior: PositionsScrollBehavior(),
-                              child: ListView(
-                                scrollDirection: Axis.horizontal,
-                                clipBehavior: Clip.none,
-                                controller: _positionsScrollContorller,
-                                physics: const PageScrollPhysics(),
-                                children: [
-                                  ...order.positions
-                                      .map(
-                                        (items) => Stack(
-                                          clipBehavior: Clip.none,
-                                          children: [
-                                            Image.asset(
-                                              productImagePath[
-                                                  items.product.name],
-                                              width: 145,
-                                              height: 240,
-                                            ),
-                                            Positioned(
-                                              top: -10,
-                                              left: 15,
-                                              child: CircleAvatar(
-                                                radius: 20,
-                                                child: Text(
-                                                  'x${items.quantity}',
-                                                  style: const TextStyle(
-                                                    fontSize: 20,
-                                                    fontWeight: FontWeight.w500,
-                                                    color: Colors.white,
-                                                  ),
-                                                ),
-                                                backgroundColor:
-                                                    const Color(0xFF73B488),
-                                              ),
-                                            )
-                                          ],
-                                        ),
-                                      )
-                                      .toList(),
-                                ],
-                              ),
-                            ),
-                          ),
-                          Positioned(
-                            bottom: -30,
-                            child: PromoBox(),
-                          )
-                        ],
                       ),
                       const SizedBox(height: 40),
                       Container(
@@ -232,6 +263,7 @@ class OrderPage extends StatelessWidget {
                                   const TextSpan(
                                     text: 'Name: ',
                                     style: TextStyle(
+                                      height: 1.41,
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold,
                                       color: Colors.black,
@@ -253,6 +285,7 @@ class OrderPage extends StatelessWidget {
                                   const TextSpan(
                                     text: 'Distrito: ',
                                     style: TextStyle(
+                                      height: 1.41,
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold,
                                       color: Colors.black,
@@ -274,6 +307,7 @@ class OrderPage extends StatelessWidget {
                                   const TextSpan(
                                     text: 'Province: ',
                                     style: TextStyle(
+                                      height: 1.41,
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold,
                                       color: Colors.black,
@@ -295,6 +329,7 @@ class OrderPage extends StatelessWidget {
                                   const TextSpan(
                                     text: 'Direccion: ',
                                     style: TextStyle(
+                                      height: 1.41,
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold,
                                       color: Colors.black,
@@ -316,6 +351,7 @@ class OrderPage extends StatelessWidget {
                                   const TextSpan(
                                     text: 'Referencia: ',
                                     style: TextStyle(
+                                      height: 1.41,
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold,
                                       color: Colors.black,
@@ -460,8 +496,9 @@ class OrderPage extends StatelessWidget {
                             //     ),
                             //   ],
                             // ),
+
                             Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Icon(Icons.arrow_downward),
                                 Text(
@@ -475,86 +512,275 @@ class OrderPage extends StatelessWidget {
                                 Icon(Icons.arrow_downward),
                               ],
                             ),
-                            const SizedBox(height: 12),
                             Container(
                               width: 480,
                               height: 400,
                               child: Center(
                                 child: BlocProvider<AdressCubit>(
                                   create: (context) => AdressCubit(),
-                                  child: AddressPage(
-                                    order: state.order,
-                                    orderCubit:
-                                        BlocProvider.of<OrderCubit>(context),
+                                  child: Visibility(
+                                    visible: _isMapVisible,
+                                    child: MapWidget(
+                                      order: state.order,
+                                      orderCubit:
+                                          BlocProvider.of<OrderCubit>(context),
+                                    ),
                                   ),
                                 ),
                               ),
                             ),
-                            const SizedBox(height: 32),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                Icon(Icons.arrow_downward),
-                                Text(
-                                  'ПОЖАЛУЙСТА ВЫБЕРИТЕ УДОБНОЕ\nВАМ ВРЕМЯ ДЛЯ ДОСТАВКИ',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                            const SizedBox(height: 16),
+                            Card(
+                              margin: EdgeInsets.zero,
+                              child: Padding(
+                                padding:
+                                    const EdgeInsets.fromLTRB(16, 16, 16, 8),
+                                child: Column(
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: const [
+                                        Icon(Icons.arrow_downward),
+                                        Text(
+                                          'ПОЖАЛУЙСТА ВЫБЕРИТЕ УДОБНОЕ\nВАМ ВРЕМЯ ДЛЯ ДОСТАВКИ',
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        Icon(Icons.arrow_downward),
+                                      ],
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 24),
+                                      child: ElevatedButton(
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              '${DateFormat.Hm().format(order.plannedDate!)} - ${DateFormat.Hm().format(order.plannedDate!.add(Duration(minutes: 90)))}',
+                                              style: const TextStyle(
+                                                  fontSize: 18,
+                                                  fontWeight: FontWeight.w600),
+                                            ),
+                                            Icon(Icons.arrow_drop_down)
+                                          ],
+                                        ),
+                                        style: ElevatedButton.styleFrom(
+                                          minimumSize: Size(120, 50),
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 12),
+                                          primary: Colors.white,
+                                          onPrimary: const Color(0XFF557EF1),
+                                          side: const BorderSide(
+                                              color: Color(0XFF557EF1)),
+                                        ),
+                                        onPressed: () {
+                                          setState(() {
+                                            _isMapVisible = false;
+                                          });
+                                          showCupertinoModalPopup(
+                                            context: context,
+                                            builder: (BuildContext context) =>
+                                                CupertinoActionSheet(
+                                              actions: <Widget>[
+                                                Container(
+                                                  color: Colors.white,
+                                                  child:
+                                                      CupertinoActionSheetAction(
+                                                    child: const Text(
+                                                      '08:30 - 10:00',
+                                                    ),
+                                                    onPressed: () {
+                                                      setState(() {
+                                                        _isMapVisible = true;
+                                                      });
+                                                      Navigator.pop(context);
+                                                    },
+                                                  ),
+                                                ),
+                                                Container(
+                                                  color: Colors.white,
+                                                  child:
+                                                      CupertinoActionSheetAction(
+                                                    child: const Text(
+                                                      '09:00 - 11:00',
+                                                    ),
+                                                    onPressed: () {
+                                                      setState(() {
+                                                        _isMapVisible = true;
+                                                      });
+                                                      Navigator.pop(context);
+                                                    },
+                                                  ),
+                                                ),
+                                                Container(
+                                                  color: Colors.white,
+                                                  child:
+                                                      CupertinoActionSheetAction(
+                                                    child: const Text(
+                                                      '10:00 - 12:00',
+                                                    ),
+                                                    onPressed: () {
+                                                      setState(() {
+                                                        _isMapVisible = true;
+                                                      });
+                                                      Navigator.pop(context);
+                                                    },
+                                                  ),
+                                                ),
+                                                Container(
+                                                  color: Colors.white,
+                                                  child:
+                                                      CupertinoActionSheetAction(
+                                                    child: const Text(
+                                                      '11:00 - 13:00',
+                                                    ),
+                                                    onPressed: () {
+                                                      setState(() {
+                                                        _isMapVisible = true;
+                                                      });
+                                                      Navigator.pop(context);
+                                                    },
+                                                  ),
+                                                ),
+                                                Container(
+                                                  color: Colors.white,
+                                                  child:
+                                                      CupertinoActionSheetAction(
+                                                    child: const Text(
+                                                      '12:00 - 14:00',
+                                                    ),
+                                                    onPressed: () {
+                                                      setState(() {
+                                                        _isMapVisible = true;
+                                                      });
+                                                      Navigator.pop(context);
+                                                    },
+                                                  ),
+                                                ),
+                                                Container(
+                                                  color: Colors.white,
+                                                  child:
+                                                      CupertinoActionSheetAction(
+                                                    child: const Text(
+                                                      '13:00 - 15:00',
+                                                    ),
+                                                    onPressed: () {
+                                                      setState(() {
+                                                        _isMapVisible = true;
+                                                      });
+                                                      Navigator.pop(context);
+                                                    },
+                                                  ),
+                                                ),
+                                                Container(
+                                                  color: Colors.white,
+                                                  child:
+                                                      CupertinoActionSheetAction(
+                                                    child: const Text(
+                                                      '14:00 - 16:00',
+                                                    ),
+                                                    onPressed: () {
+                                                      setState(() {
+                                                        _isMapVisible = true;
+                                                      });
+                                                      Navigator.pop(context);
+                                                    },
+                                                  ),
+                                                ),
+                                                Container(
+                                                  color: Colors.white,
+                                                  child:
+                                                      CupertinoActionSheetAction(
+                                                    child: const Text(
+                                                      '15:00 - 17:00',
+                                                    ),
+                                                    onPressed: () {
+                                                      setState(() {
+                                                        _isMapVisible = true;
+                                                      });
+                                                      Navigator.pop(context);
+                                                    },
+                                                  ),
+                                                ),
+                                                Container(
+                                                  color: Colors.white,
+                                                  child:
+                                                      CupertinoActionSheetAction(
+                                                    child: const Text(
+                                                      '16:00 - 18:00',
+                                                    ),
+                                                    onPressed: () {
+                                                      setState(() {
+                                                        _isMapVisible = true;
+                                                      });
+                                                      Navigator.pop(context);
+                                                    },
+                                                  ),
+                                                ),
+                                              ],
+                                              cancelButton:
+                                                  CupertinoActionSheetAction(
+                                                child: const Text('Cancel'),
+                                                isDefaultAction: true,
+                                                onPressed: () {
+                                                  setState(() {
+                                                    _isMapVisible = true;
+                                                  });
+                                                  Navigator.pop(context);
+                                                },
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                    ),
+                                    ElevatedButton(
+                                      onPressed: () {},
+                                      child: const Text(
+                                        'ПОЖАЛУЙСТА ПОДТВЕРДИТЕ ВРЕМЯ И АДРЕС ДОСТАВКИ',
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      style: ElevatedButton.styleFrom(
+                                        padding: EdgeInsets.all(16),
+                                        primary: const Color(0XFF67C99C),
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                                Icon(Icons.arrow_downward),
-                              ],
+                              ),
                             ),
                             Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 12, vertical: 16),
+                              padding:
+                                  const EdgeInsets.fromLTRB(12, 96, 12, 48),
                               child: ElevatedButton(
                                 onPressed: () {},
                                 child: const Text(
-                                  'CONFIRMAR QUE  ESTA A LA ESPERA DE MI PEDIDO ES ESTE MOMENTO',
-                                  textAlign: TextAlign.center,
+                                  'LLAMA A MI  ACCESOR',
                                   style: TextStyle(
-                                    fontSize: 20,
+                                    fontSize: 18,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
                                 style: ElevatedButton.styleFrom(
                                   minimumSize: Size(
-                                      MediaQuery.of(context).size.width, 80),
-                                  primary: const Color(0XFF67C99C),
-                                ),
-                              ),
-                            ),
-                            const Text(
-                              'OR',
-                              style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            Padding(
-                              padding:
-                                  const EdgeInsets.only(top: 8, bottom: 16),
-                              child: TimePickerChips(),
-                            ),
-                            ElevatedButton(
-                              onPressed: () {},
-                              child: const Text(
-                                'LLAMA A MI  ACCESOR',
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              style: ElevatedButton.styleFrom(
-                                minimumSize: Size(
-                                    MediaQuery.of(context).size.width - 20, 50),
-                                primary: Colors.white,
-                                onPrimary: const Color(0XFF557EF1),
-                                side: const BorderSide(
-                                  width: 1,
-                                  color: Color(0XFF557EF1),
+                                      MediaQuery.of(context).size.width - 20,
+                                      50),
+                                  primary: const Color(0XFF557EF1),
+                                  onPrimary: Colors.white,
+                                  side: const BorderSide(
+                                    width: 1,
+                                    color: Color(0XFF557EF1),
+                                  ),
                                 ),
                               ),
                             ),
@@ -708,19 +934,26 @@ class _PickedTimeDropDownState extends State<PickedTimeDropDown> {
 
   @override
   Widget build(BuildContext context) {
-    return DropdownButton<String>(
-      underline: SizedBox(),
-      isDense: true,
-      value: dropDownValue,
-      onChanged: (String? newValue) {
-        setState(() {
-          dropDownValue = newValue!;
-        });
-      },
-      items: timeRangeList
-          .map((timeRange) => DropdownMenuItem<String>(
-              value: timeRange, child: Text(timeRange)))
-          .toList(),
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      margin: EdgeInsets.only(top: 16, bottom: 24),
+      decoration: BoxDecoration(
+          border: Border.all(), borderRadius: BorderRadius.circular(4)),
+      child: DropdownButton<String>(
+        elevation: 12,
+        underline: SizedBox(),
+        isDense: true,
+        value: dropDownValue,
+        onChanged: (String? newValue) {
+          setState(() {
+            dropDownValue = newValue!;
+          });
+        },
+        items: timeRangeList
+            .map((timeRange) => DropdownMenuItem<String>(
+                value: timeRange, child: Text(timeRange)))
+            .toList(),
+      ),
     );
   }
 }
