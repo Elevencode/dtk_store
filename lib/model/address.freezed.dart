@@ -25,9 +25,9 @@ class _$AddressTearOff {
       {required String city,
       required String street,
       required String country,
-      int? id,
+      required int id,
       String? state,
-      String? district,
+      required String district,
       String? comments,
       double? lat,
       double? lng}) {
@@ -57,9 +57,9 @@ mixin _$Address {
   String get city => throw _privateConstructorUsedError;
   String get street => throw _privateConstructorUsedError;
   String get country => throw _privateConstructorUsedError;
-  int? get id => throw _privateConstructorUsedError;
+  int get id => throw _privateConstructorUsedError;
   String? get state => throw _privateConstructorUsedError;
-  String? get district => throw _privateConstructorUsedError;
+  String get district => throw _privateConstructorUsedError;
   String? get comments => throw _privateConstructorUsedError;
   double? get lat => throw _privateConstructorUsedError;
   double? get lng => throw _privateConstructorUsedError;
@@ -77,9 +77,9 @@ abstract class $AddressCopyWith<$Res> {
       {String city,
       String street,
       String country,
-      int? id,
+      int id,
       String? state,
-      String? district,
+      String district,
       String? comments,
       double? lat,
       double? lng});
@@ -121,7 +121,7 @@ class _$AddressCopyWithImpl<$Res> implements $AddressCopyWith<$Res> {
       id: id == freezed
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
-              as int?,
+              as int,
       state: state == freezed
           ? _value.state
           : state // ignore: cast_nullable_to_non_nullable
@@ -129,7 +129,7 @@ class _$AddressCopyWithImpl<$Res> implements $AddressCopyWith<$Res> {
       district: district == freezed
           ? _value.district
           : district // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as String,
       comments: comments == freezed
           ? _value.comments
           : comments // ignore: cast_nullable_to_non_nullable
@@ -155,9 +155,9 @@ abstract class _$AddressCopyWith<$Res> implements $AddressCopyWith<$Res> {
       {String city,
       String street,
       String country,
-      int? id,
+      int id,
       String? state,
-      String? district,
+      String district,
       String? comments,
       double? lat,
       double? lng});
@@ -200,7 +200,7 @@ class __$AddressCopyWithImpl<$Res> extends _$AddressCopyWithImpl<$Res>
       id: id == freezed
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
-              as int?,
+              as int,
       state: state == freezed
           ? _value.state
           : state // ignore: cast_nullable_to_non_nullable
@@ -208,7 +208,7 @@ class __$AddressCopyWithImpl<$Res> extends _$AddressCopyWithImpl<$Res>
       district: district == freezed
           ? _value.district
           : district // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as String,
       comments: comments == freezed
           ? _value.comments
           : comments // ignore: cast_nullable_to_non_nullable
@@ -232,9 +232,9 @@ class _$_Address extends _Address {
       {required this.city,
       required this.street,
       required this.country,
-      this.id,
+      required this.id,
       this.state,
-      this.district,
+      required this.district,
       this.comments,
       this.lat,
       this.lng})
@@ -250,11 +250,11 @@ class _$_Address extends _Address {
   @override
   final String country;
   @override
-  final int? id;
+  final int id;
   @override
   final String? state;
   @override
-  final String? district;
+  final String district;
   @override
   final String? comments;
   @override
@@ -305,9 +305,9 @@ abstract class _Address extends Address {
       {required String city,
       required String street,
       required String country,
-      int? id,
+      required int id,
       String? state,
-      String? district,
+      required String district,
       String? comments,
       double? lat,
       double? lng}) = _$_Address;
@@ -322,11 +322,11 @@ abstract class _Address extends Address {
   @override
   String get country;
   @override
-  int? get id;
+  int get id;
   @override
   String? get state;
   @override
-  String? get district;
+  String get district;
   @override
   String? get comments;
   @override

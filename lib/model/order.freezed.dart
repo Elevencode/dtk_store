@@ -23,13 +23,13 @@ class _$OrderTearOff {
 
   _Order call(
       {required int id,
-      required DateTime plannedDate,
+      DateTime? plannedDate,
       int? plannedDateDuration,
-      String? shortCode,
-      int? totalCents,
+      required String shortCode,
+      required int totalCents,
       int? shipmentId,
-      List<OrderPosition>? positions,
-      Client? client}) {
+      required List<OrderPosition> positions,
+      required Client client}) {
     return _Order(
       id: id,
       plannedDate: plannedDate,
@@ -54,21 +54,21 @@ const $Order = _$OrderTearOff();
 mixin _$Order {
   int get id => throw _privateConstructorUsedError; //
 // required Status status, //
-  DateTime get plannedDate => throw _privateConstructorUsedError; //
+  DateTime? get plannedDate => throw _privateConstructorUsedError; //
 // required DateTime createdAt,
 // @JsonKey(defaultValue: false) bool? important, //
   int? get plannedDateDuration => throw _privateConstructorUsedError; //
 // DateTime? deliveredDate,
 // String? umbrellaID,
-  String? get shortCode =>
+  String get shortCode =>
       throw _privateConstructorUsedError; // String? statusName,
 // String? reasonRefusal,
 // String? driverID,
-  int? get totalCents => throw _privateConstructorUsedError;
+  int get totalCents => throw _privateConstructorUsedError;
   int? get shipmentId =>
       throw _privateConstructorUsedError; // @JsonKey(name: 'order_photos') List<OrderPhoto>? photos,
-  List<OrderPosition>? get positions => throw _privateConstructorUsedError;
-  Client? get client => throw _privateConstructorUsedError;
+  List<OrderPosition> get positions => throw _privateConstructorUsedError;
+  Client get client => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -81,15 +81,15 @@ abstract class $OrderCopyWith<$Res> {
       _$OrderCopyWithImpl<$Res>;
   $Res call(
       {int id,
-      DateTime plannedDate,
+      DateTime? plannedDate,
       int? plannedDateDuration,
-      String? shortCode,
-      int? totalCents,
+      String shortCode,
+      int totalCents,
       int? shipmentId,
-      List<OrderPosition>? positions,
-      Client? client});
+      List<OrderPosition> positions,
+      Client client});
 
-  $ClientCopyWith<$Res>? get client;
+  $ClientCopyWith<$Res> get client;
 }
 
 /// @nodoc
@@ -119,7 +119,7 @@ class _$OrderCopyWithImpl<$Res> implements $OrderCopyWith<$Res> {
       plannedDate: plannedDate == freezed
           ? _value.plannedDate
           : plannedDate // ignore: cast_nullable_to_non_nullable
-              as DateTime,
+              as DateTime?,
       plannedDateDuration: plannedDateDuration == freezed
           ? _value.plannedDateDuration
           : plannedDateDuration // ignore: cast_nullable_to_non_nullable
@@ -127,11 +127,11 @@ class _$OrderCopyWithImpl<$Res> implements $OrderCopyWith<$Res> {
       shortCode: shortCode == freezed
           ? _value.shortCode
           : shortCode // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as String,
       totalCents: totalCents == freezed
           ? _value.totalCents
           : totalCents // ignore: cast_nullable_to_non_nullable
-              as int?,
+              as int,
       shipmentId: shipmentId == freezed
           ? _value.shipmentId
           : shipmentId // ignore: cast_nullable_to_non_nullable
@@ -139,21 +139,17 @@ class _$OrderCopyWithImpl<$Res> implements $OrderCopyWith<$Res> {
       positions: positions == freezed
           ? _value.positions
           : positions // ignore: cast_nullable_to_non_nullable
-              as List<OrderPosition>?,
+              as List<OrderPosition>,
       client: client == freezed
           ? _value.client
           : client // ignore: cast_nullable_to_non_nullable
-              as Client?,
+              as Client,
     ));
   }
 
   @override
-  $ClientCopyWith<$Res>? get client {
-    if (_value.client == null) {
-      return null;
-    }
-
-    return $ClientCopyWith<$Res>(_value.client!, (value) {
+  $ClientCopyWith<$Res> get client {
+    return $ClientCopyWith<$Res>(_value.client, (value) {
       return _then(_value.copyWith(client: value));
     });
   }
@@ -166,16 +162,16 @@ abstract class _$OrderCopyWith<$Res> implements $OrderCopyWith<$Res> {
   @override
   $Res call(
       {int id,
-      DateTime plannedDate,
+      DateTime? plannedDate,
       int? plannedDateDuration,
-      String? shortCode,
-      int? totalCents,
+      String shortCode,
+      int totalCents,
       int? shipmentId,
-      List<OrderPosition>? positions,
-      Client? client});
+      List<OrderPosition> positions,
+      Client client});
 
   @override
-  $ClientCopyWith<$Res>? get client;
+  $ClientCopyWith<$Res> get client;
 }
 
 /// @nodoc
@@ -206,7 +202,7 @@ class __$OrderCopyWithImpl<$Res> extends _$OrderCopyWithImpl<$Res>
       plannedDate: plannedDate == freezed
           ? _value.plannedDate
           : plannedDate // ignore: cast_nullable_to_non_nullable
-              as DateTime,
+              as DateTime?,
       plannedDateDuration: plannedDateDuration == freezed
           ? _value.plannedDateDuration
           : plannedDateDuration // ignore: cast_nullable_to_non_nullable
@@ -214,11 +210,11 @@ class __$OrderCopyWithImpl<$Res> extends _$OrderCopyWithImpl<$Res>
       shortCode: shortCode == freezed
           ? _value.shortCode
           : shortCode // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as String,
       totalCents: totalCents == freezed
           ? _value.totalCents
           : totalCents // ignore: cast_nullable_to_non_nullable
-              as int?,
+              as int,
       shipmentId: shipmentId == freezed
           ? _value.shipmentId
           : shipmentId // ignore: cast_nullable_to_non_nullable
@@ -226,11 +222,11 @@ class __$OrderCopyWithImpl<$Res> extends _$OrderCopyWithImpl<$Res>
       positions: positions == freezed
           ? _value.positions
           : positions // ignore: cast_nullable_to_non_nullable
-              as List<OrderPosition>?,
+              as List<OrderPosition>,
       client: client == freezed
           ? _value.client
           : client // ignore: cast_nullable_to_non_nullable
-              as Client?,
+              as Client,
     ));
   }
 }
@@ -240,13 +236,13 @@ class __$OrderCopyWithImpl<$Res> extends _$OrderCopyWithImpl<$Res>
 class _$_Order extends _Order {
   _$_Order(
       {required this.id,
-      required this.plannedDate,
+      this.plannedDate,
       this.plannedDateDuration,
-      this.shortCode,
-      this.totalCents,
+      required this.shortCode,
+      required this.totalCents,
       this.shipmentId,
-      this.positions,
-      this.client})
+      required this.positions,
+      required this.client})
       : super._();
 
   factory _$_Order.fromJson(Map<String, dynamic> json) =>
@@ -256,7 +252,7 @@ class _$_Order extends _Order {
   final int id;
   @override //
 // required Status status, //
-  final DateTime plannedDate;
+  final DateTime? plannedDate;
   @override //
 // required DateTime createdAt,
 // @JsonKey(defaultValue: false) bool? important, //
@@ -264,17 +260,17 @@ class _$_Order extends _Order {
   @override //
 // DateTime? deliveredDate,
 // String? umbrellaID,
-  final String? shortCode;
+  final String shortCode;
   @override // String? statusName,
 // String? reasonRefusal,
 // String? driverID,
-  final int? totalCents;
+  final int totalCents;
   @override
   final int? shipmentId;
   @override // @JsonKey(name: 'order_photos') List<OrderPhoto>? photos,
-  final List<OrderPosition>? positions;
+  final List<OrderPosition> positions;
   @override
-  final Client? client;
+  final Client client;
 
   @override
   String toString() {
@@ -327,13 +323,13 @@ class _$_Order extends _Order {
 abstract class _Order extends Order {
   factory _Order(
       {required int id,
-      required DateTime plannedDate,
+      DateTime? plannedDate,
       int? plannedDateDuration,
-      String? shortCode,
-      int? totalCents,
+      required String shortCode,
+      required int totalCents,
       int? shipmentId,
-      List<OrderPosition>? positions,
-      Client? client}) = _$_Order;
+      required List<OrderPosition> positions,
+      required Client client}) = _$_Order;
   _Order._() : super._();
 
   factory _Order.fromJson(Map<String, dynamic> json) = _$_Order.fromJson;
@@ -342,7 +338,7 @@ abstract class _Order extends Order {
   int get id;
   @override //
 // required Status status, //
-  DateTime get plannedDate;
+  DateTime? get plannedDate;
   @override //
 // required DateTime createdAt,
 // @JsonKey(defaultValue: false) bool? important, //
@@ -350,17 +346,17 @@ abstract class _Order extends Order {
   @override //
 // DateTime? deliveredDate,
 // String? umbrellaID,
-  String? get shortCode;
+  String get shortCode;
   @override // String? statusName,
 // String? reasonRefusal,
 // String? driverID,
-  int? get totalCents;
+  int get totalCents;
   @override
   int? get shipmentId;
   @override // @JsonKey(name: 'order_photos') List<OrderPhoto>? photos,
-  List<OrderPosition>? get positions;
+  List<OrderPosition> get positions;
   @override
-  Client? get client;
+  Client get client;
   @override
   @JsonKey(ignore: true)
   _$OrderCopyWith<_Order> get copyWith => throw _privateConstructorUsedError;

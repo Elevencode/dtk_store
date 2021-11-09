@@ -11,6 +11,17 @@ abstract class OrderRepository {
   Future<void> updateAddress(
       {required String shortCode, required String phone, required Address address});
   Future<void> createNotificationOperator({required String shortCode, required String phone});
+  Future<void> updateOrderTime(
+      {required String shortCode,
+      required String phone,
+      required DateTime plannedDate,
+      required int duration});
+  Future<void> updateCoords(
+      {required String shortCode,
+      required String phone,
+      required double lat,
+      required double lng,
+      required int addressId});
 }
 
 class OrderRepositoryImpl implements OrderRepository {
@@ -36,4 +47,32 @@ class OrderRepositoryImpl implements OrderRepository {
   Future<void> createNotificationOperator(
           {required String shortCode, required String phone}) async =>
       dataSource.createNotificationOperator(shortCode: shortCode, phone: phone);
+
+  @override
+  Future<void> updateOrderTime(
+      {required String shortCode,
+      required String phone,
+      required DateTime plannedDate,
+      required int duration}) async {
+    await dataSource.updateOrderTime(
+        shortCode: shortCode,
+        phone: phone,
+        plannedDate: plannedDate,
+        duration: duration);
+  }
+
+  @override
+  Future<void> updateCoords(
+      {required String shortCode,
+      required String phone,
+      required double lat,
+      required double lng,
+      required int addressId}) async {
+    await dataSource.updateCoords(
+        shortCode: shortCode,
+        phone: phone,
+        lat: lat,
+        lng: lng,
+        addressId: addressId);
+  }
 }
