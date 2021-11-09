@@ -13,10 +13,9 @@ import 'package:location/location.dart';
 class MapWidget extends StatefulWidget {
   final Order order;
   final OrderCubit orderCubit;
-  final void Function(LatLng coords) onCoordsChange;
   
 
-  const MapWidget({Key? key, required this.order, required this.orderCubit, required this.onCoordsChange})
+  const MapWidget({Key? key, required this.order, required this.orderCubit,})
       : super(key: key);
 
   @override
@@ -70,9 +69,7 @@ class _MapWidgetState extends State<MapWidget> {
       target: LatLng(_locationData!.latitude!, _locationData!.longitude!),
       zoom: 17.0,
     );
-    setState(() {
-      widget.onCoordsChange(_initialCameraPosition.target);
-    });
+    setState(() {});
   }
 
   @override
@@ -113,12 +110,10 @@ class _MapWidgetState extends State<MapWidget> {
                         myLocationEnabled: true,
                         // onCameraMove: ((_position) => _updatePosition(_position)),
                         onCameraMove: (CameraPosition position) {
-                          FocusScope.of(context).unfocus();
                           setState(() {
                             _markers.first = _markers.first
                                 .copyWith(positionParam: position.target);
                           });
-                          widget.onCoordsChange(position.target);
                         },
                       ),
                       const Align(
