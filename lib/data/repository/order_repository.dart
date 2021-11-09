@@ -1,10 +1,7 @@
-import 'dart:html';
-
 import 'package:dtk_store/data/datasource/order_datasource.dart';
 import 'package:dtk_store/model/address.dart';
 import 'package:dtk_store/model/client.dart';
 import 'package:dtk_store/model/order.dart';
-import 'package:flutter/material.dart';
 
 abstract class OrderRepository {
   Future<Order> getOrder(String shortCode, String phone);
@@ -17,6 +14,17 @@ abstract class OrderRepository {
       {required String shortCode,
       required String phone,
       required Address address});
+  Future<void> updateOrderTime(
+      {required String shortCode,
+      required String phone,
+      required DateTime plannedDate,
+      required int duration});
+  Future<void> updateCoords(
+      {required String shortCode,
+      required String phone,
+      required double lat,
+      required double lng,
+      required int addressId});
 }
 
 class OrderRepositoryImpl implements OrderRepository {
@@ -43,4 +51,32 @@ class OrderRepositoryImpl implements OrderRepository {
           required Address address}) async =>
       await dataSource.updateAddress(
           shortCode: shortCode, phone: phone, address: address);
+
+  @override
+  Future<void> updateOrderTime(
+      {required String shortCode,
+      required String phone,
+      required DateTime plannedDate,
+      required int duration}) async {
+    await dataSource.updateOrderTime(
+        shortCode: shortCode,
+        phone: phone,
+        plannedDate: plannedDate,
+        duration: duration);
+  }
+
+  @override
+  Future<void> updateCoords(
+      {required String shortCode,
+      required String phone,
+      required double lat,
+      required double lng,
+      required int addressId}) async {
+    await dataSource.updateCoords(
+        shortCode: shortCode,
+        phone: phone,
+        lat: lat,
+        lng: lng,
+        addressId: addressId);
+  }
 }

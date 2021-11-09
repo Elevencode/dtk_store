@@ -1,5 +1,4 @@
 import 'package:bloc/bloc.dart';
-import 'package:flutter/material.dart';
 
 import '../../../injection.dart';
 import '/../data/repository/order_repository.dart';
@@ -25,6 +24,20 @@ class OrderCubit extends Cubit<OrderState> {
     try {
       final result = await repository.getOrder(localShortCode, localPhone);
       order = result;
+      emit(OrderLoadSuccessState(order: order));
+    } catch (e) {
+      emit(OrderLoadFailedState(e.toString()));
+    }
+  }
+
+  void updateOrder(Order order) async {
+    emit(OrderLoadingState());
+    try {
+      repository.updateOrderTime(
+          shortCode: localShortCode,
+          phone: localPhone,
+          plannedDate: order.plannedDate!,
+          duration: order.plannedDateDuration!);
       emit(OrderLoadSuccessState(order: order));
     } catch (e) {
       emit(OrderLoadFailedState(e.toString()));

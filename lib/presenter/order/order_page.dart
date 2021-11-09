@@ -4,6 +4,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:indexed/indexed.dart';
 import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
@@ -35,7 +36,8 @@ class _OrderPageState extends State<OrderPage> {
     'Turboslim': 'assets/images/Turboslim_20.png',
     'Gialuron Revita': 'assets/images/Placeholder.png',
   };
-
+  //TODO: нет инициализации координат
+  late LatLng coords;
   bool _isMapVisible = true;
 
   @override
@@ -524,6 +526,8 @@ class _OrderPageState extends State<OrderPage> {
                                       order: state.order,
                                       orderCubit:
                                           BlocProvider.of<OrderCubit>(context),
+                                      onCoordsChange: (newCoords) =>
+                                          coords = newCoords,
                                     ),
                                   ),
                                 ),
@@ -567,12 +571,12 @@ class _OrderPageState extends State<OrderPage> {
                                                   fontSize: 18,
                                                   fontWeight: FontWeight.w600),
                                             ),
-                                            Icon(Icons.arrow_drop_down)
+                                            const Icon(Icons.arrow_drop_down)
                                           ],
                                         ),
                                         style: ElevatedButton.styleFrom(
                                           minimumSize: Size(120, 50),
-                                          padding: EdgeInsets.symmetric(
+                                          padding: const EdgeInsets.symmetric(
                                               horizontal: 12),
                                           primary: Colors.white,
                                           onPrimary: const Color(0XFF557EF1),
@@ -741,7 +745,18 @@ class _OrderPageState extends State<OrderPage> {
                                       ),
                                     ),
                                     ElevatedButton(
-                                      onPressed: () {},
+                                      onPressed: () {
+                                        print(order.shortCode);
+                                        //TODO: Как взять DateTime?
+                                        // BlocProvider.of<OrderCubit>(context)
+                                        //     .updateOrder(order);
+                                        BlocProvider.of<AdressCubit>(context)
+                                            .updateCoords(
+                                                coords,
+                                                order.client.address.id,
+                                                order.shortCode,
+                                                order.client.phone);
+                                      },
                                       child: const Text(
                                         'ПОЖАЛУЙСТА ПОДТВЕРДИТЕ ВРЕМЯ И АДРЕС ДОСТАВКИ',
                                         textAlign: TextAlign.center,
