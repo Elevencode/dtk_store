@@ -1,3 +1,4 @@
+import 'package:dtk_store/data/repository/order_repository.dart';
 import 'package:dtk_store/presenter/address/cubit/map_widget_cubit.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
@@ -39,6 +40,8 @@ class _OrderPageState extends State<OrderPage> {
   //TODO: нет инициализации координат
   late LatLng coords;
   bool _isMapVisible = true;
+  String _currentTime = '';
+  Order? _order;
 
   @override
   Widget build(BuildContext context) {
@@ -514,6 +517,7 @@ class _OrderPageState extends State<OrderPage> {
                                 Icon(Icons.arrow_downward),
                               ],
                             ),
+                            SizedBox(height: 12),
                             Container(
                               width: 480,
                               height: 400,
@@ -566,7 +570,9 @@ class _OrderPageState extends State<OrderPage> {
                                               MainAxisAlignment.spaceBetween,
                                           children: [
                                             Text(
-                                              '${DateFormat.Hm().format(order.plannedDate!)} - ${DateFormat.Hm().format(order.plannedDate!.add(Duration(minutes: 90)))}',
+                                              _currentTime == ''
+                                                  ? '${DateFormat.Hm().format(order.plannedDate!)} - ${DateFormat.Hm().format(order.plannedDate!.add(Duration(minutes: 90)))}'
+                                                  : _currentTime,
                                               style: const TextStyle(
                                                   fontSize: 18,
                                                   fontWeight: FontWeight.w600),
@@ -602,6 +608,21 @@ class _OrderPageState extends State<OrderPage> {
                                                     onPressed: () {
                                                       setState(() {
                                                         _isMapVisible = true;
+                                                        _currentTime =
+                                                            '08:30 - 10:00';
+                                                        String _formatedDate =
+                                                            DateFormat(
+                                                                    'yyyy-M-dd')
+                                                                .format(order
+                                                                    .plannedDate!);
+                                                        DateTime _selectedTime =
+                                                            DateTime.parse(
+                                                                '$_formatedDate 08:30Z');
+                                                        _order = order.copyWith(
+                                                            plannedDate:
+                                                                _selectedTime,
+                                                            plannedDateDuration:
+                                                                90);
                                                       });
                                                       Navigator.pop(context);
                                                     },
@@ -617,6 +638,21 @@ class _OrderPageState extends State<OrderPage> {
                                                     onPressed: () {
                                                       setState(() {
                                                         _isMapVisible = true;
+                                                        _currentTime =
+                                                            '09:00 - 11:00';
+                                                        String _formatedDate =
+                                                            DateFormat(
+                                                                    'yyyy-M-dd')
+                                                                .format(order
+                                                                    .plannedDate!);
+                                                        DateTime _selectedTime =
+                                                            DateTime.parse(
+                                                                '$_formatedDate 09:00Z');
+                                                        _order = order.copyWith(
+                                                            plannedDate:
+                                                                _selectedTime,
+                                                            plannedDateDuration:
+                                                                120);
                                                       });
                                                       Navigator.pop(context);
                                                     },
@@ -632,6 +668,21 @@ class _OrderPageState extends State<OrderPage> {
                                                     onPressed: () {
                                                       setState(() {
                                                         _isMapVisible = true;
+                                                        _currentTime =
+                                                            '10:00 - 12:00';
+                                                        String _formatedDate =
+                                                            DateFormat(
+                                                                    'yyyy-M-dd')
+                                                                .format(order
+                                                                    .plannedDate!);
+                                                        DateTime _selectedTime =
+                                                            DateTime.parse(
+                                                                '$_formatedDate 10:00Z');
+                                                        _order = order.copyWith(
+                                                            plannedDate:
+                                                                _selectedTime,
+                                                            plannedDateDuration:
+                                                                120);
                                                       });
                                                       Navigator.pop(context);
                                                     },
@@ -647,6 +698,21 @@ class _OrderPageState extends State<OrderPage> {
                                                     onPressed: () {
                                                       setState(() {
                                                         _isMapVisible = true;
+                                                        _currentTime =
+                                                            '11:00 - 13:00';
+                                                        String _formatedDate =
+                                                            DateFormat(
+                                                                    'yyyy-M-dd')
+                                                                .format(order
+                                                                    .plannedDate!);
+                                                        DateTime _selectedTime =
+                                                            DateTime.parse(
+                                                                '$_formatedDate 11:00Z');
+                                                        _order = order.copyWith(
+                                                            plannedDate:
+                                                                _selectedTime,
+                                                            plannedDateDuration:
+                                                                120);
                                                       });
                                                       Navigator.pop(context);
                                                     },
@@ -662,6 +728,21 @@ class _OrderPageState extends State<OrderPage> {
                                                     onPressed: () {
                                                       setState(() {
                                                         _isMapVisible = true;
+                                                        _currentTime =
+                                                            '12:00 - 14:00';
+                                                        String _formatedDate =
+                                                            DateFormat(
+                                                                    'yyyy-M-dd')
+                                                                .format(order
+                                                                    .plannedDate!);
+                                                        DateTime _selectedTime =
+                                                            DateTime.parse(
+                                                                '$_formatedDate 12:00Z');
+                                                        _order = order.copyWith(
+                                                            plannedDate:
+                                                                _selectedTime,
+                                                            plannedDateDuration:
+                                                                120);
                                                       });
                                                       Navigator.pop(context);
                                                     },
@@ -677,6 +758,21 @@ class _OrderPageState extends State<OrderPage> {
                                                     onPressed: () {
                                                       setState(() {
                                                         _isMapVisible = true;
+                                                        _currentTime =
+                                                            '13:00 - 15:00';
+                                                        String _formatedDate =
+                                                            DateFormat(
+                                                                    'yyyy-M-dd')
+                                                                .format(order
+                                                                    .plannedDate!);
+                                                        DateTime _selectedTime =
+                                                            DateTime.parse(
+                                                                '$_formatedDate 13:00Z');
+                                                        _order = order.copyWith(
+                                                            plannedDate:
+                                                                _selectedTime,
+                                                            plannedDateDuration:
+                                                                120);
                                                       });
                                                       Navigator.pop(context);
                                                     },
@@ -692,6 +788,21 @@ class _OrderPageState extends State<OrderPage> {
                                                     onPressed: () {
                                                       setState(() {
                                                         _isMapVisible = true;
+                                                        _currentTime =
+                                                            '14:00 - 16:00';
+                                                        String _formatedDate =
+                                                            DateFormat(
+                                                                    'yyyy-M-dd')
+                                                                .format(order
+                                                                    .plannedDate!);
+                                                        DateTime _selectedTime =
+                                                            DateTime.parse(
+                                                                '$_formatedDate 14:00Z');
+                                                        _order = order.copyWith(
+                                                            plannedDate:
+                                                                _selectedTime,
+                                                            plannedDateDuration:
+                                                                120);
                                                       });
                                                       Navigator.pop(context);
                                                     },
@@ -707,6 +818,21 @@ class _OrderPageState extends State<OrderPage> {
                                                     onPressed: () {
                                                       setState(() {
                                                         _isMapVisible = true;
+                                                        _currentTime =
+                                                            '15:00 - 17:00';
+                                                        String _formatedDate =
+                                                            DateFormat(
+                                                                    'yyyy-M-dd')
+                                                                .format(order
+                                                                    .plannedDate!);
+                                                        DateTime _selectedTime =
+                                                            DateTime.parse(
+                                                                '$_formatedDate 15:00Z');
+                                                        _order = order.copyWith(
+                                                            plannedDate:
+                                                                _selectedTime,
+                                                            plannedDateDuration:
+                                                                120);
                                                       });
                                                       Navigator.pop(context);
                                                     },
@@ -722,6 +848,21 @@ class _OrderPageState extends State<OrderPage> {
                                                     onPressed: () {
                                                       setState(() {
                                                         _isMapVisible = true;
+                                                        _currentTime =
+                                                            '16:00 - 18:00';
+                                                        String _formatedDate =
+                                                            DateFormat(
+                                                                    'yyyy-M-dd')
+                                                                .format(order
+                                                                    .plannedDate!);
+                                                        DateTime _selectedTime =
+                                                            DateTime.parse(
+                                                                '$_formatedDate 16:00Z');
+                                                        _order = order.copyWith(
+                                                            plannedDate:
+                                                                _selectedTime,
+                                                            plannedDateDuration:
+                                                                120);
                                                       });
                                                       Navigator.pop(context);
                                                     },
@@ -746,10 +887,10 @@ class _OrderPageState extends State<OrderPage> {
                                     ),
                                     ElevatedButton(
                                       onPressed: () {
-                                        print(order.shortCode);
+                                        print(_order);
                                         //TODO: Как взять DateTime?
-                                        // BlocProvider.of<OrderCubit>(context)
-                                        //     .updateOrder(order);
+                                        BlocProvider.of<OrderCubit>(context)
+                                            .updateOrder(_order!);
                                         BlocProvider.of<AdressCubit>(context)
                                             .updateCoords(
                                                 coords,
