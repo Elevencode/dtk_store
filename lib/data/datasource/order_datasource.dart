@@ -15,21 +15,13 @@ abstract class OrderDataSource {
       {required String shortCode,
       required String phone,
       required Client client});
+  // Future<Coordinates> createOrUpdateCoordinates(Address address);
   Future<void> updateAddress(
       {required String shortCode,
       required String phone,
       required Address address});
-  Future<void> updateOrderTime(
-      {required String shortCode,
-      required String phone,
-      required DateTime plannedDate,
-      required int duration});
-  Future<void> updateCoords(
-      {required String shortCode,
-      required String phone,
-      required double lat,
-      required double lng,
-      required int addressId});
+  // Future<Coordinates> createOrUpdateCoordinates(Address address);
+
 }
 
 class OrderDataSourceImpl implements OrderDataSource {

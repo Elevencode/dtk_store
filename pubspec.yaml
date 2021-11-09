@@ -47,6 +47,7 @@ dependencies:
   geolocator: ^7.7.0
   http: ^0.13.4
   intl: ^0.17.0
+  mockito: ^5.0.16
   location: ^4.3.0
   google_fonts: ^2.1.0
   url_strategy: ^0.2.0

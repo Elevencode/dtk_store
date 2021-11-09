@@ -32,7 +32,7 @@ class MyApp extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider<OrderCubit>(
-          create: (BuildContext context) => sl<OrderCubit>(),
+          create: (BuildContext context) => sl<OrderCubit>()..getOrder(),
         ),
         BlocProvider<AdressCubit>(
           create: (context) => AdressCubit(),

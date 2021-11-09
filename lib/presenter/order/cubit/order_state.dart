@@ -9,7 +9,6 @@ class OrderLoadingState extends OrderState {}
 class OrderLoadSuccessState extends OrderState {
   OrderLoadSuccessState({required this.order});
   final Order order;
-  
 }
 
 class OrderLoadFailedState extends OrderState {
