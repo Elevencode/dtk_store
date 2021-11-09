@@ -107,7 +107,7 @@ class OrderDataSourceImpl implements OrderDataSource {
       body: jsonEncode({
         'shortCode': shortCode,
         'phone': phone,
-        'plannedDate': plannedDate.toString(),
+        'plannedDate': plannedDate.toIso8601String(),
         'plannedDateDuration': duration,
       }),
     );
