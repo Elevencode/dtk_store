@@ -10,11 +10,27 @@ class AdressCubit extends Cubit<AdressState> {
 
   OrderDataSource source = sl();
 
-  void updateAdress(Address address) {
+  void updateAdress(Address address, String shortCode, String phone) {
     emit(AdressLoading());
     try {
       source.updateAddress(
-          shortCode: '137', phone: '+555555975', address: address);
+          shortCode: shortCode, phone: phone, address: address);
+      // shortCode: '137', phone: '+555555975', address: address);
+      emit(AdressLoadSuccess());
+    } catch (e) {
+      emit(AdressLoadFailure());
+    }
+  }
+
+  void updateCoords(coords, addressId, String shortCode, String phone) {
+    emit(AdressLoading());
+    try {
+      source.updateCoords(
+          lat: coords.latitude,
+          lng: coords.longitude,
+          addressId: addressId,
+          shortCode: shortCode,
+          phone: phone);
       emit(AdressLoadSuccess());
     } catch (e) {
       emit(AdressLoadFailure());

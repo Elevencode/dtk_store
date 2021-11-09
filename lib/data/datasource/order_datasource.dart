@@ -15,13 +15,21 @@ abstract class OrderDataSource {
       {required String shortCode,
       required String phone,
       required Client client});
-  // Future<Coordinates> createOrUpdateCoordinates(Address address);
   Future<void> updateAddress(
       {required String shortCode,
       required String phone,
       required Address address});
-  // Future<Coordinates> createOrUpdateCoordinates(Address address);
-
+  Future<void> updateOrderTime(
+      {required String shortCode,
+      required String phone,
+      required DateTime plannedDate,
+      required int duration});
+  Future<void> updateCoords(
+      {required String shortCode,
+      required String phone,
+      required double lat,
+      required double lng,
+      required int addressId});
 }
 
 class OrderDataSourceImpl implements OrderDataSource {
@@ -78,6 +86,56 @@ class OrderDataSourceImpl implements OrderDataSource {
         'shortCode': shortCode,
         'phone': phone,
         'address': address.toJson(),
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      return;
+    } else {
+      throw ex.ServerException(exception: response);
+    }
+  }
+
+  @override
+  Future<void> updateOrderTime(
+      {required String shortCode,
+      required String phone,
+      required DateTime plannedDate,
+      required int duration}) async {
+    final response = await http.post(
+      Uri.parse('https://api.zaslogistica.com/store/update-order-time'),
+      body: jsonEncode({
+        'shortCode': shortCode,
+        'phone': phone,
+        'plannedDate': plannedDate.toString(),
+        'plannedDateDuration': duration,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      return;
+    } else {
+      throw ex.ServerException(exception: response);
+    }
+  }
+
+  @override
+  Future<void> updateCoords(
+      {required String shortCode,
+      required String phone,
+      required double lat,
+      required double lng,
+      required int addressId}) async {
+    final response = await http.post(
+      Uri.parse('https://api.zaslogistica.com/store/update-address'),
+      body: jsonEncode({
+        'shortCode': shortCode,
+        'phone': phone,
+        'address': {
+          'lat': lat,
+          'lng': lng,
+          'id': addressId,
+        }
       }),
     );
 

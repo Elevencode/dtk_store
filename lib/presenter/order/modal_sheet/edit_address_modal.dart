@@ -90,11 +90,14 @@ class _EditAddressModalBottomSheetState
                   onPressed: () {
                     if (_formKey.currentState!.validate()) {
                       BlocProvider.of<ModalSheetCubit>(context).sendData(
-                          id: widget.order.client.address.id,
-                          district: widget.order.client.address.district,
-                          city: cityTextController.text,
-                          country: countryTextController.text,
-                          street: streetTextController.text);
+                        shortCode: widget.order.shortCode,
+                        phone: widget.order.client.phone,
+                        id: widget.order.client.address.id,
+                        district: widget.order.client.address.district,
+                        city: cityTextController.text,
+                        country: countryTextController.text,
+                        street: streetTextController.text,
+                      );
                     }
                   },
                   child: const Text(
