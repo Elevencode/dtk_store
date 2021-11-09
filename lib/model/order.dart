@@ -21,21 +21,21 @@ abstract class Order implements _$Order {
   factory Order({
     required int id, //
     // required Status status, //
-    required DateTime plannedDate, //
+    DateTime? plannedDate, //
     // required DateTime createdAt,
     // @JsonKey(defaultValue: false) bool? important, //
     int? plannedDateDuration, //
     // DateTime? deliveredDate,
     // String? umbrellaID,
-    String? shortCode,
+    required String shortCode,
     // String? statusName,
     // String? reasonRefusal,
     // String? driverID,
-    int? totalCents,
+    required int totalCents,
     int? shipmentId,
     // @JsonKey(name: 'order_photos') List<OrderPhoto>? photos,
-    List<OrderPosition>? positions,
-    Client? client,
+    required List<OrderPosition> positions,
+    required Client client,
     // Warehouse? warehouse,
     // Driver? driver,
     // Shipment? shipment, //
