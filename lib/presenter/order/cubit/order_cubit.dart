@@ -24,7 +24,12 @@ class OrderCubit extends Cubit<OrderState> {
     try {
       final result = await repository.getOrder(localShortCode, localPhone);
       order = result;
-      emit(OrderLoadSuccessState(order: order));
+      if (order.client.address.lat == null &&
+          order.client.address.lng == null) {
+        emit(OrderLoadSuccessState(order: order));
+      } else {
+        emit(OrderConfirmedSuccessState(order: order));
+      }
     } catch (e) {
       emit(OrderLoadFailedState(e.toString()));
     }
@@ -33,12 +38,12 @@ class OrderCubit extends Cubit<OrderState> {
   void updateOrder(Order order) async {
     emit(OrderLoadingState());
     try {
-      repository.updateOrderTime(
+      await repository.updateOrderTime(
           shortCode: localShortCode,
           phone: localPhone,
           plannedDate: order.plannedDate!,
           duration: order.plannedDateDuration!);
-      emit(OrderLoadSuccessState(order: order));
+      emit(OrderConfirmedSuccessState(order: order));
     } catch (e) {
       emit(OrderLoadFailedState(e.toString()));
     }

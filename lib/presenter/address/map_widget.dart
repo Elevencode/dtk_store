@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:dtk_store/model/address.dart';
 import 'package:dtk_store/model/order.dart';
 import 'package:dtk_store/presenter/address/cubit/map_widget_cubit.dart';
 import 'package:dtk_store/presenter/order/cubit/order_cubit.dart';
