@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:dtk_store/model/driver.dart';
 import 'package:dtk_store/model/order.dart';
 import 'package:dtk_store/presenter/address/cubit/map_widget_cubit.dart';
 import 'package:flutter/material.dart';
@@ -56,7 +57,11 @@ class _SecondMapWidgetState extends State<SecondMapWidget> {
     return BlocListener<AdressCubit, AdressState>(
       listener: (context, state) {
         if (state is AdressLoadSuccess) {
+          BlocProvider.of<AdressCubit>(context).getDriver(widget.order.shortCode, widget.order.client.phone, DateTime.now());
           //TODO: driver coords
+          Driver driver = state.driver!;
+          _driverCoords = LatLng(driver.lat, driver.lng);
+          print(driver);
         }
       },
       child: Column(

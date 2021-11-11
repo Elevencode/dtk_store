@@ -1,20 +1,18 @@
-import 'package:dtk_store/data/repository/order_repository.dart';
 import 'package:dtk_store/presenter/address/cubit/map_widget_cubit.dart';
+import 'package:dtk_store/presenter/address/map_widget.dart';
+import 'package:dtk_store/presenter/address/second_map_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:indexed/indexed.dart';
 import 'package:intl/intl.dart';
-import 'package:intl/date_symbol_data_local.dart';
 
 import '/model/order.dart';
-import '../address/map_widget.dart';
+// import '../address/client_coords_picker_map.dart';
 import '/presenter/order/cubit/order_cubit.dart';
 import '/presenter/order/modal_sheet/edit_address_modal.dart';
-import '/presenter/promo_box.dart';
 
 import 'modal_sheet/cubit/modal_sheet_cubit.dart';
 
@@ -37,7 +35,6 @@ class _OrderPageState extends State<OrderPage> {
     'Turboslim': 'assets/images/Turboslim_20.png',
     'Gialuron Revita': 'assets/images/Placeholder.png',
   };
-  //TODO: нет инициализации координат
   late LatLng coords;
   bool _isMapVisible = true;
   String _currentTime = '';
@@ -76,16 +73,17 @@ class _OrderPageState extends State<OrderPage> {
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
-                                  //TODO: Если статус заказ доставляется:
-                                  // const Text(
-                                  //   'заказ доставляется!',
-                                  //   style: TextStyle(
-                                  //     fontSize: 16,
-                                  //     color: Colors.blue,
-                                  //     fontWeight: FontWeight.bold,
-                                  //   ),
-                                  // ),
-                                  Divider(),
+                                  state.isConfirmed == true
+                                      ? const Text(
+                                          'заказ доставляется!',
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                            color: Colors.blue,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        )
+                                      : Container(),
+                                  const Divider(),
                                   Wrap(
                                     alignment: WrapAlignment.center,
                                     children: [
@@ -179,7 +177,6 @@ class _OrderPageState extends State<OrderPage> {
                                       ),
                                       const SizedBox(width: 8),
                                       Text(
-                                        //TODO: Цена со скидкой
                                         '${order.totalCents.round()}/s',
                                         style: GoogleFonts.oswald(
                                           fontSize: 48,
@@ -245,10 +242,10 @@ class _OrderPageState extends State<OrderPage> {
                                     ),
                                   ),
                                 ),
-                                Positioned(
-                                  bottom: -30,
-                                  child: PromoBox(),
-                                )
+                                // Positioned(
+                                //   bottom: -30,
+                                //   child: PromoBox(),
+                                // )
                               ],
                             ),
                           ],
@@ -437,39 +434,44 @@ class _OrderPageState extends State<OrderPage> {
                             Padding(
                               padding: const EdgeInsets.symmetric(
                                   horizontal: 16, vertical: 8.0),
-                              child: ElevatedButton(
-                                onPressed: () {
-                                  showModalBottomSheet(
-                                    isScrollControlled: true,
-                                    context: context,
-                                    builder: (context) =>
-                                        BlocProvider<ModalSheetCubit>(
-                                      create: (context) => ModalSheetCubit(),
-                                      child: EditAddressModalBottomSheet(
-                                        order: order,
-                                        orderCubit: BlocProvider.of<OrderCubit>(
-                                            context),
+                              child: state.isConfirmed == false
+                                  ? ElevatedButton(
+                                      onPressed: () {
+                                        showModalBottomSheet(
+                                          isScrollControlled: true,
+                                          context: context,
+                                          builder: (context) =>
+                                              BlocProvider<ModalSheetCubit>(
+                                            create: (context) =>
+                                                ModalSheetCubit(),
+                                            child: EditAddressModalBottomSheet(
+                                              order: order,
+                                              orderCubit:
+                                                  BlocProvider.of<OrderCubit>(
+                                                      context),
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                      child: const Text(
+                                        'EDITAR LA DIRECCION',
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold,
+                                        ),
                                       ),
-                                    ),
-                                  );
-                                },
-                                child: const Text(
-                                  'EDITAR LA DIRECCION',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                style: ElevatedButton.styleFrom(
-                                  minimumSize: Size(
-                                      MediaQuery.of(context).size.width, 60),
-                                  primary: Colors.white,
-                                  onPrimary: const Color(0XFF557EF1),
-                                  side: BorderSide(
-                                      color: const Color(0XFF557EF1)),
-                                ),
-                              ),
+                                      style: ElevatedButton.styleFrom(
+                                        minimumSize: Size(
+                                            MediaQuery.of(context).size.width,
+                                            60),
+                                        primary: Colors.white,
+                                        onPrimary: const Color(0XFF557EF1),
+                                        side: const BorderSide(
+                                            color: Color(0XFF557EF1)),
+                                      ),
+                                    )
+                                  : Container(),
                             ),
                             const SizedBox(width: 24),
                           ],
@@ -479,44 +481,45 @@ class _OrderPageState extends State<OrderPage> {
                         padding: const EdgeInsets.all(8.0),
                         child: Column(
                           children: [
-                            //TODO: Если State2, то код ниже (закомменченый)
-                            // Row(
-                            //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            //   children: [
-                            //     Text(
-                            //       'TU PEDIDO ESTA\nEN CAMINO',
-                            //       textAlign: TextAlign.center,
-                            //       style: TextStyle(
-                            //         fontSize: 24,
-                            //         fontWeight: FontWeight.bold,
-                            //       ),
-                            //     ),
-                            //     Text(
-                            //       '${DateFormat('HH:mm', 'es').format(order.plannedDate.toLocal())}\n${DateFormat('HH:mm', 'es').format(order.plannedDate.add(Duration(minutes: order.plannedDateDuration ?? 120)).toLocal())}',
-                            //       style: TextStyle(
-                            //         fontSize: 24,
-                            //         fontWeight: FontWeight.bold,
-                            //         color: Colors.green,
-                            //       ),
-                            //     ),
-                            //   ],
-                            // ),
-
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Icon(Icons.arrow_downward),
-                                Text(
-                                  'POR FAVOR AYUDANOS A ENCONTRAR\nTU UBICACION EXACTA',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
+                            state.isConfirmed == true
+                                ? Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceEvenly,
+                                    children: [
+                                      Text(
+                                        'TU PEDIDO ESTA\nEN CAMINO',
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          fontSize: 24,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      Text(
+                                        '${DateFormat('HH:mm', 'es').format(order.plannedDate!)}\n${DateFormat('HH:mm', 'es').format(order.plannedDate!.add(Duration(minutes: order.plannedDateDuration ?? 120)))}',
+                                        style: TextStyle(
+                                          fontSize: 24,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.green,
+                                        ),
+                                      ),
+                                    ],
+                                  )
+                                : Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Icon(Icons.arrow_downward),
+                                      Text(
+                                        'POR FAVOR AYUDANOS A ENCONTRAR\nTU UBICACION EXACTA',
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      Icon(Icons.arrow_downward),
+                                    ],
                                   ),
-                                ),
-                                Icon(Icons.arrow_downward),
-                              ],
-                            ),
                             SizedBox(height: 12),
                             Container(
                               width: 480,
@@ -526,398 +529,462 @@ class _OrderPageState extends State<OrderPage> {
                                   create: (context) => AdressCubit(),
                                   child: Visibility(
                                     visible: _isMapVisible,
-                                    child: MapWidget(
-                                      order: state.order,
-                                      orderCubit:
-                                          BlocProvider.of<OrderCubit>(context),
+                                    child: MapWidget(order: order, orderCubit: 
+                                    BlocProvider.of<OrderCubit>(context),
                                       onCoordsChange: (newCoords) =>
-                                          coords = newCoords,
-                                    ),
+                                          coords = newCoords,),
+                                    // ClientCoordsPickerMap(
+                                    //   order: state.order,
+                                    //   orderCubit:
+                                    //       BlocProvider.of<OrderCubit>(context),
+                                    //   onCoordsChange: (newCoords) =>
+                                    //       coords = newCoords,
+                                    // ),
                                   ),
                                 ),
                               ),
                             ),
                             const SizedBox(height: 16),
-                            Card(
-                              margin: EdgeInsets.zero,
-                              child: Padding(
-                                padding:
-                                    const EdgeInsets.fromLTRB(16, 16, 16, 8),
-                                child: Column(
-                                  children: [
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: const [
-                                        Icon(Icons.arrow_downward),
-                                        Text(
-                                          'ПОЖАЛУЙСТА ВЫБЕРИТЕ УДОБНОЕ\nВАМ ВРЕМЯ ДЛЯ ДОСТАВКИ',
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold,
+                            state.isConfirmed == false
+                                ? Card(
+                                    margin: EdgeInsets.zero,
+                                    child: Padding(
+                                      padding: const EdgeInsets.fromLTRB(
+                                          16, 16, 16, 8),
+                                      child: Column(
+                                        children: [
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: const [
+                                              Icon(Icons.arrow_downward),
+                                              Text(
+                                                'ПОЖАЛУЙСТА ВЫБЕРИТЕ УДОБНОЕ\nВАМ ВРЕМЯ ДЛЯ ДОСТАВКИ',
+                                                textAlign: TextAlign.center,
+                                                style: TextStyle(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                              Icon(Icons.arrow_downward),
+                                            ],
                                           ),
-                                        ),
-                                        Icon(Icons.arrow_downward),
-                                      ],
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 24),
-                                      child: ElevatedButton(
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Text(
-                                              _currentTime == ''
-                                                  ? '${DateFormat.Hm().format(order.plannedDate!)} - ${DateFormat.Hm().format(order.plannedDate!.add(Duration(minutes: 90)))}'
-                                                  : _currentTime,
-                                              style: const TextStyle(
-                                                  fontSize: 18,
-                                                  fontWeight: FontWeight.w600),
+                                          Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                vertical: 24),
+                                            child: ElevatedButton(
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  Text(
+                                                    _currentTime == ''
+                                                        ? '${DateFormat.Hm().format(order.plannedDate!)} - ${DateFormat.Hm().format(order.plannedDate!.add(Duration(minutes: 90)))}'
+                                                        : _currentTime,
+                                                    style: const TextStyle(
+                                                        fontSize: 18,
+                                                        fontWeight:
+                                                            FontWeight.w600),
+                                                  ),
+                                                  const Icon(
+                                                      Icons.arrow_drop_down)
+                                                ],
+                                              ),
+                                              style: ElevatedButton.styleFrom(
+                                                minimumSize: Size(120, 50),
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 12),
+                                                primary: Colors.white,
+                                                onPrimary:
+                                                    const Color(0XFF557EF1),
+                                                side: const BorderSide(
+                                                    color: Color(0XFF557EF1)),
+                                              ),
+                                              onPressed: () {
+                                                setState(() {
+                                                  _isMapVisible = false;
+                                                });
+                                                showCupertinoModalPopup(
+                                                  context: context,
+                                                  builder:
+                                                      (BuildContext context) =>
+                                                          CupertinoActionSheet(
+                                                    actions: <Widget>[
+                                                      Container(
+                                                        color: Colors.white,
+                                                        child:
+                                                            CupertinoActionSheetAction(
+                                                          child: const Text(
+                                                            '08:30 - 10:00',
+                                                          ),
+                                                          onPressed: () {
+                                                            setState(() {
+                                                              _isMapVisible =
+                                                                  true;
+                                                              _currentTime =
+                                                                  '08:30 - 10:00';
+                                                              String
+                                                                  _formatedDate =
+                                                                  DateFormat(
+                                                                          'yyyy-M-dd')
+                                                                      .format(order
+                                                                          .plannedDate!);
+                                                              DateTime
+                                                                  _selectedTime =
+                                                                  DateTime.parse(
+                                                                      '$_formatedDate 08:30Z');
+                                                              _order = order.copyWith(
+                                                                  plannedDate:
+                                                                      _selectedTime,
+                                                                  plannedDateDuration:
+                                                                      90);
+                                                            });
+                                                            Navigator.pop(
+                                                                context);
+                                                          },
+                                                        ),
+                                                      ),
+                                                      Container(
+                                                        color: Colors.white,
+                                                        child:
+                                                            CupertinoActionSheetAction(
+                                                          child: const Text(
+                                                            '09:00 - 11:00',
+                                                          ),
+                                                          onPressed: () {
+                                                            setState(() {
+                                                              _isMapVisible =
+                                                                  true;
+                                                              _currentTime =
+                                                                  '09:00 - 11:00';
+                                                              String
+                                                                  _formatedDate =
+                                                                  DateFormat(
+                                                                          'yyyy-M-dd')
+                                                                      .format(order
+                                                                          .plannedDate!);
+                                                              DateTime
+                                                                  _selectedTime =
+                                                                  DateTime.parse(
+                                                                      '$_formatedDate 09:00Z');
+                                                              _order = order.copyWith(
+                                                                  plannedDate:
+                                                                      _selectedTime,
+                                                                  plannedDateDuration:
+                                                                      120);
+                                                            });
+                                                            Navigator.pop(
+                                                                context);
+                                                          },
+                                                        ),
+                                                      ),
+                                                      Container(
+                                                        color: Colors.white,
+                                                        child:
+                                                            CupertinoActionSheetAction(
+                                                          child: const Text(
+                                                            '10:00 - 12:00',
+                                                          ),
+                                                          onPressed: () {
+                                                            setState(() {
+                                                              _isMapVisible =
+                                                                  true;
+                                                              _currentTime =
+                                                                  '10:00 - 12:00';
+                                                              String
+                                                                  _formatedDate =
+                                                                  DateFormat(
+                                                                          'yyyy-M-dd')
+                                                                      .format(order
+                                                                          .plannedDate!);
+                                                              DateTime
+                                                                  _selectedTime =
+                                                                  DateTime.parse(
+                                                                      '$_formatedDate 10:00Z');
+                                                              _order = order.copyWith(
+                                                                  plannedDate:
+                                                                      _selectedTime,
+                                                                  plannedDateDuration:
+                                                                      120);
+                                                            });
+                                                            Navigator.pop(
+                                                                context);
+                                                          },
+                                                        ),
+                                                      ),
+                                                      Container(
+                                                        color: Colors.white,
+                                                        child:
+                                                            CupertinoActionSheetAction(
+                                                          child: const Text(
+                                                            '11:00 - 13:00',
+                                                          ),
+                                                          onPressed: () {
+                                                            setState(() {
+                                                              _isMapVisible =
+                                                                  true;
+                                                              _currentTime =
+                                                                  '11:00 - 13:00';
+                                                              String
+                                                                  _formatedDate =
+                                                                  DateFormat(
+                                                                          'yyyy-M-dd')
+                                                                      .format(order
+                                                                          .plannedDate!);
+                                                              DateTime
+                                                                  _selectedTime =
+                                                                  DateTime.parse(
+                                                                      '$_formatedDate 11:00Z');
+                                                              _order = order.copyWith(
+                                                                  plannedDate:
+                                                                      _selectedTime,
+                                                                  plannedDateDuration:
+                                                                      120);
+                                                            });
+                                                            Navigator.pop(
+                                                                context);
+                                                          },
+                                                        ),
+                                                      ),
+                                                      Container(
+                                                        color: Colors.white,
+                                                        child:
+                                                            CupertinoActionSheetAction(
+                                                          child: const Text(
+                                                            '12:00 - 14:00',
+                                                          ),
+                                                          onPressed: () {
+                                                            setState(() {
+                                                              _isMapVisible =
+                                                                  true;
+                                                              _currentTime =
+                                                                  '12:00 - 14:00';
+                                                              String
+                                                                  _formatedDate =
+                                                                  DateFormat(
+                                                                          'yyyy-M-dd')
+                                                                      .format(order
+                                                                          .plannedDate!);
+                                                              DateTime
+                                                                  _selectedTime =
+                                                                  DateTime.parse(
+                                                                      '$_formatedDate 12:00Z');
+                                                              _order = order.copyWith(
+                                                                  plannedDate:
+                                                                      _selectedTime,
+                                                                  plannedDateDuration:
+                                                                      120);
+                                                            });
+                                                            Navigator.pop(
+                                                                context);
+                                                          },
+                                                        ),
+                                                      ),
+                                                      Container(
+                                                        color: Colors.white,
+                                                        child:
+                                                            CupertinoActionSheetAction(
+                                                          child: const Text(
+                                                            '13:00 - 15:00',
+                                                          ),
+                                                          onPressed: () {
+                                                            setState(() {
+                                                              _isMapVisible =
+                                                                  true;
+                                                              _currentTime =
+                                                                  '13:00 - 15:00';
+                                                              String
+                                                                  _formatedDate =
+                                                                  DateFormat(
+                                                                          'yyyy-M-dd')
+                                                                      .format(order
+                                                                          .plannedDate!);
+                                                              DateTime
+                                                                  _selectedTime =
+                                                                  DateTime.parse(
+                                                                      '$_formatedDate 13:00Z');
+                                                              _order = order.copyWith(
+                                                                  plannedDate:
+                                                                      _selectedTime,
+                                                                  plannedDateDuration:
+                                                                      120);
+                                                            });
+                                                            Navigator.pop(
+                                                                context);
+                                                          },
+                                                        ),
+                                                      ),
+                                                      Container(
+                                                        color: Colors.white,
+                                                        child:
+                                                            CupertinoActionSheetAction(
+                                                          child: const Text(
+                                                            '14:00 - 16:00',
+                                                          ),
+                                                          onPressed: () {
+                                                            setState(() {
+                                                              _isMapVisible =
+                                                                  true;
+                                                              _currentTime =
+                                                                  '14:00 - 16:00';
+                                                              String
+                                                                  _formatedDate =
+                                                                  DateFormat(
+                                                                          'yyyy-M-dd')
+                                                                      .format(order
+                                                                          .plannedDate!);
+                                                              DateTime
+                                                                  _selectedTime =
+                                                                  DateTime.parse(
+                                                                      '$_formatedDate 14:00Z');
+                                                              _order = order.copyWith(
+                                                                  plannedDate:
+                                                                      _selectedTime,
+                                                                  plannedDateDuration:
+                                                                      120);
+                                                            });
+                                                            Navigator.pop(
+                                                                context);
+                                                          },
+                                                        ),
+                                                      ),
+                                                      Container(
+                                                        color: Colors.white,
+                                                        child:
+                                                            CupertinoActionSheetAction(
+                                                          child: const Text(
+                                                            '15:00 - 17:00',
+                                                          ),
+                                                          onPressed: () {
+                                                            setState(() {
+                                                              _isMapVisible =
+                                                                  true;
+                                                              _currentTime =
+                                                                  '15:00 - 17:00';
+                                                              String
+                                                                  _formatedDate =
+                                                                  DateFormat(
+                                                                          'yyyy-M-dd')
+                                                                      .format(order
+                                                                          .plannedDate!);
+                                                              DateTime
+                                                                  _selectedTime =
+                                                                  DateTime.parse(
+                                                                      '$_formatedDate 15:00Z');
+                                                              _order = order.copyWith(
+                                                                  plannedDate:
+                                                                      _selectedTime,
+                                                                  plannedDateDuration:
+                                                                      120);
+                                                            });
+                                                            Navigator.pop(
+                                                                context);
+                                                          },
+                                                        ),
+                                                      ),
+                                                      Container(
+                                                        color: Colors.white,
+                                                        child:
+                                                            CupertinoActionSheetAction(
+                                                          child: const Text(
+                                                            '16:00 - 18:00',
+                                                          ),
+                                                          onPressed: () {
+                                                            setState(() {
+                                                              _isMapVisible =
+                                                                  true;
+                                                              _currentTime =
+                                                                  '16:00 - 18:00';
+                                                              String
+                                                                  _formatedDate =
+                                                                  DateFormat(
+                                                                          'yyyy-M-dd')
+                                                                      .format(order
+                                                                          .plannedDate!);
+                                                              DateTime
+                                                                  _selectedTime =
+                                                                  DateTime.parse(
+                                                                      '$_formatedDate 16:00Z');
+                                                              _order = order.copyWith(
+                                                                  plannedDate:
+                                                                      _selectedTime,
+                                                                  plannedDateDuration:
+                                                                      120);
+                                                            });
+                                                            Navigator.pop(
+                                                                context);
+                                                          },
+                                                        ),
+                                                      ),
+                                                    ],
+                                                    cancelButton:
+                                                        CupertinoActionSheetAction(
+                                                      child:
+                                                          const Text('Cancel'),
+                                                      isDefaultAction: true,
+                                                      onPressed: () {
+                                                        setState(() {
+                                                          _isMapVisible = true;
+                                                        });
+                                                        Navigator.pop(context);
+                                                      },
+                                                    ),
+                                                  ),
+                                                );
+                                              },
                                             ),
-                                            const Icon(Icons.arrow_drop_down)
-                                          ],
-                                        ),
-                                        style: ElevatedButton.styleFrom(
-                                          minimumSize: Size(120, 50),
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 12),
-                                          primary: Colors.white,
-                                          onPrimary: const Color(0XFF557EF1),
-                                          side: const BorderSide(
-                                              color: Color(0XFF557EF1)),
-                                        ),
-                                        onPressed: () {
-                                          setState(() {
-                                            _isMapVisible = false;
-                                          });
-                                          showCupertinoModalPopup(
-                                            context: context,
-                                            builder: (BuildContext context) =>
-                                                CupertinoActionSheet(
-                                              actions: <Widget>[
-                                                Container(
-                                                  color: Colors.white,
-                                                  child:
-                                                      CupertinoActionSheetAction(
-                                                    child: const Text(
-                                                      '08:30 - 10:00',
-                                                    ),
-                                                    onPressed: () {
-                                                      setState(() {
-                                                        _isMapVisible = true;
-                                                        _currentTime =
-                                                            '08:30 - 10:00';
-                                                        String _formatedDate =
-                                                            DateFormat(
-                                                                    'yyyy-M-dd')
-                                                                .format(order
-                                                                    .plannedDate!);
-                                                        DateTime _selectedTime =
-                                                            DateTime.parse(
-                                                                '$_formatedDate 08:30Z');
-                                                        _order = order.copyWith(
-                                                            plannedDate:
-                                                                _selectedTime,
-                                                            plannedDateDuration:
-                                                                90);
-                                                      });
-                                                      Navigator.pop(context);
-                                                    },
-                                                  ),
-                                                ),
-                                                Container(
-                                                  color: Colors.white,
-                                                  child:
-                                                      CupertinoActionSheetAction(
-                                                    child: const Text(
-                                                      '09:00 - 11:00',
-                                                    ),
-                                                    onPressed: () {
-                                                      setState(() {
-                                                        _isMapVisible = true;
-                                                        _currentTime =
-                                                            '09:00 - 11:00';
-                                                        String _formatedDate =
-                                                            DateFormat(
-                                                                    'yyyy-M-dd')
-                                                                .format(order
-                                                                    .plannedDate!);
-                                                        DateTime _selectedTime =
-                                                            DateTime.parse(
-                                                                '$_formatedDate 09:00Z');
-                                                        _order = order.copyWith(
-                                                            plannedDate:
-                                                                _selectedTime,
-                                                            plannedDateDuration:
-                                                                120);
-                                                      });
-                                                      Navigator.pop(context);
-                                                    },
-                                                  ),
-                                                ),
-                                                Container(
-                                                  color: Colors.white,
-                                                  child:
-                                                      CupertinoActionSheetAction(
-                                                    child: const Text(
-                                                      '10:00 - 12:00',
-                                                    ),
-                                                    onPressed: () {
-                                                      setState(() {
-                                                        _isMapVisible = true;
-                                                        _currentTime =
-                                                            '10:00 - 12:00';
-                                                        String _formatedDate =
-                                                            DateFormat(
-                                                                    'yyyy-M-dd')
-                                                                .format(order
-                                                                    .plannedDate!);
-                                                        DateTime _selectedTime =
-                                                            DateTime.parse(
-                                                                '$_formatedDate 10:00Z');
-                                                        _order = order.copyWith(
-                                                            plannedDate:
-                                                                _selectedTime,
-                                                            plannedDateDuration:
-                                                                120);
-                                                      });
-                                                      Navigator.pop(context);
-                                                    },
-                                                  ),
-                                                ),
-                                                Container(
-                                                  color: Colors.white,
-                                                  child:
-                                                      CupertinoActionSheetAction(
-                                                    child: const Text(
-                                                      '11:00 - 13:00',
-                                                    ),
-                                                    onPressed: () {
-                                                      setState(() {
-                                                        _isMapVisible = true;
-                                                        _currentTime =
-                                                            '11:00 - 13:00';
-                                                        String _formatedDate =
-                                                            DateFormat(
-                                                                    'yyyy-M-dd')
-                                                                .format(order
-                                                                    .plannedDate!);
-                                                        DateTime _selectedTime =
-                                                            DateTime.parse(
-                                                                '$_formatedDate 11:00Z');
-                                                        _order = order.copyWith(
-                                                            plannedDate:
-                                                                _selectedTime,
-                                                            plannedDateDuration:
-                                                                120);
-                                                      });
-                                                      Navigator.pop(context);
-                                                    },
-                                                  ),
-                                                ),
-                                                Container(
-                                                  color: Colors.white,
-                                                  child:
-                                                      CupertinoActionSheetAction(
-                                                    child: const Text(
-                                                      '12:00 - 14:00',
-                                                    ),
-                                                    onPressed: () {
-                                                      setState(() {
-                                                        _isMapVisible = true;
-                                                        _currentTime =
-                                                            '12:00 - 14:00';
-                                                        String _formatedDate =
-                                                            DateFormat(
-                                                                    'yyyy-M-dd')
-                                                                .format(order
-                                                                    .plannedDate!);
-                                                        DateTime _selectedTime =
-                                                            DateTime.parse(
-                                                                '$_formatedDate 12:00Z');
-                                                        _order = order.copyWith(
-                                                            plannedDate:
-                                                                _selectedTime,
-                                                            plannedDateDuration:
-                                                                120);
-                                                      });
-                                                      Navigator.pop(context);
-                                                    },
-                                                  ),
-                                                ),
-                                                Container(
-                                                  color: Colors.white,
-                                                  child:
-                                                      CupertinoActionSheetAction(
-                                                    child: const Text(
-                                                      '13:00 - 15:00',
-                                                    ),
-                                                    onPressed: () {
-                                                      setState(() {
-                                                        _isMapVisible = true;
-                                                        _currentTime =
-                                                            '13:00 - 15:00';
-                                                        String _formatedDate =
-                                                            DateFormat(
-                                                                    'yyyy-M-dd')
-                                                                .format(order
-                                                                    .plannedDate!);
-                                                        DateTime _selectedTime =
-                                                            DateTime.parse(
-                                                                '$_formatedDate 13:00Z');
-                                                        _order = order.copyWith(
-                                                            plannedDate:
-                                                                _selectedTime,
-                                                            plannedDateDuration:
-                                                                120);
-                                                      });
-                                                      Navigator.pop(context);
-                                                    },
-                                                  ),
-                                                ),
-                                                Container(
-                                                  color: Colors.white,
-                                                  child:
-                                                      CupertinoActionSheetAction(
-                                                    child: const Text(
-                                                      '14:00 - 16:00',
-                                                    ),
-                                                    onPressed: () {
-                                                      setState(() {
-                                                        _isMapVisible = true;
-                                                        _currentTime =
-                                                            '14:00 - 16:00';
-                                                        String _formatedDate =
-                                                            DateFormat(
-                                                                    'yyyy-M-dd')
-                                                                .format(order
-                                                                    .plannedDate!);
-                                                        DateTime _selectedTime =
-                                                            DateTime.parse(
-                                                                '$_formatedDate 14:00Z');
-                                                        _order = order.copyWith(
-                                                            plannedDate:
-                                                                _selectedTime,
-                                                            plannedDateDuration:
-                                                                120);
-                                                      });
-                                                      Navigator.pop(context);
-                                                    },
-                                                  ),
-                                                ),
-                                                Container(
-                                                  color: Colors.white,
-                                                  child:
-                                                      CupertinoActionSheetAction(
-                                                    child: const Text(
-                                                      '15:00 - 17:00',
-                                                    ),
-                                                    onPressed: () {
-                                                      setState(() {
-                                                        _isMapVisible = true;
-                                                        _currentTime =
-                                                            '15:00 - 17:00';
-                                                        String _formatedDate =
-                                                            DateFormat(
-                                                                    'yyyy-M-dd')
-                                                                .format(order
-                                                                    .plannedDate!);
-                                                        DateTime _selectedTime =
-                                                            DateTime.parse(
-                                                                '$_formatedDate 15:00Z');
-                                                        _order = order.copyWith(
-                                                            plannedDate:
-                                                                _selectedTime,
-                                                            plannedDateDuration:
-                                                                120);
-                                                      });
-                                                      Navigator.pop(context);
-                                                    },
-                                                  ),
-                                                ),
-                                                Container(
-                                                  color: Colors.white,
-                                                  child:
-                                                      CupertinoActionSheetAction(
-                                                    child: const Text(
-                                                      '16:00 - 18:00',
-                                                    ),
-                                                    onPressed: () {
-                                                      setState(() {
-                                                        _isMapVisible = true;
-                                                        _currentTime =
-                                                            '16:00 - 18:00';
-                                                        String _formatedDate =
-                                                            DateFormat(
-                                                                    'yyyy-M-dd')
-                                                                .format(order
-                                                                    .plannedDate!);
-                                                        DateTime _selectedTime =
-                                                            DateTime.parse(
-                                                                '$_formatedDate 16:00Z');
-                                                        _order = order.copyWith(
-                                                            plannedDate:
-                                                                _selectedTime,
-                                                            plannedDateDuration:
-                                                                120);
-                                                      });
-                                                      Navigator.pop(context);
-                                                    },
-                                                  ),
-                                                ),
-                                              ],
-                                              cancelButton:
-                                                  CupertinoActionSheetAction(
-                                                child: const Text('Cancel'),
-                                                isDefaultAction: true,
-                                                onPressed: () {
-                                                  setState(() {
-                                                    _isMapVisible = true;
-                                                  });
-                                                  Navigator.pop(context);
-                                                },
+                                          ),
+                                          ElevatedButton(
+                                            onPressed: () {
+                                              if (_order != null) {
+                                                BlocProvider.of<OrderCubit>(
+                                                        context)
+                                                    .updateOrder(_order!);
+                                                BlocProvider.of<AdressCubit>(
+                                                        context)
+                                                    .updateCoords(
+                                                        coords,
+                                                        _order!
+                                                            .client.address.id,
+                                                        _order!.shortCode,
+                                                        _order!.client.phone);
+                                              } else {
+                                                BlocProvider.of<OrderCubit>(
+                                                        context)
+                                                    .updateOrder(order);
+                                                BlocProvider.of<AdressCubit>(
+                                                        context)
+                                                    .updateCoords(
+                                                        coords,
+                                                        order.client.address.id,
+                                                        order.shortCode,
+                                                        order.client.phone);
+                                              }
+                                            },
+                                            child: const Text(
+                                              'ПОЖАЛУЙСТА ПОДТВЕРДИТЕ ВРЕМЯ И АДРЕС ДОСТАВКИ',
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                fontSize: 18,
+                                                fontWeight: FontWeight.bold,
                                               ),
                                             ),
-                                          );
-                                        },
+                                            style: ElevatedButton.styleFrom(
+                                              padding: const EdgeInsets.all(16),
+                                              primary: const Color(0XFF67C99C),
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                     ),
-                                    ElevatedButton(
-                                      onPressed: () {
-                                        print(_order);
-                                        //TODO: Как взять DateTime?
-                                        BlocProvider.of<OrderCubit>(context)
-                                            .updateOrder(_order!);
-                                        BlocProvider.of<AdressCubit>(context)
-                                            .updateCoords(
-                                                coords,
-                                                order.client.address.id,
-                                                order.shortCode,
-                                                order.client.phone);
-                                      },
-                                      child: const Text(
-                                        'ПОЖАЛУЙСТА ПОДТВЕРДИТЕ ВРЕМЯ И АДРЕС ДОСТАВКИ',
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      style: ElevatedButton.styleFrom(
-                                        padding: EdgeInsets.all(16),
-                                        primary: const Color(0XFF67C99C),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
+                                  )
+                                : Container(),
                             Padding(
-                              padding:
-                                  const EdgeInsets.fromLTRB(12, 96, 12, 48),
+                              padding: state.isConfirmed == false
+                                  ? const EdgeInsets.fromLTRB(12, 96, 12, 48)
+                                  : const EdgeInsets.fromLTRB(12, 12, 12, 48),
                               child: ElevatedButton(
                                 onPressed: () {},
                                 child: const Text(

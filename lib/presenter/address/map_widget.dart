@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:dtk_store/model/address.dart';
+import 'package:dtk_store/model/driver.dart';
 import 'package:dtk_store/model/order.dart';
 import 'package:dtk_store/presenter/address/cubit/map_widget_cubit.dart';
 import 'package:dtk_store/presenter/order/cubit/order_cubit.dart';
@@ -14,9 +15,12 @@ class MapWidget extends StatefulWidget {
   final Order order;
   final OrderCubit orderCubit;
   final void Function(LatLng coords) onCoordsChange;
-  
 
-  const MapWidget({Key? key, required this.order, required this.orderCubit, required this.onCoordsChange})
+  const MapWidget(
+      {Key? key,
+      required this.order,
+      required this.orderCubit,
+      required this.onCoordsChange})
       : super(key: key);
 
   @override
@@ -34,7 +38,7 @@ class _MapWidgetState extends State<MapWidget> {
 
   final Completer<GoogleMapController> _completer = Completer();
   GoogleMapController? _controller;
- 
+  LatLng? _driverCoords;
 
   // int _markerIdCounter = 0;
 
