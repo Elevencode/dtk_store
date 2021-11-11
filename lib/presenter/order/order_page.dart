@@ -1,3 +1,4 @@
+import 'package:dtk_store/presenter/address/client_coords_picker_map.dart';
 import 'package:dtk_store/presenter/address/cubit/map_widget_cubit.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
@@ -8,7 +9,6 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
 
 import '/model/order.dart';
-import '../address/map_widget.dart';
 import '/presenter/order/cubit/order_cubit.dart';
 import '/presenter/order/modal_sheet/edit_address_modal.dart';
 
@@ -88,8 +88,9 @@ class _OrderPageState extends State<OrderPage> {
                                       ...order.positions.asMap().entries.map(
                                         (item) {
                                           int itemIndex = item.key;
-                                          String productName =
-                                              item.value.product.name;
+                                          String productName = item
+                                              .value.product.name
+                                              .toUpperCase();
                                           return Text(
                                             '$productName${itemIndex == order.positions.length - 1 ? '' : ' + '}',
                                             style: const TextStyle(
@@ -138,7 +139,8 @@ class _OrderPageState extends State<OrderPage> {
                                       Text(
                                         '${(order.totalCents * 2.8).round()}/s',
                                         style: GoogleFonts.oswald(
-                                          fontSize: 48,
+                                          fontSize: 51.5,
+                                          height: 1.35,
                                           color: Colors.red,
                                           fontWeight: FontWeight.bold,
                                           decoration:
@@ -177,7 +179,8 @@ class _OrderPageState extends State<OrderPage> {
                                       Text(
                                         '${order.totalCents.round()}/s',
                                         style: GoogleFonts.oswald(
-                                          fontSize: 48,
+                                          fontSize: 51.5,
+                                          height: 1.35,
                                           color: Colors.green,
                                           fontWeight: FontWeight.bold,
                                         ),
@@ -249,9 +252,9 @@ class _OrderPageState extends State<OrderPage> {
                           ],
                         ),
                       ),
-                      const SizedBox(height: 40),
+                      const SizedBox(height: 12), //TODO:(Жандос) Вернуть 40 когда вернем PromoBox
                       Container(
-                        padding: const EdgeInsets.all(12),
+                        padding: const EdgeInsets.all(16),
                         width: MediaQuery.of(context).size.width,
                         color: Colors.grey[200],
                         child: Column(
@@ -371,11 +374,12 @@ class _OrderPageState extends State<OrderPage> {
                         ),
                       ),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12),
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
                         color: Colors.grey[200],
                         child: Column(
                           children: [
                             Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Column(
                                   children: [
@@ -397,7 +401,7 @@ class _OrderPageState extends State<OrderPage> {
                                         : const Text('Please confirmed'),
                                   ],
                                 ),
-                                const SizedBox(width: 132),
+                                const SizedBox(width: 70),
                                 Column(
                                   children: [
                                     const Text(
@@ -476,13 +480,13 @@ class _OrderPageState extends State<OrderPage> {
                         ),
                       ),
                       Padding(
-                        padding: const EdgeInsets.all(8.0),
+                        padding: const EdgeInsets.all(16),
                         child: Column(
                           children: [
                             state.isConfirmed == true
                                 ? Row(
                                     mainAxisAlignment:
-                                        MainAxisAlignment.spaceEvenly,
+                                        MainAxisAlignment.spaceBetween,
                                     children: [
                                       Text(
                                         'TU PEDIDO ESTA\nEN CAMINO',
@@ -527,7 +531,7 @@ class _OrderPageState extends State<OrderPage> {
                                   create: (context) => AdressCubit(),
                                   child: Visibility(
                                     visible: _isMapVisible,
-                                    child: MapWidget(
+                                    child: ClientCoordsPickerMap(
                                       order: state.order,
                                       orderCubit:
                                           BlocProvider.of<OrderCubit>(context),
@@ -601,6 +605,7 @@ class _OrderPageState extends State<OrderPage> {
                                                   _isMapVisible = false;
                                                 });
                                                 showCupertinoModalPopup(
+                                                  barrierDismissible: false,
                                                   context: context,
                                                   builder:
                                                       (BuildContext context) =>
@@ -978,7 +983,7 @@ class _OrderPageState extends State<OrderPage> {
                             Padding(
                               padding: state.isConfirmed == false
                                   ? const EdgeInsets.fromLTRB(12, 96, 12, 48)
-                                  : const EdgeInsets.fromLTRB(12, 12, 12, 48),
+                                  : const EdgeInsets.fromLTRB(12, 36, 12, 48),
                               child: ElevatedButton(
                                 onPressed: () {},
                                 child: const Text(
