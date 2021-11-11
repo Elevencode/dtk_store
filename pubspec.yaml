@@ -51,6 +51,7 @@ dependencies:
   location: ^4.3.0
   google_fonts: ^2.1.0
   url_strategy: ^0.2.0
+  flutter_polyline_points: ^1.0.0
 
 dev_dependencies:
   flutter_test:

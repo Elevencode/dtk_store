@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:dtk_store/model/address.dart';
 import 'package:dtk_store/model/client.dart';
+import 'package:dtk_store/model/driver.dart';
 import 'package:dtk_store/model/order.dart';
 import 'package:dtk_store/core/error/exceptions.dart' as ex;
 import 'package:http/http.dart' as http;
@@ -11,10 +12,16 @@ import '../../injection.dart';
 
 abstract class OrderDataSource {
   Future<Order> getOrder(String shortCode, String phone);
+  Future<Driver?> getDriver(
+      String shortCode, String phone, DateTime clientTime);
   Future<void> updateClient(
-      {required String shortCode, required String phone, required Client client});
+      {required String shortCode,
+      required String phone,
+      required Client client});
   Future<void> updateAddress(
-      {required String shortCode, required String phone, required Address address});
+      {required String shortCode,
+      required String phone,
+      required Address address});
   Future<void> updateOrderTime(
       {required String shortCode,
       required String phone,
@@ -26,7 +33,8 @@ abstract class OrderDataSource {
       required double lat,
       required double lng,
       required int addressId});
-  Future<void> createNotificationOperator({required String shortCode, required String phone});
+  Future<void> createNotificationOperator(
+      {required String shortCode, required String phone});
 }
 
 class OrderDataSourceImpl implements OrderDataSource {
@@ -52,8 +60,34 @@ class OrderDataSourceImpl implements OrderDataSource {
   }
 
   @override
+  Future<Driver?> getDriver(
+    String shortCode,
+    String phone,
+    DateTime time,
+  ) async {
+    final response = await dioClient.get(
+      'https://api.zaslogistica.com/store/where_is_driver',
+      queryParameters: {
+        'shortCode': shortCode,
+        'phone': phone,
+        'time': time,
+      },
+    );
+
+    if (response.statusCode == 200) {
+      return Driver.fromJson(json.decode(response.data!));
+    } else if (response.statusCode == 400) {
+      return null;
+    } else {
+      throw ex.ServerException(exception: response);
+    }
+  }
+
+  @override
   Future<void> updateClient(
-      {required String shortCode, required String phone, required Client client}) async {
+      {required String shortCode,
+      required String phone,
+      required Client client}) async {
     final response = await http.post(
       Uri.parse('https://api.zaslogistica.com/store/update-client'),
       body: jsonEncode({
@@ -70,7 +104,9 @@ class OrderDataSourceImpl implements OrderDataSource {
 
   @override
   Future<void> updateAddress(
-      {required String shortCode, required String phone, required Address address}) async {
+      {required String shortCode,
+      required String phone,
+      required Address address}) async {
     final response = await http.post(
       Uri.parse('https://api.zaslogistica.com/store/update-address'),
       body: jsonEncode({
