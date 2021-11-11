@@ -26,9 +26,9 @@ class OrderCubit extends Cubit<OrderState> {
       order = result;
       if (order.client.address.lat == null &&
           order.client.address.lng == null) {
-        emit(OrderLoadSuccessState(order: order));
+        emit(OrderLoadSuccessState(order: order, isConfirmed: false));
       } else {
-        emit(OrderConfirmedSuccessState(order: order));
+        emit(OrderLoadSuccessState(order: order, isConfirmed: true));
       }
     } catch (e) {
       emit(OrderLoadFailedState(e.toString()));
@@ -43,7 +43,7 @@ class OrderCubit extends Cubit<OrderState> {
           phone: localPhone,
           plannedDate: order.plannedDate!,
           duration: order.plannedDateDuration!);
-      emit(OrderConfirmedSuccessState(order: order));
+      emit(OrderLoadSuccessState(order: order, isConfirmed: true));
     } catch (e) {
       emit(OrderLoadFailedState(e.toString()));
     }
