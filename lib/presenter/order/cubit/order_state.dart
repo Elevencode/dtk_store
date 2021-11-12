@@ -12,6 +12,10 @@ class OrderLoadSuccessState extends OrderState {
   final bool isConfirmed;
 }
 
+class AirstrikeSendSuccessState extends OrderState {}
+
+class AirstrikeSendFailureState extends OrderState {}
+
 class OrderLoadFailedState extends OrderState {
   OrderLoadFailedState(this.error);
   final String error;

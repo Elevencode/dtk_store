@@ -41,7 +41,41 @@ class _OrderPageState extends State<OrderPage> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<OrderCubit, OrderState>(
+    return BlocConsumer<OrderCubit, OrderState>(
+      listener: (context, state) {
+        if (state is AirstrikeSendSuccessState) {
+          ScaffoldMessenger.of(context).hideCurrentSnackBar();
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: const Text('Оператор вам скоро перезвонит'),
+              backgroundColor: Colors.green.shade400,
+              behavior: SnackBarBehavior.floating,
+              padding: const EdgeInsets.all(8.0),
+              duration: const Duration(seconds: 6),
+            ),
+          );
+        }
+        if (state is AirstrikeSendFailureState) {
+          ScaffoldMessenger.of(context).hideCurrentSnackBar();
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: const Text('Ошибка'),
+              backgroundColor: Colors.red.shade400,
+              behavior: SnackBarBehavior.floating,
+              padding: const EdgeInsets.all(8.0),
+              duration: const Duration(seconds: 6),
+            ),
+          );
+        }
+      },
+      buildWhen: (context, state) {
+        if (state is OrderLoadSuccessState || state is OrderLoadingState) {
+          return true;
+        } else {
+          return false;
+        }
+
+      },
       builder: (context, state) {
         if (state is OrderLoadSuccessState) {
           Order order = state.order;
@@ -951,6 +985,48 @@ class _OrderPageState extends State<OrderPage> {
                                   : const EdgeInsets.fromLTRB(12, 36, 12, 48),
                               child: ElevatedButton(
                                 onPressed: () {
+                                  showDialog<void>(
+                                    context: context,
+                                    barrierDismissible:
+                                        false, // user must tap button!
+                                    builder: (BuildContext context) {
+                                      return AlertDialog(
+                                        title: const Text('Запросить помощь'),
+                                        content: SingleChildScrollView(
+                                          child: ListBody(
+                                            children: const <Widget>[
+                                              Text(
+                                                  'Уверены, что хотите связаться с оператором?'),
+                                            ],
+                                          ),
+                                        ),
+                                        actions: <Widget>[
+                                          TextButton(
+                                            child: const Text('Да'),
+                                            onPressed: () {
+                                              //TODO: добавить progress indicator пока идет отправка, добавить таймер для дизейблд кнопки
+                                              BlocProvider.of<OrderCubit>(
+                                                      context)
+                                                  .createNotification(
+                                                shortCode: order.shortCode,
+                                                phone: order.client.phone,
+                                                order: order,
+                                                isConfirmed: state.isConfirmed,
+                                              );
+                                              Navigator.of(context).pop();
+                                            },
+                                          ),
+                                          ElevatedButton(
+                                            
+                                            child: const Text('Нет'),
+                                            onPressed: () {
+                                              Navigator.of(context).pop();
+                                            },
+                                          ),
+                                        ],
+                                      );
+                                    },
+                                  );
                                 },
                                 child: const Text(
                                   'LLAMA A MI  ACCESOR',
