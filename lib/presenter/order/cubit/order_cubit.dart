@@ -48,4 +48,13 @@ class OrderCubit extends Cubit<OrderState> {
       emit(OrderLoadFailedState(e.toString()));
     }
   }
+  void createNotification({required String shortCode, required String phone, required Order order, required bool isConfirmed}) async {
+    try {
+      await repository.createNotificationOperator(shortCode: shortCode, phone: phone);
+      emit(AirstrikeSendSuccessState());
+    }
+    catch (e) {
+      emit(AirstrikeSendFailureState());
+    }
+  }
 }
