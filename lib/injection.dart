@@ -9,7 +9,8 @@ final sl = GetIt.instance;
 Future<void> init() async {
   registerBloc();
   // //! Repository
-  sl.registerLazySingleton<OrderRepository>(() => OrderRepositoryImpl(dataSource: sl()));
+  sl.registerLazySingleton<OrderRepository>(
+      () => OrderRepositoryImpl(dataSource: sl()));
 
   // //! Datasources
   sl.registerLazySingleton<OrderDataSource>(() => OrderDataSourceImpl());

@@ -1,16 +1,14 @@
 import 'dart:async';
 
-import 'package:dtk_store/model/driver.dart';
 import 'package:dtk_store/model/order.dart';
 import 'package:dtk_store/presenter/address/cubit/map_widget_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:location/location.dart';
-// import 'package:google_maps_flutter_web/google_maps_flutter_web.dart';
+import 'package:open_route_service/open_route_service.dart';
 
-class SecondMapWidget extends StatefulWidget {
+class SecondMapWidget extends StatelessWidget {
   const SecondMapWidget({
     Key? key,
     required this.order,
@@ -19,14 +17,61 @@ class SecondMapWidget extends StatefulWidget {
   final Order order;
 
   @override
-  State<SecondMapWidget> createState() => _SecondMapWidgetState();
+  Widget build(BuildContext context) {
+    BlocProvider.of<AdressCubit>(context).getDriver(
+      "CBX-772-675",
+      "+51986307179",
+      DateTime.parse("2021-10-16T17:00:54+00:00"),
+    );
+
+    // BlocProvider.of<AdressCubit>(context).getDriver(
+    //   order.shortCode,
+    //   order.client.phone,
+    //   order.plannedDate!,
+    // );
+    return BlocBuilder<AdressCubit, AdressState>(builder: (context, state) {
+      print(state);
+
+      if (state is AdressLoadSuccess) {
+        if (state.driver != null) {
+          return SecondMapWidgetBody(
+            order: order,
+            driverCoords: LatLng(
+              state.driver!.lat,
+              state.driver!.lng,
+            ),
+          );
+        }
+      }
+      return const Text("Driver not founded");
+    });
+  }
 }
 
-class _SecondMapWidgetState extends State<SecondMapWidget> {
-  //TODO: пофиксить на настоящие данные
-  LatLng _driverCoords = const LatLng(-12.046374, -77.042793);
+class SecondMapWidgetBody extends StatefulWidget {
+  const SecondMapWidgetBody({
+    Key? key,
+    required this.order,
+    required this.driverCoords,
+  }) : super(key: key);
+
+  final Order order;
+  final LatLng driverCoords;
+
+  @override
+  State<SecondMapWidgetBody> createState() => _SecondMapWidgetBodyState();
+}
+
+class _SecondMapWidgetBodyState extends State<SecondMapWidgetBody> {
+  late LatLng _driverCoords;
+  late LatLng _clientCoords;
+
+  final OpenRouteService _polylineClient =
+      OpenRouteService(apiKey: 'AIzaSyDK6a99pqYap3FeLbJ2m0rwnsGEb9qIpts');
 
   late GoogleMapController _mapController;
+
+  late List<Coordinate> _routeCoordinates;
 
   late BitmapDescriptor _driverIcon;
 
@@ -40,56 +85,36 @@ class _SecondMapWidgetState extends State<SecondMapWidget> {
 
   PolylinePoints _polylinePoints = PolylinePoints();
 
-  late CameraPosition _initialCameraPosition;
-
-  LocationData? _locationData;
-
   @override
   void initState() {
     super.initState();
-    _getIcons().then((value) => _init());
-
-    _setupLocation();
+    _getIcons().then((_) => _init());
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<AdressCubit, AdressState>(
-      listener: (context, state) {
-        if (state is AdressLoadSuccess) {
-          BlocProvider.of<AdressCubit>(context).getDriver(widget.order.shortCode, widget.order.client.phone, DateTime.now());
-          //TODO: driver coords
-          Driver driver = state.driver!;
-          _driverCoords = LatLng(driver.lat, driver.lng);
-          print(driver);
-        }
-      },
-      child: Column(
-        children: [
-          Expanded(
-            child: Stack(
-              children: [
-                GoogleMap(
-                  markers: _markers,
-                  mapType: MapType.normal,
-                  initialCameraPosition: _initialCameraPosition,
-                  onMapCreated: (controller) => setState(
-                    () => _mapController = controller,
+    return Column(
+      children: [
+        Expanded(
+          child: Stack(
+            children: [
+              GoogleMap(
+                markers: _markers,
+                polylines: _polyline,
+                mapType: MapType.normal,
+                initialCameraPosition: CameraPosition(
+                  target: LatLng(
+                    widget.order.client.address.lat!,
+                    widget.order.client.address.lng!,
                   ),
+                  zoom: 17.0,
                 ),
-                const Align(
-                  alignment: Alignment.center,
-                  child: Icon(
-                    Icons.add_location,
-                    size: 40.0,
-                    color: Colors.purple,
-                  ),
-                ),
-              ],
-            ),
+                onMapCreated: _onMapCreated,
+              ),
+            ],
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
@@ -98,7 +123,9 @@ class _SecondMapWidgetState extends State<SecondMapWidget> {
 
     _polyline.clear();
 
-    await _setPolylines();
+    _setupLocation();
+
+    // await _setPolylines();
     await _getMarkers();
   }
 
@@ -107,7 +134,7 @@ class _SecondMapWidgetState extends State<SecondMapWidget> {
       () {
         _markers.add(
           Marker(
-            markerId: MarkerId(_driverCoords.toString()),
+            markerId: MarkerId("$_driverCoords"),
             position: _driverCoords,
             icon: _driverIcon,
           ),
@@ -115,12 +142,10 @@ class _SecondMapWidgetState extends State<SecondMapWidget> {
 
         _markers.add(
           Marker(
-            markerId: MarkerId(
-              "${_locationData!.latitude!}${_locationData!.longitude!}",
-            ),
+            markerId: MarkerId("$_clientCoords"),
             position: LatLng(
-              _locationData!.latitude!,
-              _locationData!.longitude!,
+              _clientCoords.latitude,
+              _clientCoords.longitude,
             ), //position of marker
             icon: _orderIcon,
           ),
@@ -129,85 +154,142 @@ class _SecondMapWidgetState extends State<SecondMapWidget> {
     );
   }
 
+  // Future<bool> _updateMap() async {
+  // await Future.delayed(const Duration(milliseconds: 400));
+
+  // var controller = _mapController;
+
+  // var region = await controller.getVisibleRegion();
+  // if (region.southwest.latitude == 0.0) return false;
+
+  // LatLng _southwest;
+  // LatLng _northeast;
+
+  // final _clientLatLng = LatLng(
+  //   _clientCoords.latitude,
+  //   _clientCoords.longitude,
+  // );
+  // final _driverLatLng = LatLng(
+  //   _driverCoords.latitude,
+  //   _driverCoords.longitude,
+  // );
+
+  // if (_clientLatLng.latitude <= _driverLatLng.latitude) {
+  //   _southwest = _clientLatLng;
+  //   _northeast = _driverLatLng;
+  // } else {
+  //   _southwest = _driverLatLng;
+  //   _northeast = _clientLatLng;
+  // }
+
+  // CameraUpdate update = CameraUpdate.newLatLngBounds(
+  //   LatLngBounds(
+  //     southwest: _southwest,
+  //     northeast: _northeast,
+  //   ),
+  //   70,
+  // );
+
+  // controller.moveCamera(update);
+
+  // return true;
+  // }ƒ
+
   Future<void> _getIcons() async {
     _driverIcon = await BitmapDescriptor.fromAssetImage(
-      const ImageConfiguration(),
-      "assets/driver-icon.png",
+      const ImageConfiguration(size: Size(45, 45)),
+      "assets/images/driver-icon.png",
     );
+
     _orderIcon = await BitmapDescriptor.fromAssetImage(
-      const ImageConfiguration(),
-      "assets/order-icon.png",
+      const ImageConfiguration(size: Size(45, 45)),
+      "assets/images/order-icon.png",
     );
   }
 
   Future<void> _setPolylines() async {
-    PolylineResult result = await _polylinePoints.getRouteBetweenCoordinates(
-      "AIzaSyDK6a99pqYap3FeLbJ2m0rwnsGEb9qIpts",
-      PointLatLng(
-        _driverCoords.latitude,
-        _driverCoords.longitude,
-      ),
-      PointLatLng(
-        _locationData!.latitude!,
-        _locationData!.longitude!,
-      ),
-    );
+    // _routeCoordinates = await _polylineClient.directionsRouteCoordsGet(
+    //   startCoordinate: Coordinate(
+    //     latitude: _driverCoords.latitude,
+    //     longitude: _driverCoords.longitude,
+    //   ),
+    //   endCoordinate: Coordinate(
+    //     latitude: _clientCoords.latitude,
+    //     longitude: _clientCoords.longitude,
+    //   ),
+    // );
 
-    if (result.status == "OK") {
-      _polylineCoords.clear();
+    // final List<LatLng> routePoints = _routeCoordinates
+    //     .map((coordinate) => LatLng(coordinate.latitude, coordinate.longitude))
+    //     .toList();
 
-      setState(() {
-        _polyline = result.points.map(
-          (PointLatLng point) {
-            _polylineCoords.add(LatLng(point.latitude, point.longitude));
+    // setState(
+    //   () {
+    //     _polyline.add(
+    //       Polyline(
+    //         polylineId: const PolylineId('route'),
+    //         visible: true,
+    //         points: routePoints,
+    //         color: Colors.red,
+    //         width: 4,
+    //       ),
+    //     );
+    //   },
+    // );
 
-            return Polyline(
-              width: 7,
-              polylineId: const PolylineId("polyline"),
-              points: _polylineCoords,
-              color: Theme.of(context).primaryColor,
-            );
-          },
-        ).toSet();
-      });
-    }
+    // PolylineResult result = await _polylinePoints.getRouteBetweenCoordinates(
+    //   "AIzaSyDK6a99pqYap3FeLbJ2m0rwnsGEb9qIpts",
+    //   PointLatLng(
+    //     _driverCoords.latitude,
+    //     _driverCoords.longitude,
+    //   ),
+    //   PointLatLng(
+    //     _clientCoords.latitude,
+    //     _clientCoords.longitude,
+    //   ),
+    // );
+
+    // if (result.status == "OK") {
+    //   _polylineCoords.clear();
+
+    //   setState(
+    //     () {
+    //       _polyline = result.points.map(
+    //         (PointLatLng point) {
+    //           _polylineCoords.add(LatLng(point.latitude, point.longitude));
+
+    //           return Polyline(
+    //             width: 7,
+    //             polylineId: const PolylineId("polyline"),
+    //             points: _polylineCoords,
+    //             color: Theme.of(context).primaryColor,
+    //           );
+    //         },
+    //       ).toSet();
+    //     },
+    //   );
+    // }
   }
 
   void _setupLocation() async {
-    Location location = Location();
-    bool _serviceEnabled;
-    PermissionStatus _permissionGranted;
+    if (widget.order.client.address.lat != null &&
+        widget.order.client.address.lng != null) {
+      setState(
+        () {
+          _driverCoords = widget.driverCoords;
 
-    _serviceEnabled = await location.serviceEnabled();
-    if (!_serviceEnabled) {
-      _serviceEnabled = await location.requestService();
-      if (!_serviceEnabled) {
-        return;
-      }
+          _clientCoords = LatLng(
+            widget.order.client.address.lat!,
+            widget.order.client.address.lng!,
+          );
+        },
+      );
     }
+  }
 
-    _permissionGranted = await location.hasPermission();
-    if (_permissionGranted == PermissionStatus.denied) {
-      _permissionGranted = await location.requestPermission();
-      if (_permissionGranted != PermissionStatus.granted) {
-        return;
-      }
-    }
+  void _onMapCreated(GoogleMapController controller) {
+    _mapController = controller;
 
-    _locationData = await location.getLocation();
-
-    if (_locationData != null) {
-      setState(() {
-        _initialCameraPosition = CameraPosition(
-          target: LatLng(_locationData!.latitude!, _locationData!.longitude!),
-          zoom: 17.0,
-        );
-
-        _driverCoords = LatLng(
-          _locationData!.latitude!,
-          _locationData!.longitude!,
-        );
-      });
-    }
+    // _updateMap();
   }
 }

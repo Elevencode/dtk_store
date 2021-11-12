@@ -1,7 +1,7 @@
 import 'package:bloc/bloc.dart';
 
 import '../../../injection.dart';
-import '/../data/repository/order_repository.dart';
+import '../../../data/repository/order_repository.dart';
 import 'package:dtk_store/model/order.dart';
 
 part 'order_state.dart';

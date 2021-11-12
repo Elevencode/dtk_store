@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/date_symbol_data_local.dart';
@@ -16,8 +18,8 @@ import 'presenter/order/cubit/order_cubit.dart';
 void main() async {
   await init();
   await initializeDateFormatting('pt_BR', null);
-  runApp(MyApp());
   setPathUrlStrategy();
+  debugger();
 
   runApp(MyApp());
 }

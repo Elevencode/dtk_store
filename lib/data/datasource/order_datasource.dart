@@ -66,11 +66,11 @@ class OrderDataSourceImpl implements OrderDataSource {
     DateTime time,
   ) async {
     final response = await dioClient.get(
-      'https://api.zaslogistica.com/store/where_is_driver',
+      'https://api.zaslogistica.com/store/get-driver-coords',
       queryParameters: {
         'shortCode': shortCode,
         'phone': phone,
-        'time': time,
+        'time': time.toLocal().toIso8601String(),
       },
     );
 
