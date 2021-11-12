@@ -47,7 +47,7 @@ class _OrderPageState extends State<OrderPage> {
           ScaffoldMessenger.of(context).hideCurrentSnackBar();
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: const Text('Оператор вам скоро перезвонит'),
+              content: const Text('Un operador se pondrá en contacto con usted en breve'),
               backgroundColor: Colors.green.shade400,
               behavior: SnackBarBehavior.floating,
               padding: const EdgeInsets.all(8.0),
@@ -59,7 +59,7 @@ class _OrderPageState extends State<OrderPage> {
           ScaffoldMessenger.of(context).hideCurrentSnackBar();
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: const Text('Ошибка'),
+              content: const Text('Error, inténtelo de nuevo más tarde'),
               backgroundColor: Colors.red.shade400,
               behavior: SnackBarBehavior.floating,
               padding: const EdgeInsets.all(8.0),
@@ -99,7 +99,7 @@ class _OrderPageState extends State<OrderPage> {
                                 children: [
                                   const SizedBox(height: 12),
                                   Text(
-                                    'YOUR ORDER #${order.shortCode}',
+                                    'TU PEDIDO #${order.shortCode}',
                                     style: const TextStyle(
                                       fontSize: 32,
                                       color: Color(0XFF557EF1),
@@ -108,7 +108,7 @@ class _OrderPageState extends State<OrderPage> {
                                   ),
                                   state.isConfirmed == true
                                       ? const Text(
-                                          'заказ доставляется!',
+                                          'la entrega del pedido!',
                                           style: TextStyle(
                                             fontSize: 16,
                                             color: Colors.blue,
@@ -266,7 +266,7 @@ class _OrderPageState extends State<OrderPage> {
                               text: TextSpan(
                                 children: [
                                   const TextSpan(
-                                    text: 'Name: ',
+                                    text: 'Nombre: ',
                                     style: TextStyle(
                                       height: 1.41,
                                       fontSize: 18,
@@ -379,7 +379,7 @@ class _OrderPageState extends State<OrderPage> {
                                 Column(
                                   children: [
                                     const Text(
-                                      'Planned date',
+                                      'Fecha prevista',
                                       style: TextStyle(
                                         fontSize: 20,
                                         fontWeight: FontWeight.bold,
@@ -387,19 +387,19 @@ class _OrderPageState extends State<OrderPage> {
                                     ),
                                     (order.plannedDate != null)
                                         ? Text(
-                                            '${DateFormat.MMMMd().format(order.plannedDate!)} ${order.plannedDate == DateTime.now() ? '(Today)' : ''}',
+                                            '${DateFormat.MMMMd().format(order.plannedDate!)} ${order.plannedDate == DateTime.now() ? '(Hoy)' : ''}',
                                             textAlign: TextAlign.end,
                                             style: const TextStyle(
                                               fontSize: 18,
                                             ),
                                           )
-                                        : const Text('Please confirmed'),
+                                        : const Text('Por favor, confirme'),
                                   ],
                                 ),
                                 Column(
                                   children: [
                                     const Text(
-                                      'Planned time',
+                                      'Tiempo previsto',
                                       style: TextStyle(
                                         fontSize: 20,
                                         fontWeight: FontWeight.bold,
@@ -417,7 +417,7 @@ class _OrderPageState extends State<OrderPage> {
                                               fontSize: 18,
                                             ),
                                           )
-                                        : const Text('Please confirmed'),
+                                        : const Text('Por favor, confirme'),
                                   ],
                                 ),
                               ],
@@ -514,7 +514,7 @@ class _OrderPageState extends State<OrderPage> {
                                         'POR FAVOR AYUDANOS A ENCONTRAR\nTU UBICACION EXACTA',
                                         textAlign: TextAlign.center,
                                         style: TextStyle(
-                                          fontSize: 20,
+                                          fontSize: 16,
                                           fontWeight: FontWeight.bold,
                                         ),
                                       ),
@@ -556,7 +556,7 @@ class _OrderPageState extends State<OrderPage> {
                                             children: const [
                                               Icon(Icons.arrow_downward),
                                               Text(
-                                                'ПОЖАЛУЙСТА ВЫБЕРИТЕ УДОБНОЕ\nВАМ ВРЕМЯ ДЛЯ ДОСТАВКИ',
+                                                'POR FAVOR, ELIJA UNA HORA\nDE ENTREGA CONVENIENTE',
                                                 textAlign: TextAlign.center,
                                                 style: TextStyle(
                                                   fontSize: 16,
@@ -566,6 +566,7 @@ class _OrderPageState extends State<OrderPage> {
                                               Icon(Icons.arrow_downward),
                                             ],
                                           ),
+                                          //TODO: (Жандос) сделать текст через getRangeTime после добавления функционала кнопки
                                           Padding(
                                             padding: const EdgeInsets.symmetric(
                                                 vertical: 24),
@@ -615,7 +616,7 @@ class _OrderPageState extends State<OrderPage> {
                                                         child:
                                                             CupertinoActionSheetAction(
                                                           child: const Text(
-                                                            '08:30 - 10:00',
+                                                            '08:30 - 10:00'
                                                           ),
                                                           onPressed: () {
                                                             setState(() {
@@ -962,7 +963,7 @@ class _OrderPageState extends State<OrderPage> {
                                               }
                                             },
                                             child: const Text(
-                                              'ПОЖАЛУЙСТА ПОДТВЕРДИТЕ ВРЕМЯ И АДРЕС ДОСТАВКИ',
+                                              'POR FAVOR, CONFIRME LA HORA DE ENTREGA Y LA DIRECCIÓN',
                                               textAlign: TextAlign.center,
                                               style: TextStyle(
                                                 fontSize: 18,
@@ -991,18 +992,18 @@ class _OrderPageState extends State<OrderPage> {
                                         false, // user must tap button!
                                     builder: (BuildContext context) {
                                       return AlertDialog(
-                                        title: const Text('Запросить помощь'),
+                                        title: const Text('Solicitar asistencia'),
                                         content: SingleChildScrollView(
                                           child: ListBody(
                                             children: const <Widget>[
                                               Text(
-                                                  'Уверены, что хотите связаться с оператором?'),
+                                                  '¿Seguro que quieres contactar con el operador?'),
                                             ],
                                           ),
                                         ),
                                         actions: <Widget>[
                                           TextButton(
-                                            child: const Text('Да'),
+                                            child: const Text('Sí'),
                                             onPressed: () {
                                               //TODO: добавить progress indicator пока идет отправка, добавить таймер для дизейблд кнопки
                                               BlocProvider.of<OrderCubit>(
@@ -1018,7 +1019,7 @@ class _OrderPageState extends State<OrderPage> {
                                           ),
                                           ElevatedButton(
                                             
-                                            child: const Text('Нет'),
+                                            child: const Text('No'),
                                             onPressed: () {
                                               Navigator.of(context).pop();
                                             },
