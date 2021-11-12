@@ -1,3 +1,4 @@
+import 'package:dtk_store/core/utils/get_time_range.dart';
 import 'package:dtk_store/presenter/address/client_coords_picker_map.dart';
 import 'package:dtk_store/presenter/address/cubit/map_widget_cubit.dart';
 import 'package:flutter/cupertino.dart';
@@ -110,87 +111,52 @@ class _OrderPageState extends State<OrderPage> {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: [
-                                Container(
-                                  child: Row(
-                                    children: [
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.end,
-                                        children: [
-                                          Text(
-                                            'PRECIO',
-                                            style: GoogleFonts.oswald(
-                                              fontSize: 18,
-                                              color: Colors.red,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                          Text(
-                                            'REGULAR',
-                                            style: GoogleFonts.oswald(
-                                              fontSize: 18,
-                                              color: Colors.red,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                        ],
+                                Column(
+                                  children: [
+                                    Text(
+                                      'PRECIO REGULAR',
+                                      style: GoogleFonts.oswald(
+                                        fontSize: 18,
+                                        color: Colors.red,
+                                        fontWeight: FontWeight.bold,
                                       ),
-                                      const SizedBox(width: 8),
-                                      Text(
-                                        '${(order.totalCents * 2.8).round()}/s',
-                                        style: GoogleFonts.oswald(
-                                          fontSize: 51.5,
-                                          height: 1.35,
-                                          color: Colors.red,
-                                          fontWeight: FontWeight.bold,
-                                          decoration:
-                                              TextDecoration.lineThrough,
-                                        ),
-                                      )
-                                    ],
-                                  ),
+                                    ),
+                                    Text(
+                                      '${(order.totalCents * 2.8).round()}/s',
+                                      style: GoogleFonts.oswald(
+                                        height: 1.1,
+                                        fontSize: 52,
+                                        color: Colors.red,
+                                        fontWeight: FontWeight.bold,
+                                        decoration: TextDecoration.lineThrough,
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                                Container(
-                                  child: Row(
-                                    children: [
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.end,
-                                        children: [
-                                          Text(
-                                            'PRECIO',
-                                            style: GoogleFonts.oswald(
-                                              fontSize: 18,
-                                              color: Colors.green,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                          Text(
-                                            'PARA TI',
-                                            style: GoogleFonts.oswald(
-                                              fontSize: 18,
-                                              color: Colors.green,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                        ],
+                                Column(
+                                  children: [
+                                    Text(
+                                      'PRECIO PARA TI',
+                                      style: GoogleFonts.oswald(
+                                        fontSize: 18,
+                                        color: Colors.green,
+                                        fontWeight: FontWeight.bold,
                                       ),
-                                      const SizedBox(width: 8),
-                                      Text(
-                                        '${order.totalCents.round()}/s',
-                                        style: GoogleFonts.oswald(
-                                          fontSize: 51.5,
-                                          height: 1.35,
-                                          color: Colors.green,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      )
-                                    ],
-                                  ),
+                                    ),
+                                    Text(
+                                      '${order.totalCents.round()}/s',
+                                      style: GoogleFonts.oswald(
+                                        height: 1.1,
+                                        fontSize: 52,
+                                        color: Colors.green,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ],
                             ),
-                            const SizedBox(height: 16),
+                            const SizedBox(height: 32),
                             Stack(
                               clipBehavior: Clip.none,
                               children: [
@@ -252,7 +218,9 @@ class _OrderPageState extends State<OrderPage> {
                           ],
                         ),
                       ),
-                      const SizedBox(height: 12), //TODO:(Жандос) Вернуть 40 когда вернем PromoBox
+                      const SizedBox(
+                          height:
+                              12), //TODO:(Жандос) Вернуть 40 когда вернем PromoBox
                       Container(
                         padding: const EdgeInsets.all(16),
                         width: MediaQuery.of(context).size.width,
@@ -370,14 +338,7 @@ class _OrderPageState extends State<OrderPage> {
                                 ],
                               ),
                             ),
-                          ],
-                        ),
-                      ),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        color: Colors.grey[200],
-                        child: Column(
-                          children: [
+                            const SizedBox(height: 16),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
@@ -401,7 +362,6 @@ class _OrderPageState extends State<OrderPage> {
                                         : const Text('Please confirmed'),
                                   ],
                                 ),
-                                const SizedBox(width: 70),
                                 Column(
                                   children: [
                                     const Text(
@@ -413,7 +373,11 @@ class _OrderPageState extends State<OrderPage> {
                                     ),
                                     (order.plannedDate != null)
                                         ? Text(
-                                            '${DateFormat.Hm().format(order.plannedDate!)} - ${DateFormat.Hm().format(order.plannedDate!.add(Duration(minutes: 90)))}',
+                                            getTimeRange(
+                                              order.plannedDate!,
+                                              order.plannedDateDuration!,
+                                              ' - ',
+                                            ),
                                             textAlign: TextAlign.end,
                                             style: const TextStyle(
                                               fontSize: 18,
@@ -497,7 +461,8 @@ class _OrderPageState extends State<OrderPage> {
                                         ),
                                       ),
                                       Text(
-                                        '${DateFormat('HH:mm', 'es').format(order.plannedDate!)}\n${DateFormat('HH:mm', 'es').format(order.plannedDate!.add(Duration(minutes: order.plannedDateDuration ?? 120)))}',
+                                        getTimeRange(order.plannedDate!,
+                                            order.plannedDateDuration!),
                                         style: TextStyle(
                                           fontSize: 24,
                                           fontWeight: FontWeight.bold,
@@ -985,7 +950,8 @@ class _OrderPageState extends State<OrderPage> {
                                   ? const EdgeInsets.fromLTRB(12, 96, 12, 48)
                                   : const EdgeInsets.fromLTRB(12, 36, 12, 48),
                               child: ElevatedButton(
-                                onPressed: () {},
+                                onPressed: () {
+                                },
                                 child: const Text(
                                   'LLAMA A MI  ACCESOR',
                                   style: TextStyle(
