@@ -24,8 +24,7 @@ class OrderCubit extends Cubit<OrderState> {
     try {
       final result = await repository.getOrder(localShortCode, localPhone);
       order = result;
-      if (order.client.address.lat == null &&
-          order.client.address.lng == null) {
+      if (order.client.address.lat == null && order.client.address.lng == null) {
         emit(OrderLoadSuccessState(order: order, isConfirmed: false));
       } else {
         emit(OrderLoadSuccessState(order: order, isConfirmed: true));
@@ -48,13 +47,20 @@ class OrderCubit extends Cubit<OrderState> {
       emit(OrderLoadFailedState(e.toString()));
     }
   }
-  void createNotification({required String shortCode, required String phone, required Order order, required bool isConfirmed}) async {
+
+  void createNotification(
+      {required String shortCode,
+      required String phone,
+      required Order order,
+      required bool isConfirmed}) async {
+    emit(OrderLoadSuccessState(order: order, isConfirmed: isConfirmed, isAirstrikeLoading: true));
     try {
       await repository.createNotificationOperator(shortCode: shortCode, phone: phone);
+
       emit(AirstrikeSendSuccessState());
-    }
-    catch (e) {
+    } catch (e) {
       emit(AirstrikeSendFailureState());
     }
+    emit(OrderLoadSuccessState(order: order, isConfirmed: isConfirmed, isAirstrikeLoading: false));
   }
 }
