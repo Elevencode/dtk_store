@@ -47,7 +47,7 @@ class _OrderPageState extends State<OrderPage> {
           ScaffoldMessenger.of(context).hideCurrentSnackBar();
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: const Text('Оператор вам скоро перезвонит'),
+              content: const Text('Un operador se pondrá en contacto con usted en breve'),
               backgroundColor: Colors.green.shade400,
               behavior: SnackBarBehavior.floating,
               padding: const EdgeInsets.all(8.0),
@@ -59,7 +59,7 @@ class _OrderPageState extends State<OrderPage> {
           ScaffoldMessenger.of(context).hideCurrentSnackBar();
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: const Text('Ошибка'),
+              content: const Text('Error, inténtelo de nuevo más tarde'),
               backgroundColor: Colors.red.shade400,
               behavior: SnackBarBehavior.floating,
               padding: const EdgeInsets.all(8.0),
@@ -992,18 +992,18 @@ class _OrderPageState extends State<OrderPage> {
                                         false, // user must tap button!
                                     builder: (BuildContext context) {
                                       return AlertDialog(
-                                        title: const Text('Запросить помощь'),
+                                        title: const Text('Solicitar asistencia'),
                                         content: SingleChildScrollView(
                                           child: ListBody(
                                             children: const <Widget>[
                                               Text(
-                                                  'Уверены, что хотите связаться с оператором?'),
+                                                  '¿Seguro que quieres contactar con el operador?'),
                                             ],
                                           ),
                                         ),
                                         actions: <Widget>[
                                           TextButton(
-                                            child: const Text('Да'),
+                                            child: const Text('Sí'),
                                             onPressed: () {
                                               //TODO: добавить progress indicator пока идет отправка, добавить таймер для дизейблд кнопки
                                               BlocProvider.of<OrderCubit>(
@@ -1019,7 +1019,7 @@ class _OrderPageState extends State<OrderPage> {
                                           ),
                                           ElevatedButton(
                                             
-                                            child: const Text('Нет'),
+                                            child: const Text('No'),
                                             onPressed: () {
                                               Navigator.of(context).pop();
                                             },
