@@ -1,3 +1,4 @@
+import 'package:dtk_store/core/utils/get_time_range.dart';
 import 'package:dtk_store/presenter/address/client_coords_picker_map.dart';
 import 'package:dtk_store/presenter/address/cubit/map_widget_cubit.dart';
 import 'package:flutter/cupertino.dart';
@@ -40,7 +41,40 @@ class _OrderPageState extends State<OrderPage> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<OrderCubit, OrderState>(
+    return BlocConsumer<OrderCubit, OrderState>(
+      listener: (context, state) {
+        if (state is AirstrikeSendSuccessState) {
+          ScaffoldMessenger.of(context).hideCurrentSnackBar();
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: const Text('Un operador se pondrá en contacto con usted en breve'),
+              backgroundColor: Colors.green.shade400,
+              behavior: SnackBarBehavior.floating,
+              padding: const EdgeInsets.all(8.0),
+              duration: const Duration(seconds: 6),
+            ),
+          );
+        }
+        if (state is AirstrikeSendFailureState) {
+          ScaffoldMessenger.of(context).hideCurrentSnackBar();
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: const Text('Error, inténtelo de nuevo más tarde'),
+              backgroundColor: Colors.red.shade400,
+              behavior: SnackBarBehavior.floating,
+              padding: const EdgeInsets.all(8.0),
+              duration: const Duration(seconds: 6),
+            ),
+          );
+        }
+      },
+      buildWhen: (context, state) {
+        if (state is OrderLoadSuccessState || state is OrderLoadingState) {
+          return true;
+        } else {
+          return false;
+        }
+      },
       builder: (context, state) {
         if (state is OrderLoadSuccessState) {
           Order order = state.order;
@@ -49,8 +83,7 @@ class _OrderPageState extends State<OrderPage> {
             child: Scaffold(
               backgroundColor: Colors.grey[200],
               body: ScrollConfiguration(
-                behavior:
-                    ScrollConfiguration.of(context).copyWith(scrollbars: false),
+                behavior: ScrollConfiguration.of(context).copyWith(scrollbars: false),
                 child: SingleChildScrollView(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -64,7 +97,7 @@ class _OrderPageState extends State<OrderPage> {
                                 children: [
                                   const SizedBox(height: 12),
                                   Text(
-                                    'YOUR ORDER #${order.shortCode}',
+                                    'TU PEDIDO #${order.shortCode}',
                                     style: const TextStyle(
                                       fontSize: 32,
                                       color: Color(0XFF557EF1),
@@ -73,7 +106,7 @@ class _OrderPageState extends State<OrderPage> {
                                   ),
                                   state.isConfirmed == true
                                       ? const Text(
-                                          'заказ доставляется!',
+                                          'la entrega del pedido!',
                                           style: TextStyle(
                                             fontSize: 16,
                                             color: Colors.blue,
@@ -88,9 +121,8 @@ class _OrderPageState extends State<OrderPage> {
                                       ...order.positions.asMap().entries.map(
                                         (item) {
                                           int itemIndex = item.key;
-                                          String productName = item
-                                              .value.product.name
-                                              .toUpperCase();
+                                          String productName =
+                                              item.value.product.name.toUpperCase();
                                           return Text(
                                             '$productName${itemIndex == order.positions.length - 1 ? '' : ' + '}',
                                             style: const TextStyle(
@@ -110,87 +142,52 @@ class _OrderPageState extends State<OrderPage> {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: [
-                                Container(
-                                  child: Row(
-                                    children: [
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.end,
-                                        children: [
-                                          Text(
-                                            'PRECIO',
-                                            style: GoogleFonts.oswald(
-                                              fontSize: 18,
-                                              color: Colors.red,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                          Text(
-                                            'REGULAR',
-                                            style: GoogleFonts.oswald(
-                                              fontSize: 18,
-                                              color: Colors.red,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                        ],
+                                Column(
+                                  children: [
+                                    Text(
+                                      'PRECIO REGULAR',
+                                      style: GoogleFonts.oswald(
+                                        fontSize: 18,
+                                        color: Colors.red,
+                                        fontWeight: FontWeight.bold,
                                       ),
-                                      const SizedBox(width: 8),
-                                      Text(
-                                        '${(order.totalCents * 2.8).round()}/s',
-                                        style: GoogleFonts.oswald(
-                                          fontSize: 51.5,
-                                          height: 1.35,
-                                          color: Colors.red,
-                                          fontWeight: FontWeight.bold,
-                                          decoration:
-                                              TextDecoration.lineThrough,
-                                        ),
-                                      )
-                                    ],
-                                  ),
+                                    ),
+                                    Text(
+                                      '${(order.totalCents * 2.8).round()}/s',
+                                      style: GoogleFonts.oswald(
+                                        height: 1.1,
+                                        fontSize: 52,
+                                        color: Colors.red,
+                                        fontWeight: FontWeight.bold,
+                                        decoration: TextDecoration.lineThrough,
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                                Container(
-                                  child: Row(
-                                    children: [
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.end,
-                                        children: [
-                                          Text(
-                                            'PRECIO',
-                                            style: GoogleFonts.oswald(
-                                              fontSize: 18,
-                                              color: Colors.green,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                          Text(
-                                            'PARA TI',
-                                            style: GoogleFonts.oswald(
-                                              fontSize: 18,
-                                              color: Colors.green,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                        ],
+                                Column(
+                                  children: [
+                                    Text(
+                                      'PRECIO PARA TI',
+                                      style: GoogleFonts.oswald(
+                                        fontSize: 18,
+                                        color: Colors.green,
+                                        fontWeight: FontWeight.bold,
                                       ),
-                                      const SizedBox(width: 8),
-                                      Text(
-                                        '${order.totalCents.round()}/s',
-                                        style: GoogleFonts.oswald(
-                                          fontSize: 51.5,
-                                          height: 1.35,
-                                          color: Colors.green,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      )
-                                    ],
-                                  ),
+                                    ),
+                                    Text(
+                                      '${order.totalCents.round()}/s',
+                                      style: GoogleFonts.oswald(
+                                        height: 1.1,
+                                        fontSize: 52,
+                                        color: Colors.green,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ],
                             ),
-                            const SizedBox(height: 16),
+                            const SizedBox(height: 32),
                             Stack(
                               clipBehavior: Clip.none,
                               children: [
@@ -211,8 +208,7 @@ class _OrderPageState extends State<OrderPage> {
                                                 clipBehavior: Clip.none,
                                                 children: [
                                                   Image.asset(
-                                                    productImagePath[
-                                                        items.product.name],
+                                                    productImagePath[items.product.name],
                                                     width: 145,
                                                     height: 240,
                                                   ),
@@ -225,14 +221,11 @@ class _OrderPageState extends State<OrderPage> {
                                                         'x${items.quantity}',
                                                         style: const TextStyle(
                                                           fontSize: 20,
-                                                          fontWeight:
-                                                              FontWeight.w500,
+                                                          fontWeight: FontWeight.w500,
                                                           color: Colors.white,
                                                         ),
                                                       ),
-                                                      backgroundColor:
-                                                          const Color(
-                                                              0xFF73B488),
+                                                      backgroundColor: const Color(0xFF73B488),
                                                     ),
                                                   )
                                                 ],
@@ -264,7 +257,7 @@ class _OrderPageState extends State<OrderPage> {
                               text: TextSpan(
                                 children: [
                                   const TextSpan(
-                                    text: 'Name: ',
+                                    text: 'Nombre: ',
                                     style: TextStyle(
                                       height: 1.41,
                                       fontSize: 18,
@@ -370,21 +363,14 @@ class _OrderPageState extends State<OrderPage> {
                                 ],
                               ),
                             ),
-                          ],
-                        ),
-                      ),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        color: Colors.grey[200],
-                        child: Column(
-                          children: [
+                            const SizedBox(height: 16),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Column(
                                   children: [
                                     const Text(
-                                      'Planned date',
+                                      'Fecha prevista',
                                       style: TextStyle(
                                         fontSize: 20,
                                         fontWeight: FontWeight.bold,
@@ -392,20 +378,19 @@ class _OrderPageState extends State<OrderPage> {
                                     ),
                                     (order.plannedDate != null)
                                         ? Text(
-                                            '${DateFormat.MMMMd().format(order.plannedDate!)} ${order.plannedDate == DateTime.now() ? '(Today)' : ''}',
+                                            '${DateFormat.MMMMd().format(order.plannedDate!)} ${order.plannedDate == DateTime.now() ? '(Hoy)' : ''}',
                                             textAlign: TextAlign.end,
                                             style: const TextStyle(
                                               fontSize: 18,
                                             ),
                                           )
-                                        : const Text('Please confirmed'),
+                                        : const Text('Por favor, confirme'),
                                   ],
                                 ),
-                                const SizedBox(width: 70),
                                 Column(
                                   children: [
                                     const Text(
-                                      'Planned time',
+                                      'Tiempo previsto',
                                       style: TextStyle(
                                         fontSize: 20,
                                         fontWeight: FontWeight.bold,
@@ -413,13 +398,17 @@ class _OrderPageState extends State<OrderPage> {
                                     ),
                                     (order.plannedDate != null)
                                         ? Text(
-                                            '${DateFormat.Hm().format(order.plannedDate!)} - ${DateFormat.Hm().format(order.plannedDate!.add(Duration(minutes: 90)))}',
+                                            getTimeRange(
+                                              order.plannedDate!,
+                                              order.plannedDateDuration!,
+                                              ' - ',
+                                            ),
                                             textAlign: TextAlign.end,
                                             style: const TextStyle(
                                               fontSize: 18,
                                             ),
                                           )
-                                        : const Text('Please confirmed'),
+                                        : const Text('Por favor, confirme'),
                                   ],
                                 ),
                               ],
@@ -429,28 +418,22 @@ class _OrderPageState extends State<OrderPage> {
                       ),
                       Container(
                         color: Colors.grey[200],
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 8, vertical: 12),
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
                         child: Column(
                           children: [
                             Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 16, vertical: 8.0),
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8.0),
                               child: state.isConfirmed == false
                                   ? ElevatedButton(
                                       onPressed: () {
                                         showModalBottomSheet(
                                           isScrollControlled: true,
                                           context: context,
-                                          builder: (context) =>
-                                              BlocProvider<ModalSheetCubit>(
-                                            create: (context) =>
-                                                ModalSheetCubit(),
+                                          builder: (context) => BlocProvider<ModalSheetCubit>(
+                                            create: (context) => ModalSheetCubit(),
                                             child: EditAddressModalBottomSheet(
                                               order: order,
-                                              orderCubit:
-                                                  BlocProvider.of<OrderCubit>(
-                                                      context),
+                                              orderCubit: BlocProvider.of<OrderCubit>(context),
                                             ),
                                           ),
                                         );
@@ -464,13 +447,10 @@ class _OrderPageState extends State<OrderPage> {
                                         ),
                                       ),
                                       style: ElevatedButton.styleFrom(
-                                        minimumSize: Size(
-                                            MediaQuery.of(context).size.width,
-                                            60),
+                                        minimumSize: Size(MediaQuery.of(context).size.width, 60),
                                         primary: Colors.white,
                                         onPrimary: const Color(0XFF557EF1),
-                                        side: const BorderSide(
-                                            color: Color(0XFF557EF1)),
+                                        side: const BorderSide(color: Color(0XFF557EF1)),
                                       ),
                                     )
                                   : Container(),
@@ -485,8 +465,7 @@ class _OrderPageState extends State<OrderPage> {
                           children: [
                             state.isConfirmed == true
                                 ? Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children: [
                                       Text(
                                         'TU PEDIDO ESTA\nEN CAMINO',
@@ -497,7 +476,8 @@ class _OrderPageState extends State<OrderPage> {
                                         ),
                                       ),
                                       Text(
-                                        '${DateFormat('HH:mm', 'es').format(order.plannedDate!)}\n${DateFormat('HH:mm', 'es').format(order.plannedDate!.add(Duration(minutes: order.plannedDateDuration ?? 120)))}',
+                                        getTimeRange(
+                                            order.plannedDate!, order.plannedDateDuration!),
                                         style: TextStyle(
                                           fontSize: 24,
                                           fontWeight: FontWeight.bold,
@@ -507,15 +487,14 @@ class _OrderPageState extends State<OrderPage> {
                                     ],
                                   )
                                 : Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children: [
                                       Icon(Icons.arrow_downward),
                                       Text(
                                         'POR FAVOR AYUDANOS A ENCONTRAR\nTU UBICACION EXACTA',
                                         textAlign: TextAlign.center,
                                         style: TextStyle(
-                                          fontSize: 20,
+                                          fontSize: 16,
                                           fontWeight: FontWeight.bold,
                                         ),
                                       ),
@@ -533,10 +512,8 @@ class _OrderPageState extends State<OrderPage> {
                                     visible: _isMapVisible,
                                     child: ClientCoordsPickerMap(
                                       order: state.order,
-                                      orderCubit:
-                                          BlocProvider.of<OrderCubit>(context),
-                                      onCoordsChange: (newCoords) =>
-                                          coords = newCoords,
+                                      orderCubit: BlocProvider.of<OrderCubit>(context),
+                                      onCoordsChange: (newCoords) => coords = newCoords,
                                     ),
                                   ),
                                 ),
@@ -547,17 +524,15 @@ class _OrderPageState extends State<OrderPage> {
                                 ? Card(
                                     margin: EdgeInsets.zero,
                                     child: Padding(
-                                      padding: const EdgeInsets.fromLTRB(
-                                          16, 16, 16, 8),
+                                      padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
                                       child: Column(
                                         children: [
                                           Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
+                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                             children: const [
                                               Icon(Icons.arrow_downward),
                                               Text(
-                                                'ПОЖАЛУЙСТА ВЫБЕРИТЕ УДОБНОЕ\nВАМ ВРЕМЯ ДЛЯ ДОСТАВКИ',
+                                                'POR FAVOR, ELIJA UNA HORA\nDE ENTREGA CONVENIENTE',
                                                 textAlign: TextAlign.center,
                                                 style: TextStyle(
                                                   fontSize: 16,
@@ -567,38 +542,29 @@ class _OrderPageState extends State<OrderPage> {
                                               Icon(Icons.arrow_downward),
                                             ],
                                           ),
+                                          //TODO: (Жандос) сделать текст через getRangeTime после добавления функционала кнопки
                                           Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                                vertical: 24),
+                                            padding: const EdgeInsets.symmetric(vertical: 24),
                                             child: ElevatedButton(
                                               child: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
+                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                 children: [
                                                   Text(
                                                     _currentTime == ''
                                                         ? '${DateFormat.Hm().format(order.plannedDate!)} - ${DateFormat.Hm().format(order.plannedDate!.add(Duration(minutes: 90)))}'
                                                         : _currentTime,
                                                     style: const TextStyle(
-                                                        fontSize: 18,
-                                                        fontWeight:
-                                                            FontWeight.w600),
+                                                        fontSize: 18, fontWeight: FontWeight.w600),
                                                   ),
-                                                  const Icon(
-                                                      Icons.arrow_drop_down)
+                                                  const Icon(Icons.arrow_drop_down)
                                                 ],
                                               ),
                                               style: ElevatedButton.styleFrom(
                                                 minimumSize: Size(120, 50),
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        horizontal: 12),
+                                                padding: const EdgeInsets.symmetric(horizontal: 12),
                                                 primary: Colors.white,
-                                                onPrimary:
-                                                    const Color(0XFF557EF1),
-                                                side: const BorderSide(
-                                                    color: Color(0XFF557EF1)),
+                                                onPrimary: const Color(0XFF557EF1),
+                                                side: const BorderSide(color: Color(0XFF557EF1)),
                                               ),
                                               onPressed: () {
                                                 setState(() {
@@ -607,321 +573,226 @@ class _OrderPageState extends State<OrderPage> {
                                                 showCupertinoModalPopup(
                                                   barrierDismissible: false,
                                                   context: context,
-                                                  builder:
-                                                      (BuildContext context) =>
-                                                          CupertinoActionSheet(
+                                                  builder: (BuildContext context) =>
+                                                      CupertinoActionSheet(
                                                     actions: <Widget>[
                                                       Container(
                                                         color: Colors.white,
-                                                        child:
-                                                            CupertinoActionSheetAction(
-                                                          child: const Text(
-                                                            '08:30 - 10:00',
-                                                          ),
+                                                        child: CupertinoActionSheetAction(
+                                                          child: const Text('08:30 - 10:00'),
                                                           onPressed: () {
                                                             setState(() {
-                                                              _isMapVisible =
-                                                                  true;
-                                                              _currentTime =
-                                                                  '08:30 - 10:00';
-                                                              String
-                                                                  _formatedDate =
-                                                                  DateFormat(
-                                                                          'yyyy-M-dd')
-                                                                      .format(order
-                                                                          .plannedDate!);
-                                                              DateTime
-                                                                  _selectedTime =
+                                                              _isMapVisible = true;
+                                                              _currentTime = '08:30 - 10:00';
+                                                              String _formatedDate =
+                                                                  DateFormat('yyyy-M-dd')
+                                                                      .format(order.plannedDate!);
+                                                              DateTime _selectedTime =
                                                                   DateTime.parse(
                                                                       '$_formatedDate 08:30Z');
                                                               _order = order.copyWith(
-                                                                  plannedDate:
-                                                                      _selectedTime,
-                                                                  plannedDateDuration:
-                                                                      90);
+                                                                  plannedDate: _selectedTime,
+                                                                  plannedDateDuration: 90);
                                                             });
-                                                            Navigator.pop(
-                                                                context);
+                                                            Navigator.pop(context);
                                                           },
                                                         ),
                                                       ),
                                                       Container(
                                                         color: Colors.white,
-                                                        child:
-                                                            CupertinoActionSheetAction(
+                                                        child: CupertinoActionSheetAction(
                                                           child: const Text(
                                                             '09:00 - 11:00',
                                                           ),
                                                           onPressed: () {
                                                             setState(() {
-                                                              _isMapVisible =
-                                                                  true;
-                                                              _currentTime =
-                                                                  '09:00 - 11:00';
-                                                              String
-                                                                  _formatedDate =
-                                                                  DateFormat(
-                                                                          'yyyy-M-dd')
-                                                                      .format(order
-                                                                          .plannedDate!);
-                                                              DateTime
-                                                                  _selectedTime =
+                                                              _isMapVisible = true;
+                                                              _currentTime = '09:00 - 11:00';
+                                                              String _formatedDate =
+                                                                  DateFormat('yyyy-M-dd')
+                                                                      .format(order.plannedDate!);
+                                                              DateTime _selectedTime =
                                                                   DateTime.parse(
                                                                       '$_formatedDate 09:00Z');
                                                               _order = order.copyWith(
-                                                                  plannedDate:
-                                                                      _selectedTime,
-                                                                  plannedDateDuration:
-                                                                      120);
+                                                                  plannedDate: _selectedTime,
+                                                                  plannedDateDuration: 120);
                                                             });
-                                                            Navigator.pop(
-                                                                context);
+                                                            Navigator.pop(context);
                                                           },
                                                         ),
                                                       ),
                                                       Container(
                                                         color: Colors.white,
-                                                        child:
-                                                            CupertinoActionSheetAction(
+                                                        child: CupertinoActionSheetAction(
                                                           child: const Text(
                                                             '10:00 - 12:00',
                                                           ),
                                                           onPressed: () {
                                                             setState(() {
-                                                              _isMapVisible =
-                                                                  true;
-                                                              _currentTime =
-                                                                  '10:00 - 12:00';
-                                                              String
-                                                                  _formatedDate =
-                                                                  DateFormat(
-                                                                          'yyyy-M-dd')
-                                                                      .format(order
-                                                                          .plannedDate!);
-                                                              DateTime
-                                                                  _selectedTime =
+                                                              _isMapVisible = true;
+                                                              _currentTime = '10:00 - 12:00';
+                                                              String _formatedDate =
+                                                                  DateFormat('yyyy-M-dd')
+                                                                      .format(order.plannedDate!);
+                                                              DateTime _selectedTime =
                                                                   DateTime.parse(
                                                                       '$_formatedDate 10:00Z');
                                                               _order = order.copyWith(
-                                                                  plannedDate:
-                                                                      _selectedTime,
-                                                                  plannedDateDuration:
-                                                                      120);
+                                                                  plannedDate: _selectedTime,
+                                                                  plannedDateDuration: 120);
                                                             });
-                                                            Navigator.pop(
-                                                                context);
+                                                            Navigator.pop(context);
                                                           },
                                                         ),
                                                       ),
                                                       Container(
                                                         color: Colors.white,
-                                                        child:
-                                                            CupertinoActionSheetAction(
+                                                        child: CupertinoActionSheetAction(
                                                           child: const Text(
                                                             '11:00 - 13:00',
                                                           ),
                                                           onPressed: () {
                                                             setState(() {
-                                                              _isMapVisible =
-                                                                  true;
-                                                              _currentTime =
-                                                                  '11:00 - 13:00';
-                                                              String
-                                                                  _formatedDate =
-                                                                  DateFormat(
-                                                                          'yyyy-M-dd')
-                                                                      .format(order
-                                                                          .plannedDate!);
-                                                              DateTime
-                                                                  _selectedTime =
+                                                              _isMapVisible = true;
+                                                              _currentTime = '11:00 - 13:00';
+                                                              String _formatedDate =
+                                                                  DateFormat('yyyy-M-dd')
+                                                                      .format(order.plannedDate!);
+                                                              DateTime _selectedTime =
                                                                   DateTime.parse(
                                                                       '$_formatedDate 11:00Z');
                                                               _order = order.copyWith(
-                                                                  plannedDate:
-                                                                      _selectedTime,
-                                                                  plannedDateDuration:
-                                                                      120);
+                                                                  plannedDate: _selectedTime,
+                                                                  plannedDateDuration: 120);
                                                             });
-                                                            Navigator.pop(
-                                                                context);
+                                                            Navigator.pop(context);
                                                           },
                                                         ),
                                                       ),
                                                       Container(
                                                         color: Colors.white,
-                                                        child:
-                                                            CupertinoActionSheetAction(
+                                                        child: CupertinoActionSheetAction(
                                                           child: const Text(
                                                             '12:00 - 14:00',
                                                           ),
                                                           onPressed: () {
                                                             setState(() {
-                                                              _isMapVisible =
-                                                                  true;
-                                                              _currentTime =
-                                                                  '12:00 - 14:00';
-                                                              String
-                                                                  _formatedDate =
-                                                                  DateFormat(
-                                                                          'yyyy-M-dd')
-                                                                      .format(order
-                                                                          .plannedDate!);
-                                                              DateTime
-                                                                  _selectedTime =
+                                                              _isMapVisible = true;
+                                                              _currentTime = '12:00 - 14:00';
+                                                              String _formatedDate =
+                                                                  DateFormat('yyyy-M-dd')
+                                                                      .format(order.plannedDate!);
+                                                              DateTime _selectedTime =
                                                                   DateTime.parse(
                                                                       '$_formatedDate 12:00Z');
                                                               _order = order.copyWith(
-                                                                  plannedDate:
-                                                                      _selectedTime,
-                                                                  plannedDateDuration:
-                                                                      120);
+                                                                  plannedDate: _selectedTime,
+                                                                  plannedDateDuration: 120);
                                                             });
-                                                            Navigator.pop(
-                                                                context);
+                                                            Navigator.pop(context);
                                                           },
                                                         ),
                                                       ),
                                                       Container(
                                                         color: Colors.white,
-                                                        child:
-                                                            CupertinoActionSheetAction(
+                                                        child: CupertinoActionSheetAction(
                                                           child: const Text(
                                                             '13:00 - 15:00',
                                                           ),
                                                           onPressed: () {
                                                             setState(() {
-                                                              _isMapVisible =
-                                                                  true;
-                                                              _currentTime =
-                                                                  '13:00 - 15:00';
-                                                              String
-                                                                  _formatedDate =
-                                                                  DateFormat(
-                                                                          'yyyy-M-dd')
-                                                                      .format(order
-                                                                          .plannedDate!);
-                                                              DateTime
-                                                                  _selectedTime =
+                                                              _isMapVisible = true;
+                                                              _currentTime = '13:00 - 15:00';
+                                                              String _formatedDate =
+                                                                  DateFormat('yyyy-M-dd')
+                                                                      .format(order.plannedDate!);
+                                                              DateTime _selectedTime =
                                                                   DateTime.parse(
                                                                       '$_formatedDate 13:00Z');
                                                               _order = order.copyWith(
-                                                                  plannedDate:
-                                                                      _selectedTime,
-                                                                  plannedDateDuration:
-                                                                      120);
+                                                                  plannedDate: _selectedTime,
+                                                                  plannedDateDuration: 120);
                                                             });
-                                                            Navigator.pop(
-                                                                context);
+                                                            Navigator.pop(context);
                                                           },
                                                         ),
                                                       ),
                                                       Container(
                                                         color: Colors.white,
-                                                        child:
-                                                            CupertinoActionSheetAction(
+                                                        child: CupertinoActionSheetAction(
                                                           child: const Text(
                                                             '14:00 - 16:00',
                                                           ),
                                                           onPressed: () {
                                                             setState(() {
-                                                              _isMapVisible =
-                                                                  true;
-                                                              _currentTime =
-                                                                  '14:00 - 16:00';
-                                                              String
-                                                                  _formatedDate =
-                                                                  DateFormat(
-                                                                          'yyyy-M-dd')
-                                                                      .format(order
-                                                                          .plannedDate!);
-                                                              DateTime
-                                                                  _selectedTime =
+                                                              _isMapVisible = true;
+                                                              _currentTime = '14:00 - 16:00';
+                                                              String _formatedDate =
+                                                                  DateFormat('yyyy-M-dd')
+                                                                      .format(order.plannedDate!);
+                                                              DateTime _selectedTime =
                                                                   DateTime.parse(
                                                                       '$_formatedDate 14:00Z');
                                                               _order = order.copyWith(
-                                                                  plannedDate:
-                                                                      _selectedTime,
-                                                                  plannedDateDuration:
-                                                                      120);
+                                                                  plannedDate: _selectedTime,
+                                                                  plannedDateDuration: 120);
                                                             });
-                                                            Navigator.pop(
-                                                                context);
+                                                            Navigator.pop(context);
                                                           },
                                                         ),
                                                       ),
                                                       Container(
                                                         color: Colors.white,
-                                                        child:
-                                                            CupertinoActionSheetAction(
+                                                        child: CupertinoActionSheetAction(
                                                           child: const Text(
                                                             '15:00 - 17:00',
                                                           ),
                                                           onPressed: () {
                                                             setState(() {
-                                                              _isMapVisible =
-                                                                  true;
-                                                              _currentTime =
-                                                                  '15:00 - 17:00';
-                                                              String
-                                                                  _formatedDate =
-                                                                  DateFormat(
-                                                                          'yyyy-M-dd')
-                                                                      .format(order
-                                                                          .plannedDate!);
-                                                              DateTime
-                                                                  _selectedTime =
+                                                              _isMapVisible = true;
+                                                              _currentTime = '15:00 - 17:00';
+                                                              String _formatedDate =
+                                                                  DateFormat('yyyy-M-dd')
+                                                                      .format(order.plannedDate!);
+                                                              DateTime _selectedTime =
                                                                   DateTime.parse(
                                                                       '$_formatedDate 15:00Z');
                                                               _order = order.copyWith(
-                                                                  plannedDate:
-                                                                      _selectedTime,
-                                                                  plannedDateDuration:
-                                                                      120);
+                                                                  plannedDate: _selectedTime,
+                                                                  plannedDateDuration: 120);
                                                             });
-                                                            Navigator.pop(
-                                                                context);
+                                                            Navigator.pop(context);
                                                           },
                                                         ),
                                                       ),
                                                       Container(
                                                         color: Colors.white,
-                                                        child:
-                                                            CupertinoActionSheetAction(
+                                                        child: CupertinoActionSheetAction(
                                                           child: const Text(
                                                             '16:00 - 18:00',
                                                           ),
                                                           onPressed: () {
                                                             setState(() {
-                                                              _isMapVisible =
-                                                                  true;
-                                                              _currentTime =
-                                                                  '16:00 - 18:00';
-                                                              String
-                                                                  _formatedDate =
-                                                                  DateFormat(
-                                                                          'yyyy-M-dd')
-                                                                      .format(order
-                                                                          .plannedDate!);
-                                                              DateTime
-                                                                  _selectedTime =
+                                                              _isMapVisible = true;
+                                                              _currentTime = '16:00 - 18:00';
+                                                              String _formatedDate =
+                                                                  DateFormat('yyyy-M-dd')
+                                                                      .format(order.plannedDate!);
+                                                              DateTime _selectedTime =
                                                                   DateTime.parse(
                                                                       '$_formatedDate 16:00Z');
                                                               _order = order.copyWith(
-                                                                  plannedDate:
-                                                                      _selectedTime,
-                                                                  plannedDateDuration:
-                                                                      120);
+                                                                  plannedDate: _selectedTime,
+                                                                  plannedDateDuration: 120);
                                                             });
-                                                            Navigator.pop(
-                                                                context);
+                                                            Navigator.pop(context);
                                                           },
                                                         ),
                                                       ),
                                                     ],
-                                                    cancelButton:
-                                                        CupertinoActionSheetAction(
-                                                      child:
-                                                          const Text('Cancel'),
+                                                    cancelButton: CupertinoActionSheetAction(
+                                                      child: const Text('Cancel'),
                                                       isDefaultAction: true,
                                                       onPressed: () {
                                                         setState(() {
@@ -938,32 +809,25 @@ class _OrderPageState extends State<OrderPage> {
                                           ElevatedButton(
                                             onPressed: () {
                                               if (_order != null) {
-                                                BlocProvider.of<OrderCubit>(
-                                                        context)
+                                                BlocProvider.of<OrderCubit>(context)
                                                     .updateOrder(_order!);
-                                                BlocProvider.of<AdressCubit>(
-                                                        context)
-                                                    .updateCoords(
-                                                        coords,
-                                                        _order!
-                                                            .client.address.id,
-                                                        _order!.shortCode,
-                                                        _order!.client.phone);
+                                                BlocProvider.of<AdressCubit>(context).updateCoords(
+                                                    coords,
+                                                    _order!.client.address.id,
+                                                    _order!.shortCode,
+                                                    _order!.client.phone);
                                               } else {
-                                                BlocProvider.of<OrderCubit>(
-                                                        context)
+                                                BlocProvider.of<OrderCubit>(context)
                                                     .updateOrder(order);
-                                                BlocProvider.of<AdressCubit>(
-                                                        context)
-                                                    .updateCoords(
-                                                        coords,
-                                                        order.client.address.id,
-                                                        order.shortCode,
-                                                        order.client.phone);
+                                                BlocProvider.of<AdressCubit>(context).updateCoords(
+                                                    coords,
+                                                    order.client.address.id,
+                                                    order.shortCode,
+                                                    order.client.phone);
                                               }
                                             },
                                             child: const Text(
-                                              'ПОЖАЛУЙСТА ПОДТВЕРДИТЕ ВРЕМЯ И АДРЕС ДОСТАВКИ',
+                                              'POR FAVOR, CONFIRME LA HORA DE ENTREGA Y LA DIRECCIÓN',
                                               textAlign: TextAlign.center,
                                               style: TextStyle(
                                                 fontSize: 18,
@@ -985,18 +849,62 @@ class _OrderPageState extends State<OrderPage> {
                                   ? const EdgeInsets.fromLTRB(12, 96, 12, 48)
                                   : const EdgeInsets.fromLTRB(12, 36, 12, 48),
                               child: ElevatedButton(
-                                onPressed: () {},
-                                child: const Text(
-                                  'LLAMA A MI  ACCESOR',
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
+                                onPressed: state.isAirstrikeLoading
+                                    ? () {}
+                                    : () {
+                                        showDialog<void>(
+                                          context: context,
+                                          barrierDismissible: false, // user must tap button!
+                                          builder: (BuildContext context) {
+                                            return AlertDialog(
+                                              title: const Text('Solicitar asistencia'),
+                                              content: SingleChildScrollView(
+                                                child: ListBody(
+                                                  children: const <Widget>[
+                                                    Text(
+                                                        '¿Seguro que quieres contactar con el operador?'),
+                                                  ],
+                                                ),
+                                              ),
+                                              actions: <Widget>[
+                                                TextButton(
+                                                  child: const Text('Sí'),
+                                                  onPressed: () {
+                                                    //TODO: добавить progress indicator пока идет отправка, добавить таймер для дизейблд кнопки
+                                                    BlocProvider.of<OrderCubit>(context)
+                                                        .createNotification(
+                                                      shortCode: order.shortCode,
+                                                      phone: order.client.phone,
+                                                      order: order,
+                                                      isConfirmed: state.isConfirmed,
+                                                    );
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                ),
+                                                ElevatedButton(
+                                                  child: const Text('No'),
+                                                  onPressed: () {
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                ),
+                                              ],
+                                            );
+                                          },
+                                        );
+                                      },
+                                child: state.isAirstrikeLoading
+                                    ? const CircularProgressIndicator(
+                                        color: Colors.white,
+                                      )
+                                    : const Text(
+                                        'LLAMA A MI  ACCESOR',
+                                        style: TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
                                 style: ElevatedButton.styleFrom(
-                                  minimumSize: Size(
-                                      MediaQuery.of(context).size.width - 20,
-                                      50),
+                                  minimumSize: Size(MediaQuery.of(context).size.width - 20, 50),
                                   primary: const Color(0XFF557EF1),
                                   onPrimary: Colors.white,
                                   side: const BorderSide(
@@ -1159,8 +1067,7 @@ class _PickedTimeDropDownState extends State<PickedTimeDropDown> {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       margin: EdgeInsets.only(top: 16, bottom: 24),
-      decoration: BoxDecoration(
-          border: Border.all(), borderRadius: BorderRadius.circular(4)),
+      decoration: BoxDecoration(border: Border.all(), borderRadius: BorderRadius.circular(4)),
       child: DropdownButton<String>(
         elevation: 12,
         underline: SizedBox(),
@@ -1172,8 +1079,7 @@ class _PickedTimeDropDownState extends State<PickedTimeDropDown> {
           });
         },
         items: timeRangeList
-            .map((timeRange) => DropdownMenuItem<String>(
-                value: timeRange, child: Text(timeRange)))
+            .map((timeRange) => DropdownMenuItem<String>(value: timeRange, child: Text(timeRange)))
             .toList(),
       ),
     );
