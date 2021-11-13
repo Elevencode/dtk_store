@@ -8,7 +8,7 @@ import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:open_route_service/open_route_service.dart';
 
-class SecondMapWidget extends StatelessWidget {
+class SecondMapWidget extends StatefulWidget {
   const SecondMapWidget({
     Key? key,
     required this.order,
@@ -17,23 +17,26 @@ class SecondMapWidget extends StatelessWidget {
   final Order order;
 
   @override
-  Widget build(BuildContext context) {
-    //? TEST
-    // BlocProvider.of<AdressCubit>(context).getDriver(
-    //   "CBX-772-675",
-    //   "+51986307179",
-    //   DateTime.parse("2021-10-16T17:00:54+00:00"),
-    // );
-    //! PROD
+  State<SecondMapWidget> createState() => _SecondMapWidgetState();
+}
+
+class _SecondMapWidgetState extends State<SecondMapWidget> {
+  @override
+  void initState() {
     BlocProvider.of<AdressCubit>(context).getDriver(
-      order.shortCode,
-      order.client.phone,
+      widget.order.shortCode,
+      widget.order.client.phone,
       DateTime.now(),
     );
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return BlocBuilder<AdressCubit, AdressState>(builder: (context, state) {
       if (state is AdressLoadSuccess) {
         return SecondMapWidgetBody(
-          order: order,
+          order: widget.order,
           driverCoords: LatLng(
             state.driver.lat,
             state.driver.lng,
@@ -41,9 +44,8 @@ class SecondMapWidget extends StatelessWidget {
         );
       }
       return SecondMapWidgetBody(
-        order: order,
+        order: widget.order,
       );
-      ;
     });
   }
 }

@@ -14,11 +14,12 @@ class AdressCubit extends Cubit<AdressState> {
   void getDriver(String shortCode, String phone, DateTime time) async {
     emit(AdressLoading());
     try {
-      final driverOrNull = await source.getDriver(shortCode, phone, time);
-      if (driverOrNull == null) {
-      } else {
+      final Driver? driver = await source.getDriver(shortCode, phone, time);
+      if (driver != null) {
         //TODO создать новый стейт для загрузки драйвера
-        emit(AdressLoadSuccess(driver: driverOrNull));
+        emit(AdressLoadSuccess(driver: driver));
+      } else {
+        //Todo если водитель Null?
       }
     } catch (e) {
       emit(AdressLoadFailure());
