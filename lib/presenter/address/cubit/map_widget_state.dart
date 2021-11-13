@@ -6,6 +6,9 @@ class AdressInitial implements AdressState {}
 
 class AdressLoading implements AdressState {}
 
-class AdressLoadSuccess implements AdressState {}
+class AdressLoadSuccess implements AdressState {
+  AdressLoadSuccess({required this.driver});
+  final Driver driver;
+}
 
 class AdressLoadFailure implements AdressState {}

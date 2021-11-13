@@ -37,7 +37,6 @@ abstract class Order implements _$Order {
     required List<OrderPosition> positions,
     required Client client,
     // Warehouse? warehouse,
-    // Driver? driver,
     // Shipment? shipment, //
   }) = _Order;
 

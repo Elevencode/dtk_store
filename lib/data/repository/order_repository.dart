@@ -1,16 +1,23 @@
 import 'package:dtk_store/data/datasource/order_datasource.dart';
 import 'package:dtk_store/model/address.dart';
 import 'package:dtk_store/model/client.dart';
+import 'package:dtk_store/model/driver.dart';
 import 'package:dtk_store/model/order.dart';
 
 abstract class OrderRepository {
   Future<Order> getOrder(String shortCode, String phone);
+  Future<Driver?> getDriver(String shortCode, String phone, DateTime time);
   Future<void> updateClient(
-      {required String shortCode, required String phone, required Client client});
+      {required String shortCode,
+      required String phone,
+      required Client client});
   // Future<Coordinates> createOrUpdateCoordinates(Address address);
   Future<void> updateAddress(
-      {required String shortCode, required String phone, required Address address});
-  Future<void> createNotificationOperator({required String shortCode, required String phone});
+      {required String shortCode,
+      required String phone,
+      required Address address});
+  Future<void> createNotificationOperator(
+      {required String shortCode, required String phone});
   Future<void> updateOrderTime(
       {required String shortCode,
       required String phone,
@@ -34,14 +41,25 @@ class OrderRepositoryImpl implements OrderRepository {
       await dataSource.getOrder(shortCode, phone);
 
   @override
+  Future<Driver?> getDriver(
+          String shortCode, String phone, DateTime time) async =>
+      await dataSource.getDriver(shortCode, phone, time);
+
+  @override
   Future<void> updateClient(
-          {required String shortCode, required String phone, required Client client}) async =>
-      await dataSource.updateClient(shortCode: shortCode, phone: phone, client: client);
+          {required String shortCode,
+          required String phone,
+          required Client client}) async =>
+      await dataSource.updateClient(
+          shortCode: shortCode, phone: phone, client: client);
 
   @override
   Future<void> updateAddress(
-          {required String shortCode, required String phone, required Address address}) async =>
-      await dataSource.updateAddress(shortCode: shortCode, phone: phone, address: address);
+          {required String shortCode,
+          required String phone,
+          required Address address}) async =>
+      await dataSource.updateAddress(
+          shortCode: shortCode, phone: phone, address: address);
 
   @override
   Future<void> createNotificationOperator(
@@ -69,10 +87,11 @@ class OrderRepositoryImpl implements OrderRepository {
       required double lng,
       required int addressId}) async {
     await dataSource.updateCoords(
-        shortCode: shortCode,
-        phone: phone,
-        lat: lat,
-        lng: lng,
-        addressId: addressId);
+      shortCode: shortCode,
+      phone: phone,
+      lat: lat,
+      lng: lng,
+      addressId: addressId,
+    );
   }
 }

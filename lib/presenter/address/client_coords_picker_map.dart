@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:dtk_store/model/address.dart';
+import 'package:dtk_store/model/driver.dart';
 import 'package:dtk_store/model/order.dart';
 import 'package:dtk_store/presenter/address/cubit/map_widget_cubit.dart';
 import 'package:dtk_store/presenter/order/cubit/order_cubit.dart';
@@ -12,9 +14,12 @@ class ClientCoordsPickerMap extends StatefulWidget {
   final Order order;
   final OrderCubit orderCubit;
   final void Function(LatLng coords) onCoordsChange;
-  
 
-  const ClientCoordsPickerMap({Key? key, required this.order, required this.orderCubit, required this.onCoordsChange})
+  const ClientCoordsPickerMap(
+      {Key? key,
+      required this.order,
+      required this.orderCubit,
+      required this.onCoordsChange})
       : super(key: key);
 
   @override
@@ -22,7 +27,6 @@ class ClientCoordsPickerMap extends StatefulWidget {
 }
 
 class _ClientCoordsPickerMapState extends State<ClientCoordsPickerMap> {
-
   Location location = Location();
   late bool _serviceEnabled;
   late PermissionStatus _permissionGranted;

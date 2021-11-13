@@ -8,7 +8,9 @@ class OrderLoadingState extends OrderState {}
 
 class OrderLoadSuccessState extends OrderState {
   OrderLoadSuccessState(
-      {required this.order, required this.isConfirmed, this.isAirstrikeLoading = false});
+      {required this.order,
+      required this.isConfirmed,
+      this.isAirstrikeLoading = false});
   final Order order;
   final bool isConfirmed;
   bool isAirstrikeLoading;

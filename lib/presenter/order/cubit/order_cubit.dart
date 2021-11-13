@@ -1,7 +1,7 @@
 import 'package:bloc/bloc.dart';
 
 import '../../../injection.dart';
-import '/../data/repository/order_repository.dart';
+import '../../../data/repository/order_repository.dart';
 import 'package:dtk_store/model/order.dart';
 
 part 'order_state.dart';
@@ -24,7 +24,8 @@ class OrderCubit extends Cubit<OrderState> {
     try {
       final result = await repository.getOrder(localShortCode, localPhone);
       order = result;
-      if (order.client.address.lat == null && order.client.address.lng == null) {
+      if (order.client.address.lat == null &&
+          order.client.address.lng == null) {
         emit(OrderLoadSuccessState(order: order, isConfirmed: false));
       } else {
         emit(OrderLoadSuccessState(order: order, isConfirmed: true));
@@ -53,14 +54,17 @@ class OrderCubit extends Cubit<OrderState> {
       required String phone,
       required Order order,
       required bool isConfirmed}) async {
-    emit(OrderLoadSuccessState(order: order, isConfirmed: isConfirmed, isAirstrikeLoading: true));
+    emit(OrderLoadSuccessState(
+        order: order, isConfirmed: isConfirmed, isAirstrikeLoading: true));
     try {
-      await repository.createNotificationOperator(shortCode: shortCode, phone: phone);
+      await repository.createNotificationOperator(
+          shortCode: shortCode, phone: phone);
 
       emit(AirstrikeSendSuccessState());
     } catch (e) {
       emit(AirstrikeSendFailureState());
     }
-    emit(OrderLoadSuccessState(order: order, isConfirmed: isConfirmed, isAirstrikeLoading: false));
+    emit(OrderLoadSuccessState(
+        order: order, isConfirmed: isConfirmed, isAirstrikeLoading: false));
   }
 }
