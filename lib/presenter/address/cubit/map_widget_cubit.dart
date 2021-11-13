@@ -24,10 +24,10 @@ class AdressCubit extends Cubit<AdressState> {
     }
   }
 
-  void updateAdress(Address address, String shortCode, String phone) {
+  void updateAdress(Address address, String shortCode, String phone) async {
     emit(AdressLoading());
     try {
-      source.updateAddress(
+      await source.updateAddress(
           shortCode: shortCode, phone: phone, address: address);
       // shortCode: '137', phone: '+555555975', address: address);
       getDriver(shortCode, phone, DateTime.now());
@@ -36,10 +36,10 @@ class AdressCubit extends Cubit<AdressState> {
     }
   }
 
-  void updateCoords(coords, addressId, String shortCode, String phone) {
+  void updateCoords(coords, addressId, String shortCode, String phone) async {
     emit(AdressLoading());
     try {
-      source.updateCoords(
+      await source.updateCoords(
           lat: coords.latitude,
           lng: coords.longitude,
           addressId: addressId,

@@ -9,14 +9,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
-// import 'package:google_maps_flutter_web/google_maps_flutter_web.dart';
 
-class MapWidget extends StatefulWidget {
+class ClientCoordsPickerMap extends StatefulWidget {
   final Order order;
   final OrderCubit orderCubit;
   final void Function(LatLng coords) onCoordsChange;
 
-  const MapWidget(
+  const ClientCoordsPickerMap(
       {Key? key,
       required this.order,
       required this.orderCubit,
@@ -24,26 +23,17 @@ class MapWidget extends StatefulWidget {
       : super(key: key);
 
   @override
-  State<MapWidget> createState() => _MapWidgetState();
+  State<ClientCoordsPickerMap> createState() => _ClientCoordsPickerMapState();
 }
 
-class _MapWidgetState extends State<MapWidget> {
-  // final Completer<GoogleMapController> _mapController = Completer();
-  // final Map<MarkerId, Marker> _markers = <MarkerId, Marker>{};
+class _ClientCoordsPickerMapState extends State<ClientCoordsPickerMap> {
   Location location = Location();
-
   late bool _serviceEnabled;
   late PermissionStatus _permissionGranted;
   LocationData? _locationData;
-
   final Completer<GoogleMapController> _completer = Completer();
   GoogleMapController? _controller;
-  LatLng? _driverCoords;
-
-  // int _markerIdCounter = 0;
-
   final List<Marker> _markers = [];
-
   late CameraPosition _initialCameraPosition;
 
   @override
@@ -97,12 +87,9 @@ class _MapWidgetState extends State<MapWidget> {
                   child: Stack(
                     children: [
                       GoogleMap(
-                        // scrollGesturesEnabled: false,
-                        // markers: Set<Marker>.of(_markers.values),
                         markers: _markers.toSet(),
                         mapType: MapType.normal,
                         initialCameraPosition: _initialCameraPosition,
-                        // onMapCreated: _onMapCreated,
                         onMapCreated: (controller) {
                           final marker = Marker(
                             markerId: MarkerId('0'),
@@ -115,7 +102,6 @@ class _MapWidgetState extends State<MapWidget> {
                           _controller = controller;
                         },
                         myLocationEnabled: true,
-                        // onCameraMove: ((_position) => _updatePosition(_position)),
                         onCameraMove: (CameraPosition position) {
                           FocusScope.of(context).unfocus();
                           setState(() {
@@ -133,39 +119,6 @@ class _MapWidgetState extends State<MapWidget> {
                           color: Colors.purple,
                         ),
                       ),
-                      // Positioned(
-                      //   bottom: 20,
-                      //   child: Padding(
-                      //     padding: const EdgeInsets.all(10),
-                      //     child: ElevatedButton(
-                      //       onPressed: () {
-                      //         final Address address = Address(
-                      //           id: widget.order.client.address.id,
-                      //           district: widget.order.client.address.district,
-                      //           city: widget.order.client.address.city,
-                      //           street: widget.order.client.address.street,
-                      //           country: widget.order.client.address.country,
-                      //           lat: _markers.first.position.latitude,
-                      //           lng: _markers.first.position.longitude,
-                      //         );
-                      //         BlocProvider.of<AdressCubit>(context)
-                      //             .updateAdress(address);
-                      //       },
-                      //       child: const Text(
-                      //         'CONFIRMAR LA\nUBICACION EXACTA',
-                      //         textAlign: TextAlign.center,
-                      //         style: TextStyle(
-                      //           fontSize: 15,
-                      //           fontWeight: FontWeight.bold,
-                      //         ),
-                      //       ),
-                      //       style: ElevatedButton.styleFrom(
-                      //         minimumSize: const Size(50, 70),
-                      //         primary: const Color(0XFF67C99C),
-                      //       ),
-                      //     ),
-                      //   ),
-                      // ),
                     ],
                   ),
                 ),
