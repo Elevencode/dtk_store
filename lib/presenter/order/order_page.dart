@@ -1,6 +1,7 @@
 import 'package:dtk_store/core/utils/get_time_range.dart';
 import 'package:dtk_store/presenter/address/client_coords_picker_map.dart';
 import 'package:dtk_store/presenter/address/cubit/map_widget_cubit.dart';
+import 'package:dtk_store/presenter/address/second_map_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -15,14 +16,50 @@ import '/presenter/order/modal_sheet/edit_address_modal.dart';
 
 import 'modal_sheet/cubit/modal_sheet_cubit.dart';
 
-class OrderPage extends StatefulWidget {
-  OrderPage({Key? key}) : super(key: key);
+class OrderPage extends StatelessWidget {
+  const OrderPage({Key? key}) : super(key: key);
 
   @override
-  State<OrderPage> createState() => _OrderPageState();
+  Widget build(BuildContext context) {
+    return BlocBuilder<OrderCubit, OrderState>(
+      builder: (context, state) {
+        if (state is OrderLoadingState) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        if (state is OrderLoadFailedState) {
+          //TODO: Сделать виджет ошибки
+          return Container();
+        }
+        if (state is OrderLoadSuccessState) {
+          return OrderPageBody(
+            order: state.order,
+            isConfirmed: state.isConfirmed,
+          );
+        } else {
+          //TODO: Сделать виджет ошибки
+          return Container();
+        }
+      },
+    );
+  }
 }
 
-class _OrderPageState extends State<OrderPage> {
+class OrderPageBody extends StatefulWidget {
+  const OrderPageBody({
+    Key? key,
+    required this.order,
+    required this.isConfirmed,
+  }) : super(key: key);
+
+  final Order order;
+  final bool isConfirmed;
+
+  @override
+  State<OrderPageBody> createState() => _OrderPageBodyState();
+}
+
+class _OrderPageBodyState extends State<OrderPageBody> {
   final ScrollController _positionsScrollContorller = ScrollController();
 
   final Map productImagePath = {
@@ -530,13 +567,18 @@ class _OrderPageState extends State<OrderPage> {
                                   create: (context) => AdressCubit(),
                                   child: Visibility(
                                     visible: _isMapVisible,
-                                    child: ClientCoordsPickerMap(
-                                      order: state.order,
-                                      orderCubit:
-                                          BlocProvider.of<OrderCubit>(context),
-                                      onCoordsChange: (newCoords) =>
-                                          coords = newCoords,
-                                    ),
+                                    child: widget.isConfirmed
+                                        ? SecondMapWidget(
+                                            order: widget.order,
+                                          )
+                                        : ClientCoordsPickerMap(
+                                            order: widget.order,
+                                            orderCubit:
+                                                BlocProvider.of<OrderCubit>(
+                                                    context),
+                                            onCoordsChange: (newCoords) =>
+                                                coords = newCoords,
+                                          ),
                                   ),
                                 ),
                               ),

@@ -17,6 +17,7 @@ class AdressCubit extends Cubit<AdressState> {
       final driverOrNull = await source.getDriver(shortCode, phone, time);
       if (driverOrNull == null) {
       } else {
+        //TODO создать новый стейт для загрузки драйвера
         emit(AdressLoadSuccess(driver: driverOrNull));
       }
     } catch (e) {

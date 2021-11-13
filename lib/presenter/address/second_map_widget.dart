@@ -40,7 +40,10 @@ class SecondMapWidget extends StatelessWidget {
           ),
         );
       }
-      return const Text("Driver not founded");
+      return SecondMapWidgetBody(
+        order: order,
+      );
+      ;
     });
   }
 }
@@ -49,11 +52,11 @@ class SecondMapWidgetBody extends StatefulWidget {
   const SecondMapWidgetBody({
     Key? key,
     required this.order,
-    required this.driverCoords,
+    this.driverCoords,
   }) : super(key: key);
 
   final Order order;
-  final LatLng driverCoords;
+  final LatLng? driverCoords;
 
   @override
   State<SecondMapWidgetBody> createState() => _SecondMapWidgetBodyState();
@@ -61,26 +64,16 @@ class SecondMapWidgetBody extends StatefulWidget {
 
 class _SecondMapWidgetBodyState extends State<SecondMapWidgetBody> {
   late LatLng _driverCoords;
+
   late LatLng _clientCoords;
 
-  final OpenRouteService _polylineClient =
-      OpenRouteService(apiKey: 'AIzaSyDK6a99pqYap3FeLbJ2m0rwnsGEb9qIpts');
-
   late GoogleMapController _mapController;
-
-  late List<Coordinate> _routeCoordinates;
 
   late BitmapDescriptor _driverIcon;
 
   late BitmapDescriptor _orderIcon;
 
   Set<Marker> _markers = {};
-
-  Set<Polyline> _polyline = {};
-
-  List<LatLng> _polylineCoords = [];
-
-  PolylinePoints _polylinePoints = PolylinePoints();
 
   @override
   void initState() {
@@ -97,7 +90,6 @@ class _SecondMapWidgetBodyState extends State<SecondMapWidgetBody> {
             children: [
               GoogleMap(
                 markers: _markers,
-                polylines: _polyline,
                 mapType: MapType.normal,
                 initialCameraPosition: CameraPosition(
                   target: LatLng(
@@ -118,24 +110,23 @@ class _SecondMapWidgetBodyState extends State<SecondMapWidgetBody> {
   Future<void> _init() async {
     _markers.clear();
 
-    _polyline.clear();
-
     _setupLocation();
 
-    // await _setPolylines();
     await _getMarkers();
   }
 
   Future<void> _getMarkers() async {
     setState(
       () {
-        _markers.add(
-          Marker(
-            markerId: MarkerId("$_driverCoords"),
-            position: _driverCoords,
-            icon: _driverIcon,
-          ),
-        );
+        if (widget.driverCoords != null) {
+          _markers.add(
+            Marker(
+              markerId: MarkerId("$_driverCoords"),
+              position: _driverCoords,
+              icon: _driverIcon,
+            ),
+          );
+        }
 
         _markers.add(
           Marker(
@@ -151,52 +142,13 @@ class _SecondMapWidgetBodyState extends State<SecondMapWidgetBody> {
     );
   }
 
-  // Future<bool> _updateMap() async {
-  // await Future.delayed(const Duration(milliseconds: 400));
-
-  // var controller = _mapController;
-
-  // var region = await controller.getVisibleRegion();
-  // if (region.southwest.latitude == 0.0) return false;
-
-  // LatLng _southwest;
-  // LatLng _northeast;
-
-  // final _clientLatLng = LatLng(
-  //   _clientCoords.latitude,
-  //   _clientCoords.longitude,
-  // );
-  // final _driverLatLng = LatLng(
-  //   _driverCoords.latitude,
-  //   _driverCoords.longitude,
-  // );
-
-  // if (_clientLatLng.latitude <= _driverLatLng.latitude) {
-  //   _southwest = _clientLatLng;
-  //   _northeast = _driverLatLng;
-  // } else {
-  //   _southwest = _driverLatLng;
-  //   _northeast = _clientLatLng;
-  // }
-
-  // CameraUpdate update = CameraUpdate.newLatLngBounds(
-  //   LatLngBounds(
-  //     southwest: _southwest,
-  //     northeast: _northeast,
-  //   ),
-  //   70,
-  // );
-
-  // controller.moveCamera(update);
-
-  // return true;
-  // }ƒ
-
   Future<void> _getIcons() async {
-    _driverIcon = await BitmapDescriptor.fromAssetImage(
-      const ImageConfiguration(size: Size(45, 45)),
-      "assets/images/driver-icon.png",
-    );
+    if (widget.driverCoords != null) {
+      _driverIcon = await BitmapDescriptor.fromAssetImage(
+        const ImageConfiguration(size: Size(45, 45)),
+        "assets/images/driver-icon.png",
+      );
+    }
 
     _orderIcon = await BitmapDescriptor.fromAssetImage(
       const ImageConfiguration(size: Size(45, 45)),
@@ -204,76 +156,14 @@ class _SecondMapWidgetBodyState extends State<SecondMapWidgetBody> {
     );
   }
 
-  Future<void> _setPolylines() async {
-    // _routeCoordinates = await _polylineClient.directionsRouteCoordsGet(
-    //   startCoordinate: Coordinate(
-    //     latitude: _driverCoords.latitude,
-    //     longitude: _driverCoords.longitude,
-    //   ),
-    //   endCoordinate: Coordinate(
-    //     latitude: _clientCoords.latitude,
-    //     longitude: _clientCoords.longitude,
-    //   ),
-    // );
-
-    // final List<LatLng> routePoints = _routeCoordinates
-    //     .map((coordinate) => LatLng(coordinate.latitude, coordinate.longitude))
-    //     .toList();
-
-    // setState(
-    //   () {
-    //     _polyline.add(
-    //       Polyline(
-    //         polylineId: const PolylineId('route'),
-    //         visible: true,
-    //         points: routePoints,
-    //         color: Colors.red,
-    //         width: 4,
-    //       ),
-    //     );
-    //   },
-    // );
-
-    // PolylineResult result = await _polylinePoints.getRouteBetweenCoordinates(
-    //   "AIzaSyDK6a99pqYap3FeLbJ2m0rwnsGEb9qIpts",
-    //   PointLatLng(
-    //     _driverCoords.latitude,
-    //     _driverCoords.longitude,
-    //   ),
-    //   PointLatLng(
-    //     _clientCoords.latitude,
-    //     _clientCoords.longitude,
-    //   ),
-    // );
-
-    // if (result.status == "OK") {
-    //   _polylineCoords.clear();
-
-    //   setState(
-    //     () {
-    //       _polyline = result.points.map(
-    //         (PointLatLng point) {
-    //           _polylineCoords.add(LatLng(point.latitude, point.longitude));
-
-    //           return Polyline(
-    //             width: 7,
-    //             polylineId: const PolylineId("polyline"),
-    //             points: _polylineCoords,
-    //             color: Theme.of(context).primaryColor,
-    //           );
-    //         },
-    //       ).toSet();
-    //     },
-    //   );
-    // }
-  }
-
   void _setupLocation() {
     if (widget.order.client.address.lat != null &&
         widget.order.client.address.lng != null) {
       setState(
         () {
-          _driverCoords = widget.driverCoords;
+          if (widget.driverCoords != null) {
+            _driverCoords = widget.driverCoords!;
+          }
 
           _clientCoords = LatLng(
             widget.order.client.address.lat!,
