@@ -18,30 +18,27 @@ class SecondMapWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    BlocProvider.of<AdressCubit>(context).getDriver(
-      "CBX-772-675",
-      "+51986307179",
-      DateTime.parse("2021-10-16T17:00:54+00:00"),
-    );
-
+    //? TEST
     // BlocProvider.of<AdressCubit>(context).getDriver(
-    //   order.shortCode,
-    //   order.client.phone,
-    //   order.plannedDate!,
+    //   "CBX-772-675",
+    //   "+51986307179",
+    //   DateTime.parse("2021-10-16T17:00:54+00:00"),
     // );
+    //! PROD
+    BlocProvider.of<AdressCubit>(context).getDriver(
+      order.shortCode,
+      order.client.phone,
+      DateTime.now(),
+    );
     return BlocBuilder<AdressCubit, AdressState>(builder: (context, state) {
-      print(state);
-
       if (state is AdressLoadSuccess) {
-        if (state.driver != null) {
-          return SecondMapWidgetBody(
-            order: order,
-            driverCoords: LatLng(
-              state.driver!.lat,
-              state.driver!.lng,
-            ),
-          );
-        }
+        return SecondMapWidgetBody(
+          order: order,
+          driverCoords: LatLng(
+            state.driver.lat,
+            state.driver.lng,
+          ),
+        );
       }
       return const Text("Driver not founded");
     });
@@ -271,7 +268,7 @@ class _SecondMapWidgetBodyState extends State<SecondMapWidgetBody> {
     // }
   }
 
-  void _setupLocation() async {
+  void _setupLocation() {
     if (widget.order.client.address.lat != null &&
         widget.order.client.address.lng != null) {
       setState(

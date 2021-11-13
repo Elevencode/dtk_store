@@ -12,12 +12,13 @@ class AdressCubit extends Cubit<AdressState> {
   OrderDataSource source = sl();
 
   void getDriver(String shortCode, String phone, DateTime time) async {
-    late Driver driver;
     emit(AdressLoading());
     try {
-      final result = await source.getDriver(shortCode, phone, time);
-      driver = result!;
-      emit(AdressLoadSuccess(driver: driver));
+      final driverOrNull = await source.getDriver(shortCode, phone, time);
+      if (driverOrNull == null) {
+      } else {
+        emit(AdressLoadSuccess(driver: driverOrNull));
+      }
     } catch (e) {
       emit(AdressLoadFailure());
     }
@@ -29,7 +30,7 @@ class AdressCubit extends Cubit<AdressState> {
       source.updateAddress(
           shortCode: shortCode, phone: phone, address: address);
       // shortCode: '137', phone: '+555555975', address: address);
-      emit(AdressLoadSuccess());
+      getDriver(shortCode, phone, DateTime.now());
     } catch (e) {
       emit(AdressLoadFailure());
     }
@@ -44,7 +45,7 @@ class AdressCubit extends Cubit<AdressState> {
           addressId: addressId,
           shortCode: shortCode,
           phone: phone);
-      emit(AdressLoadSuccess());
+      getDriver(shortCode, phone, DateTime.now());
     } catch (e) {
       emit(AdressLoadFailure());
     }

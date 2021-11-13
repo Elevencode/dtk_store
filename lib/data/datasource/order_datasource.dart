@@ -70,7 +70,7 @@ class OrderDataSourceImpl implements OrderDataSource {
       queryParameters: {
         'shortCode': shortCode,
         'phone': phone,
-        'time': time.toLocal().toIso8601String(),
+        'time': time.toUtc().toIso8601String(),
       },
     );
 
