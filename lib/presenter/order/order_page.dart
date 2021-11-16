@@ -783,22 +783,58 @@ class _OrderPageBodyState extends State<OrderPageBody> {
                                     //* Кнопка подтверждения координаты и времени
                                     ElevatedButton(
                                       onPressed: () {
-                                        // TODO: Заменить copyWith на что-то другое :0 Необходимо вытянуть координаты
-                                        BlocProvider.of<OrderCubit>(context).updateOrder(
-                                          _currentOrder.copyWith(
-                                            client: _currentOrder.client.copyWith(
-                                              address: _currentOrder.client.address.copyWith(
-                                                lat: coords.latitude,
-                                                lng: coords.longitude,
+                                        showDialog<void>(
+                                          context: context,
+                                          barrierDismissible: false, // user must tap button!
+                                          builder: (BuildContext context) {
+                                            return AlertDialog(
+                                              title: const Text('Confirmación de datos'),
+                                              content: SingleChildScrollView(
+                                                child: ListBody(
+                                                  children: const <Widget>[
+                                                    Text(
+                                                        '¿Está seguro de que desea verificar los datos?'),
+                                                  ],
+                                                ),
                                               ),
-                                            ),
-                                          ),
+                                              actions: <Widget>[
+                                                TextButton(
+                                                  child: const Text('Sí'),
+                                                  onPressed: () {
+                                                    //TODO: добавить progress indicator пока идет отправка, добавить таймер для дизейблд кнопки
+
+                                                    BlocProvider.of<OrderCubit>(context)
+                                                        .updateOrder(
+                                                      _currentOrder.copyWith(
+                                                        client: _currentOrder.client.copyWith(
+                                                          address:
+                                                              _currentOrder.client.address.copyWith(
+                                                            lat: coords.latitude,
+                                                            lng: coords.longitude,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    );
+                                                    BlocProvider.of<AdressCubit>(context)
+                                                        .updateCoords(
+                                                            coords,
+                                                            _currentOrder.client.address.id,
+                                                            _currentOrder.shortCode,
+                                                            _currentOrder.client.phone);
+
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                ),
+                                                ElevatedButton(
+                                                  child: const Text('No'),
+                                                  onPressed: () {
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                ),
+                                              ],
+                                            );
+                                          },
                                         );
-                                        BlocProvider.of<AdressCubit>(context).updateCoords(
-                                            coords,
-                                            _currentOrder.client.address.id,
-                                            _currentOrder.shortCode,
-                                            _currentOrder.client.phone);
                                       },
                                       child: const Text(
                                         'POR FAVOR, CONFIRME LA HORA DE ENTREGA Y LA DIRECCIÓN',
