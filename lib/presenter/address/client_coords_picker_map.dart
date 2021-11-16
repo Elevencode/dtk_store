@@ -16,10 +16,7 @@ class ClientCoordsPickerMap extends StatefulWidget {
   final void Function(LatLng coords) onCoordsChange;
 
   const ClientCoordsPickerMap(
-      {Key? key,
-      required this.order,
-      required this.orderCubit,
-      required this.onCoordsChange})
+      {Key? key, required this.order, required this.orderCubit, required this.onCoordsChange})
       : super(key: key);
 
   @override
@@ -38,8 +35,9 @@ class _ClientCoordsPickerMapState extends State<ClientCoordsPickerMap> {
 
   @override
   void initState() {
-    setupLocation();
     super.initState();
+
+    setupLocation();
   }
 
   void setupLocation() async {
@@ -75,55 +73,60 @@ class _ClientCoordsPickerMapState extends State<ClientCoordsPickerMap> {
         ? const Center(
             child: CircularProgressIndicator(),
           )
-        : BlocListener<AdressCubit, AdressState>(
-            listener: (context, state) {
-              if (state is AdressLoadSuccess) {
-                widget.orderCubit.getOrder();
+        : BlocBuilder<AdressCubit, AdressState>(
+            builder: (context, state) {
+              if (state is AdressLoadSuccess || state is AdressInitial) {
+                return Column(
+                  children: [
+                    Expanded(
+                      child: Stack(
+                        children: [
+                          GoogleMap(
+                            markers: _markers.toSet(),
+                            mapType: MapType.normal,
+                            initialCameraPosition: _initialCameraPosition,
+                            onMapCreated: (controller) {
+                              final marker = Marker(
+                                markerId: MarkerId('0'),
+                                position:
+                                    LatLng(_locationData!.latitude!, _locationData!.longitude!),
+                                visible: false,
+                              );
+                              _markers.add(marker);
+                              _completer.complete(controller);
+                              _controller = controller;
+                            },
+                            myLocationEnabled: true,
+                            onCameraMove: (CameraPosition position) {
+                              FocusScope.of(context).unfocus();
+                              setState(() {
+                                _markers.first =
+                                    _markers.first.copyWith(positionParam: position.target);
+                              });
+                              widget.onCoordsChange(position.target);
+                            },
+                          ),
+                          const Align(
+                            alignment: Alignment.center,
+                            child: Icon(
+                              Icons.add_location,
+                              size: 40.0,
+                              color: Colors.purple,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                );
+              }
+              if (state is AdressLoading) {
+                return const CircularProgressIndicator();
+              } else {
+                //TODO: Сделать виджет ошибки
+                return Container();
               }
             },
-            child: Column(
-              children: [
-                Expanded(
-                  child: Stack(
-                    children: [
-                      GoogleMap(
-                        markers: _markers.toSet(),
-                        mapType: MapType.normal,
-                        initialCameraPosition: _initialCameraPosition,
-                        onMapCreated: (controller) {
-                          final marker = Marker(
-                            markerId: MarkerId('0'),
-                            position: LatLng(_locationData!.latitude!,
-                                _locationData!.longitude!),
-                            visible: false,
-                          );
-                          _markers.add(marker);
-                          _completer.complete(controller);
-                          _controller = controller;
-                        },
-                        myLocationEnabled: true,
-                        onCameraMove: (CameraPosition position) {
-                          FocusScope.of(context).unfocus();
-                          setState(() {
-                            _markers.first = _markers.first
-                                .copyWith(positionParam: position.target);
-                          });
-                          widget.onCoordsChange(position.target);
-                        },
-                      ),
-                      const Align(
-                        alignment: Alignment.center,
-                        child: Icon(
-                          Icons.add_location,
-                          size: 40.0,
-                          color: Colors.purple,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
           );
   }
 }

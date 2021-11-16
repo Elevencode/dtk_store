@@ -159,8 +159,8 @@ class _SecondMapWidgetBodyState extends State<SecondMapWidgetBody> {
   }
 
   void _setupLocation() {
-    if (widget.order.client.address.lat != null &&
-        widget.order.client.address.lng != null) {
+    // TODO?: Возможно стоит убрать проверку, ибо вызывается виджет только после получения координат
+    if (widget.order.client.address.lat != null && widget.order.client.address.lng != null) {
       setState(
         () {
           if (widget.driverCoords != null) {
