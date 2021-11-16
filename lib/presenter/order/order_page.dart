@@ -817,26 +817,78 @@ class _OrderPageBodyState extends State<OrderPageBody> {
                                     //* Кнопка подтверждения координаты и времени
                                     ElevatedButton(
                                       onPressed: () {
-                                        if (_newOrder != null) {
-                                          BlocProvider.of<OrderCubit>(context)
-                                              .updateOrder(_newOrder);
-                                          BlocProvider.of<AdressCubit>(context)
-                                              .updateCoords(
-                                                  coords,
-                                                  _newOrder.client.address.id,
-                                                  _newOrder.shortCode,
-                                                  _newOrder.client.phone);
-                                        } else {
-                                          BlocProvider.of<OrderCubit>(context)
-                                              .updateOrder(_currentOrder);
-                                          BlocProvider.of<AdressCubit>(context)
-                                              .updateCoords(
-                                                  coords,
-                                                  _currentOrder
-                                                      .client.address.id,
-                                                  _currentOrder.shortCode,
-                                                  _currentOrder.client.phone);
-                                        }
+                                        showDialog<void>(
+                                          context: context,
+                                          barrierDismissible:
+                                              false, // user must tap button!
+                                          builder: (BuildContext context) {
+                                            return AlertDialog(
+                                              title: const Text(
+                                                  'Confirmación de datos'),
+                                              content: SingleChildScrollView(
+                                                child: ListBody(
+                                                  children: const <Widget>[
+                                                    Text(
+                                                        '¿Está seguro de que desea verificar los datos?'),
+                                                  ],
+                                                ),
+                                              ),
+                                              actions: <Widget>[
+                                                TextButton(
+                                                  child: const Text('Sí'),
+                                                  onPressed: () {
+                                                    //TODO: добавить progress indicator пока идет отправка, добавить таймер для дизейблд кнопки
+                                                    if (_newOrder != null) {
+                                                      BlocProvider.of<
+                                                                  OrderCubit>(
+                                                              context)
+                                                          .updateOrder(
+                                                              _newOrder);
+                                                      BlocProvider.of<
+                                                                  AdressCubit>(
+                                                              context)
+                                                          .updateCoords(
+                                                              coords,
+                                                              _newOrder.client
+                                                                  .address.id,
+                                                              _newOrder
+                                                                  .shortCode,
+                                                              _newOrder.client
+                                                                  .phone);
+                                                    } else {
+                                                      BlocProvider.of<
+                                                                  OrderCubit>(
+                                                              context)
+                                                          .updateOrder(
+                                                              _currentOrder);
+                                                      BlocProvider.of<
+                                                                  AdressCubit>(
+                                                              context)
+                                                          .updateCoords(
+                                                              coords,
+                                                              _currentOrder
+                                                                  .client
+                                                                  .address
+                                                                  .id,
+                                                              _currentOrder
+                                                                  .shortCode,
+                                                              _currentOrder
+                                                                  .client
+                                                                  .phone);
+                                                    }
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                ),
+                                                ElevatedButton(
+                                                  child: const Text('No'),
+                                                  onPressed: () {
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                ),
+                                              ],
+                                            );
+                                          },
+                                        );
                                       },
                                       child: const Text(
                                         'POR FAVOR, CONFIRME LA HORA DE ENTREGA Y LA DIRECCIÓN',
