@@ -21,13 +21,11 @@ void main() async {
   setPathUrlStrategy();
   debugger();
 
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  MyApp({Key? key}) : super(key: key);
-
-  late Widget _rootWidget;
+  const MyApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -48,36 +46,40 @@ class MyApp extends StatelessWidget {
         onGenerateRoute: (RouteSettings settings) {
           var name = settings.name;
 
-          ///Создаём [_rootWidget]
           if (name != null && name.contains('phone') && name.contains('code')) {
             var shortCode = Uri.parse(name).queryParameters['code'];
             var phone = Uri.parse(name).queryParameters['phone'];
 
-            _rootWidget = Builder(
-              builder: (context) {
-                BlocProvider.of<OrderCubit>(context)
-                  ..initOrderCubit(
-                    shortCode!,
-                    '+${phone!}',
-                  )
-                  ..getOrder();
-                return const OrderPage();
-              },
+            return PageRouteBuilder(
+              maintainState: true,
+              settings: RouteSettings(name: name),
+              pageBuilder: (context, animation, secondaryAnimation) => SafeArea(
+                child: Scaffold(
+                  body: Builder(
+                    builder: (context) {
+                      BlocProvider.of<OrderCubit>(context)
+                        ..initOrderCubit(
+                          shortCode!,
+                          '+${phone!}',
+                        )
+                        ..getOrder();
+                      return const OrderPage();
+                    },
+                  ),
+                ),
+              ),
             );
           } else {
-            _rootWidget = const Text('Phone and ShortCode is required');
-          }
-
-          ///Используем [_rootWidget]
-          return PageRouteBuilder(
-            maintainState: true,
-            settings: RouteSettings(name: name),
-            pageBuilder: (context, animation, secondaryAnimation) => SafeArea(
-              child: Scaffold(
-                body: _rootWidget,
+            return PageRouteBuilder(
+              maintainState: true,
+              settings: RouteSettings(name: name),
+              pageBuilder: (context, animation, secondaryAnimation) => const SafeArea(
+                child: Scaffold(
+                  body: Text('Phone and ShortCode is required'),
+                ),
               ),
-            ),
-          );
+            );
+          }
         },
         debugShowCheckedModeBanner: false,
       ),

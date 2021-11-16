@@ -29,8 +29,7 @@ class OrderPage extends StatelessWidget {
           ScaffoldMessenger.of(context).hideCurrentSnackBar();
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: const Text(
-                  'Un operador se pondrá en contacto con usted en breve'),
+              content: const Text('Un operador se pondrá en contacto con usted en breve'),
               backgroundColor: Colors.green.shade400,
               behavior: SnackBarBehavior.floating,
               padding: const EdgeInsets.all(8.0),
@@ -101,7 +100,6 @@ class OrderPageBody extends StatefulWidget {
 
 class _OrderPageBodyState extends State<OrderPageBody> {
   Location location = Location();
-  bool _serviceEnabled = false;
 
   final ScrollController _positionsScrollContorller = ScrollController();
 
@@ -124,7 +122,6 @@ class _OrderPageBodyState extends State<OrderPageBody> {
   void initState() {
     super.initState();
     // _serviceEnabled = false;
-    _checkLocationPermissions();
     _currentOrder = widget.order;
   }
 
@@ -174,8 +171,7 @@ class _OrderPageBodyState extends State<OrderPageBody> {
                                 ..._currentOrder.positions.asMap().entries.map(
                                   (item) {
                                     int itemIndex = item.key;
-                                    String productName =
-                                        item.value.product.name.toUpperCase();
+                                    String productName = item.value.product.name.toUpperCase();
                                     return Text(
                                       '$productName${itemIndex == _currentOrder.positions.length - 1 ? '' : ' + '}',
                                       style: const TextStyle(
@@ -261,8 +257,7 @@ class _OrderPageBodyState extends State<OrderPageBody> {
                                           clipBehavior: Clip.none,
                                           children: [
                                             Image.asset(
-                                              productImagePath[
-                                                  items.product.name],
+                                              productImagePath[items.product.name],
                                               width: 145,
                                               height: 240,
                                             ),
@@ -279,8 +274,7 @@ class _OrderPageBodyState extends State<OrderPageBody> {
                                                     color: Colors.white,
                                                   ),
                                                 ),
-                                                backgroundColor:
-                                                    const Color(0xFF73B488),
+                                                backgroundColor: const Color(0xFF73B488),
                                               ),
                                             )
                                           ],
@@ -300,9 +294,7 @@ class _OrderPageBodyState extends State<OrderPageBody> {
                     ],
                   ),
                 ),
-                const SizedBox(
-                    height:
-                        12), //TODO:(Жандос) Вернуть 40 когда вернем PromoBox
+                const SizedBox(height: 12), //TODO:(Жандос) Вернуть 40 когда вернем PromoBox
                 //Todo(Жандос) вынести в виджет Contact
                 Container(
                   padding: const EdgeInsets.all(16),
@@ -477,26 +469,22 @@ class _OrderPageBodyState extends State<OrderPageBody> {
                 //Todo(Жандос) вынести в виджет ContactButton
                 Container(
                   color: Colors.grey[200],
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
                   child: Column(
                     children: [
                       Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 16, vertical: 8.0),
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8.0),
                         child: widget.isConfirmed == false
                             ? ElevatedButton(
                                 onPressed: () {
                                   showModalBottomSheet(
                                     isScrollControlled: true,
                                     context: context,
-                                    builder: (context) =>
-                                        BlocProvider<ModalSheetCubit>(
+                                    builder: (context) => BlocProvider<ModalSheetCubit>(
                                       create: (context) => ModalSheetCubit(),
                                       child: EditAddressModalBottomSheet(
                                         order: _currentOrder,
-                                        orderCubit: BlocProvider.of<OrderCubit>(
-                                            context),
+                                        orderCubit: BlocProvider.of<OrderCubit>(context),
                                       ),
                                     ),
                                   );
@@ -510,12 +498,10 @@ class _OrderPageBodyState extends State<OrderPageBody> {
                                   ),
                                 ),
                                 style: ElevatedButton.styleFrom(
-                                  minimumSize: Size(
-                                      MediaQuery.of(context).size.width, 60),
+                                  minimumSize: Size(MediaQuery.of(context).size.width, 60),
                                   primary: Colors.white,
                                   onPrimary: const Color(0XFF557EF1),
-                                  side: const BorderSide(
-                                      color: Color(0XFF557EF1)),
+                                  side: const BorderSide(color: Color(0XFF557EF1)),
                                 ),
                               )
                             : Container(),
@@ -580,16 +566,11 @@ class _OrderPageBodyState extends State<OrderPageBody> {
                           child: Visibility(
                             visible: _isMapVisible,
                             child: widget.isConfirmed
-                                ? SecondMapWidget(
-                                    serviceEnabled: _serviceEnabled,
-                                    order: widget.order,
-                                  )
+                                ? SecondMapWidget(order: widget.order)
                                 : ClientCoordsPickerMap(
                                     order: widget.order,
-                                    orderCubit:
-                                        BlocProvider.of<OrderCubit>(context),
-                                    onCoordsChange: (newCoords) =>
-                                        coords = newCoords,
+                                    orderCubit: BlocProvider.of<OrderCubit>(context),
+                                    onCoordsChange: (newCoords) => coords = newCoords,
                                   ),
                           ),
                         ),
@@ -604,13 +585,11 @@ class _OrderPageBodyState extends State<OrderPageBody> {
                           ? Card(
                               margin: EdgeInsets.zero,
                               child: Padding(
-                                padding:
-                                    const EdgeInsets.fromLTRB(16, 16, 16, 8),
+                                padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
                                 child: Column(
                                   children: [
                                     Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                       children: const [
                                         Icon(Icons.arrow_downward),
                                         Text(
@@ -626,32 +605,27 @@ class _OrderPageBodyState extends State<OrderPageBody> {
                                     ),
                                     //TODO: (Жандос) сделать текст через getRangeTime после добавления функционала кнопки
                                     Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 24),
+                                      padding: const EdgeInsets.symmetric(vertical: 24),
                                       child: ElevatedButton(
                                         child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                           children: [
                                             Text(
                                               _currentTimeRange == ''
                                                   ? '${DateFormat.Hm().format(_currentOrder.plannedDate!)} - ${DateFormat.Hm().format(_currentOrder.plannedDate!.add(Duration(minutes: 90)))}'
                                                   : _currentTimeRange,
                                               style: const TextStyle(
-                                                  fontSize: 18,
-                                                  fontWeight: FontWeight.w600),
+                                                  fontSize: 18, fontWeight: FontWeight.w600),
                                             ),
                                             const Icon(Icons.arrow_drop_down)
                                           ],
                                         ),
                                         style: ElevatedButton.styleFrom(
                                           minimumSize: const Size(120, 50),
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 12),
+                                          padding: const EdgeInsets.symmetric(horizontal: 12),
                                           primary: Colors.white,
                                           onPrimary: const Color(0XFF557EF1),
-                                          side: const BorderSide(
-                                              color: Color(0XFF557EF1)),
+                                          side: const BorderSide(color: Color(0XFF557EF1)),
                                         ),
                                         onPressed: () {
                                           setState(() {
@@ -660,15 +634,12 @@ class _OrderPageBodyState extends State<OrderPageBody> {
                                           showCupertinoModalPopup(
                                             barrierDismissible: false,
                                             context: context,
-                                            builder: (BuildContext context) =>
-                                                CupertinoActionSheet(
+                                            builder: (BuildContext context) => CupertinoActionSheet(
                                               actions: <Widget>[
                                                 Container(
                                                   color: Colors.white,
-                                                  child:
-                                                      CupertinoActionSheetAction(
-                                                    child: const Text(
-                                                        '08:30 - 10:00'),
+                                                  child: CupertinoActionSheetAction(
+                                                    child: const Text('08:30 - 10:00'),
                                                     onPressed: () {
                                                       _onPressedCupertinoActionTimeItem(
                                                         '08:30 - 10:00',
@@ -680,8 +651,7 @@ class _OrderPageBodyState extends State<OrderPageBody> {
                                                 ),
                                                 Container(
                                                   color: Colors.white,
-                                                  child:
-                                                      CupertinoActionSheetAction(
+                                                  child: CupertinoActionSheetAction(
                                                     child: const Text(
                                                       '09:00 - 11:00',
                                                     ),
@@ -696,8 +666,7 @@ class _OrderPageBodyState extends State<OrderPageBody> {
                                                 ),
                                                 Container(
                                                   color: Colors.white,
-                                                  child:
-                                                      CupertinoActionSheetAction(
+                                                  child: CupertinoActionSheetAction(
                                                     child: const Text(
                                                       '10:00 - 12:00',
                                                     ),
@@ -712,8 +681,7 @@ class _OrderPageBodyState extends State<OrderPageBody> {
                                                 ),
                                                 Container(
                                                   color: Colors.white,
-                                                  child:
-                                                      CupertinoActionSheetAction(
+                                                  child: CupertinoActionSheetAction(
                                                     child: const Text(
                                                       '11:00 - 13:00',
                                                     ),
@@ -728,8 +696,7 @@ class _OrderPageBodyState extends State<OrderPageBody> {
                                                 ),
                                                 Container(
                                                   color: Colors.white,
-                                                  child:
-                                                      CupertinoActionSheetAction(
+                                                  child: CupertinoActionSheetAction(
                                                     child: const Text(
                                                       '12:00 - 14:00',
                                                     ),
@@ -744,8 +711,7 @@ class _OrderPageBodyState extends State<OrderPageBody> {
                                                 ),
                                                 Container(
                                                   color: Colors.white,
-                                                  child:
-                                                      CupertinoActionSheetAction(
+                                                  child: CupertinoActionSheetAction(
                                                     child: const Text(
                                                       '13:00 - 15:00',
                                                     ),
@@ -760,8 +726,7 @@ class _OrderPageBodyState extends State<OrderPageBody> {
                                                 ),
                                                 Container(
                                                   color: Colors.white,
-                                                  child:
-                                                      CupertinoActionSheetAction(
+                                                  child: CupertinoActionSheetAction(
                                                     child: const Text(
                                                       '14:00 - 16:00',
                                                     ),
@@ -776,8 +741,7 @@ class _OrderPageBodyState extends State<OrderPageBody> {
                                                 ),
                                                 Container(
                                                   color: Colors.white,
-                                                  child:
-                                                      CupertinoActionSheetAction(
+                                                  child: CupertinoActionSheetAction(
                                                     child: const Text(
                                                       '15:00 - 17:00',
                                                     ),
@@ -792,8 +756,7 @@ class _OrderPageBodyState extends State<OrderPageBody> {
                                                 ),
                                                 Container(
                                                   color: Colors.white,
-                                                  child:
-                                                      CupertinoActionSheetAction(
+                                                  child: CupertinoActionSheetAction(
                                                     child: const Text(
                                                       '16:00 - 18:00',
                                                     ),
@@ -807,8 +770,7 @@ class _OrderPageBodyState extends State<OrderPageBody> {
                                                   ),
                                                 ),
                                               ],
-                                              cancelButton:
-                                                  CupertinoActionSheetAction(
+                                              cancelButton: CupertinoActionSheetAction(
                                                 child: const Text('Cancel'),
                                                 isDefaultAction: true,
                                                 onPressed: () {
@@ -829,22 +791,19 @@ class _OrderPageBodyState extends State<OrderPageBody> {
                                         if (_newOrder != null) {
                                           BlocProvider.of<OrderCubit>(context)
                                               .updateOrder(_newOrder);
-                                          BlocProvider.of<AddressCubit>(context)
-                                              .updateCoords(
-                                                  coords,
-                                                  _newOrder.client.address.id,
-                                                  _newOrder.shortCode,
-                                                  _newOrder.client.phone);
+                                          BlocProvider.of<AddressCubit>(context).updateCoords(
+                                              coords,
+                                              _newOrder.client.address.id,
+                                              _newOrder.shortCode,
+                                              _newOrder.client.phone);
                                         } else {
                                           BlocProvider.of<OrderCubit>(context)
                                               .updateOrder(_currentOrder);
-                                          BlocProvider.of<AddressCubit>(context)
-                                              .updateCoords(
-                                                  coords,
-                                                  _currentOrder
-                                                      .client.address.id,
-                                                  _currentOrder.shortCode,
-                                                  _currentOrder.client.phone);
+                                          BlocProvider.of<AddressCubit>(context).updateCoords(
+                                              coords,
+                                              _currentOrder.client.address.id,
+                                              _currentOrder.shortCode,
+                                              _currentOrder.client.phone);
                                         }
                                       },
                                       child: const Text(
@@ -876,12 +835,10 @@ class _OrderPageBodyState extends State<OrderPageBody> {
                               : () {
                                   showDialog<void>(
                                     context: context,
-                                    barrierDismissible:
-                                        false, // user must tap button!
+                                    barrierDismissible: false, // user must tap button!
                                     builder: (BuildContext context) {
                                       return AlertDialog(
-                                        title:
-                                            const Text('Solicitar asistencia'),
+                                        title: const Text('Solicitar asistencia'),
                                         content: SingleChildScrollView(
                                           child: ListBody(
                                             children: const <Widget>[
@@ -895,13 +852,10 @@ class _OrderPageBodyState extends State<OrderPageBody> {
                                             child: const Text('Sí'),
                                             onPressed: () {
                                               //TODO: добавить progress indicator пока идет отправка, добавить таймер для дизейблд кнопки
-                                              BlocProvider.of<OrderCubit>(
-                                                      context)
+                                              BlocProvider.of<OrderCubit>(context)
                                                   .createNotification(
-                                                shortCode:
-                                                    _currentOrder.shortCode,
-                                                phone:
-                                                    _currentOrder.client.phone,
+                                                shortCode: _currentOrder.shortCode,
+                                                phone: _currentOrder.client.phone,
                                                 order: _currentOrder,
                                                 isConfirmed: widget.isConfirmed,
                                               );
@@ -931,8 +885,7 @@ class _OrderPageBodyState extends State<OrderPageBody> {
                                   ),
                                 ),
                           style: ElevatedButton.styleFrom(
-                            minimumSize: Size(
-                                MediaQuery.of(context).size.width - 20, 50),
+                            minimumSize: Size(MediaQuery.of(context).size.width - 20, 50),
                             primary: const Color(0XFF557EF1),
                             onPrimary: Colors.white,
                             side: const BorderSide(
@@ -951,56 +904,6 @@ class _OrderPageBodyState extends State<OrderPageBody> {
         ),
       ),
     );
-  }
-
-  void _checkLocationPermissions() async {
-    bool serviceEnabled;
-    LocationPermission permission;
-
-    serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      Future.error("Location service is disabled");
-    }
-
-    permission = await Geolocator.checkPermission();
-    print(permission);
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
-        setState(() => _serviceEnabled = false);
-      } else if (permission == LocationPermission.deniedForever) {
-        showDialog(
-          context: context,
-          builder: (_) => AlertDialog(
-            title: const Text("Geoposition permission error"),
-            content: SizedBox(
-              height: 160,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: const [
-                  Text(
-                    """Has prohibido el acceso a tu ubicación para siempre.\n
-Es necesario para identificar su ubicación y entregar el producto a la dirección correcta lo antes posible.\n
-Para continuar, habilite el seguimiento de ubicación en la configuración de su navegador.""",
-                  ),
-                ],
-              ),
-            ),
-            actions: [
-              OutlinedButton(
-                onPressed: () {
-                  setState(() => _serviceEnabled = false);
-                  Navigator.pop(context);
-                },
-                child: const Text("Okey"),
-              ),
-            ],
-          ),
-        );
-      } else if (permission == LocationPermission.always) {
-        setState(() => _serviceEnabled = true);
-      }
-    }
   }
 
   void _onPressedCupertinoActionTimeItem(
