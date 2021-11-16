@@ -7,9 +7,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
+import 'package:location/location.dart';
 
 import '/presenter/order/cubit/order_cubit.dart';
 import '/presenter/order/modal_sheet/edit_address_modal.dart';
@@ -98,6 +100,9 @@ class OrderPageBody extends StatefulWidget {
 }
 
 class _OrderPageBodyState extends State<OrderPageBody> {
+  Location location = Location();
+  bool _serviceEnabled = false;
+
   final ScrollController _positionsScrollContorller = ScrollController();
 
   final Map productImagePath = {
@@ -117,8 +122,10 @@ class _OrderPageBodyState extends State<OrderPageBody> {
 
   @override
   void initState() {
-    _currentOrder = widget.order;
     super.initState();
+    // _serviceEnabled = false;
+    _checkLocationPermissions();
+    _currentOrder = widget.order;
   }
 
   @override
@@ -527,7 +534,7 @@ class _OrderPageBodyState extends State<OrderPageBody> {
                           ? Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Text(
+                                const Text(
                                   'TU PEDIDO ESTA\nEN CAMINO',
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
@@ -538,7 +545,7 @@ class _OrderPageBodyState extends State<OrderPageBody> {
                                 Text(
                                   getTimeRange(_currentOrder.plannedDate!,
                                       _currentOrder.plannedDateDuration!),
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                     fontSize: 24,
                                     fontWeight: FontWeight.bold,
                                     color: Colors.green,
@@ -549,7 +556,7 @@ class _OrderPageBodyState extends State<OrderPageBody> {
                           // Заголовок карты Выбора координаты клиента
                           : Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
+                              children: const [
                                 Icon(Icons.arrow_downward),
                                 Text(
                                   'POR FAVOR AYUDANOS A ENCONTRAR\nTU UBICACION EXACTA',
@@ -563,7 +570,8 @@ class _OrderPageBodyState extends State<OrderPageBody> {
                               ],
                             ),
                       const SizedBox(height: 12),
-                      Container(
+
+                      SizedBox(
                         width: 480,
                         height: 400,
                         child: Center(
@@ -573,6 +581,7 @@ class _OrderPageBodyState extends State<OrderPageBody> {
                             visible: _isMapVisible,
                             child: widget.isConfirmed
                                 ? SecondMapWidget(
+                                    serviceEnabled: _serviceEnabled,
                                     order: widget.order,
                                   )
                                 : ClientCoordsPickerMap(
@@ -820,7 +829,7 @@ class _OrderPageBodyState extends State<OrderPageBody> {
                                         if (_newOrder != null) {
                                           BlocProvider.of<OrderCubit>(context)
                                               .updateOrder(_newOrder);
-                                          BlocProvider.of<AdressCubit>(context)
+                                          BlocProvider.of<AddressCubit>(context)
                                               .updateCoords(
                                                   coords,
                                                   _newOrder.client.address.id,
@@ -829,7 +838,7 @@ class _OrderPageBodyState extends State<OrderPageBody> {
                                         } else {
                                           BlocProvider.of<OrderCubit>(context)
                                               .updateOrder(_currentOrder);
-                                          BlocProvider.of<AdressCubit>(context)
+                                          BlocProvider.of<AddressCubit>(context)
                                               .updateCoords(
                                                   coords,
                                                   _currentOrder
@@ -942,6 +951,56 @@ class _OrderPageBodyState extends State<OrderPageBody> {
         ),
       ),
     );
+  }
+
+  void _checkLocationPermissions() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      Future.error("Location service is disabled");
+    }
+
+    permission = await Geolocator.checkPermission();
+    print(permission);
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        setState(() => _serviceEnabled = false);
+      } else if (permission == LocationPermission.deniedForever) {
+        showDialog(
+          context: context,
+          builder: (_) => AlertDialog(
+            title: const Text("Geoposition permission error"),
+            content: SizedBox(
+              height: 160,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: const [
+                  Text(
+                    """Has prohibido el acceso a tu ubicación para siempre.\n
+Es necesario para identificar su ubicación y entregar el producto a la dirección correcta lo antes posible.\n
+Para continuar, habilite el seguimiento de ubicación en la configuración de su navegador.""",
+                  ),
+                ],
+              ),
+            ),
+            actions: [
+              OutlinedButton(
+                onPressed: () {
+                  setState(() => _serviceEnabled = false);
+                  Navigator.pop(context);
+                },
+                child: const Text("Okey"),
+              ),
+            ],
+          ),
+        );
+      } else if (permission == LocationPermission.always) {
+        setState(() => _serviceEnabled = true);
+      }
+    }
   }
 
   void _onPressedCupertinoActionTimeItem(

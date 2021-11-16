@@ -34,9 +34,9 @@ class _DriverCoordsMapState extends State<DriverCoordsMap> {
         target: LatLng(
             widget.order.client.address.lat!, widget.order.client.address.lng!),
         zoom: 17.0);
-    return BlocListener<AdressCubit, AdressState>(
+    return BlocListener<AddressCubit, AddressState>(
       listener: (context, state) {
-        if (state is AdressLoadSuccess) {
+        if (state is AddressLoadSuccess) {
           widget.orderCubit.getOrder();
         }
       },

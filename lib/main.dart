@@ -36,8 +36,8 @@ class MyApp extends StatelessWidget {
         BlocProvider<OrderCubit>(
           create: (BuildContext context) => sl<OrderCubit>(),
         ),
-        BlocProvider<AdressCubit>(
-          create: (context) => AdressCubit(),
+        BlocProvider<AddressCubit>(
+          create: (context) => AddressCubit(),
         ),
         BlocProvider<ModalSheetCubit>(
           create: (context) => ModalSheetCubit(),
@@ -61,8 +61,7 @@ class MyApp extends StatelessWidget {
                     '+${phone!}',
                   )
                   ..getOrder();
-
-                return OrderPage();
+                return const OrderPage();
               },
             );
           } else {

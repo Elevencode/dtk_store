@@ -1,7 +1,5 @@
 import 'dart:async';
 
-import 'package:dtk_store/model/address.dart';
-import 'package:dtk_store/model/driver.dart';
 import 'package:dtk_store/model/order.dart';
 import 'package:dtk_store/presenter/address/cubit/map_widget_cubit.dart';
 import 'package:dtk_store/presenter/order/cubit/order_cubit.dart';
@@ -43,22 +41,6 @@ class _ClientCoordsPickerMapState extends State<ClientCoordsPickerMap> {
   }
 
   void setupLocation() async {
-    _serviceEnabled = await location.serviceEnabled();
-    if (!_serviceEnabled) {
-      _serviceEnabled = await location.requestService();
-      if (!_serviceEnabled) {
-        return;
-      }
-    }
-
-    _permissionGranted = await location.hasPermission();
-    if (_permissionGranted == PermissionStatus.denied) {
-      _permissionGranted = await location.requestPermission();
-      if (_permissionGranted != PermissionStatus.granted) {
-        return;
-      }
-    }
-
     _locationData = await location.getLocation();
     _initialCameraPosition = CameraPosition(
       target: LatLng(_locationData!.latitude!, _locationData!.longitude!),
@@ -75,9 +57,9 @@ class _ClientCoordsPickerMapState extends State<ClientCoordsPickerMap> {
         ? const Center(
             child: CircularProgressIndicator(),
           )
-        : BlocListener<AdressCubit, AdressState>(
+        : BlocListener<AddressCubit, AddressState>(
             listener: (context, state) {
-              if (state is AdressLoadSuccess) {
+              if (state is AddressLoadSuccess) {
                 widget.orderCubit.getOrder();
               }
             },

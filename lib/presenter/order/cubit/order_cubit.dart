@@ -1,4 +1,5 @@
 import 'package:bloc/bloc.dart';
+import 'package:geolocator/geolocator.dart';
 
 import '../../../injection.dart';
 import '../../../data/repository/order_repository.dart';
