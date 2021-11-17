@@ -49,7 +49,6 @@ class MyApp extends StatelessWidget {
           if (name != null && name.contains('phone') && name.contains('code')) {
             var shortCode = Uri.parse(name).queryParameters['code'];
             var phone = Uri.parse(name).queryParameters['phone'];
-
             return PageRouteBuilder(
               maintainState: true,
               settings: RouteSettings(name: name),
@@ -73,7 +72,8 @@ class MyApp extends StatelessWidget {
             return PageRouteBuilder(
               maintainState: true,
               settings: RouteSettings(name: name),
-              pageBuilder: (context, animation, secondaryAnimation) => const SafeArea(
+              pageBuilder: (context, animation, secondaryAnimation) =>
+                  const SafeArea(
                 child: Scaffold(
                   body: Text('Phone and ShortCode is required'),
                 ),
