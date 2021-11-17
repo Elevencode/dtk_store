@@ -53,10 +53,7 @@ class _ClientCoordsPickerMapState extends State<ClientCoordsPickerMap> {
                 myLocationEnabled: false,
                 onMapCreated: _onMapCreated,
                 onCameraMove: (position) => _position = position,
-                onCameraIdle: () {
-                  print(_position.target);
-                  widget.onCoordsChange(_position.target);
-                },
+                onCameraIdle: () => widget.onCoordsChange(_position.target),
               ),
               Align(
                 alignment: Alignment.centerRight,
@@ -71,7 +68,7 @@ class _ClientCoordsPickerMapState extends State<ClientCoordsPickerMap> {
                     ),
                     onPressed: _serviceEnabled
                         ? _setCurrentCoords
-                        : _checkLocationPermissions,
+                        : _requestPermissions,
                   ),
                 ),
               ),
@@ -87,6 +84,28 @@ class _ClientCoordsPickerMapState extends State<ClientCoordsPickerMap> {
           ),
         ),
       ],
+    );
+  }
+
+  void _requestPermissions() {
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: const Text("Geolocalización deshabilitada"),
+        content: const Text(
+          "Para acceder a su ubicación actual, permita el acceso a la geolocalización",
+        ),
+        actions: [
+          OutlinedButton(
+            onPressed: () {
+              _checkLocationPermissions();
+
+              Navigator.pop(context);
+            },
+            child: const Text("Solicitar permisos"),
+          ),
+        ],
+      ),
     );
   }
 
@@ -148,6 +167,7 @@ class _ClientCoordsPickerMapState extends State<ClientCoordsPickerMap> {
 
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
+
       if (permission == LocationPermission.always ||
           permission == LocationPermission.whileInUse) {
         setState(() => _serviceEnabled = true);
