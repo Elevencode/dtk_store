@@ -581,7 +581,7 @@ class _OrderPageBodyState extends State<OrderPageBody> {
                                     orderCubit:
                                         BlocProvider.of<OrderCubit>(context),
                                     onCoordsChange: (newCoords) =>
-                                        setState(() => coords = newCoords),
+                                        coords = newCoords,
                                   ),
                           ),
                         ),
@@ -823,20 +823,21 @@ class _OrderPageBodyState extends State<OrderPageBody> {
                                               .updateOrder(_newOrder);
                                           BlocProvider.of<AddressCubit>(context)
                                               .updateCoords(
-                                                  coords,
-                                                  _newOrder.client.address.id,
-                                                  _newOrder.shortCode,
-                                                  _newOrder.client.phone);
+                                            coords,
+                                            _newOrder.client.address.id,
+                                            _newOrder.shortCode,
+                                            _newOrder.client.phone,
+                                          );
                                         } else {
                                           BlocProvider.of<OrderCubit>(context)
                                               .updateOrder(_currentOrder);
                                           BlocProvider.of<AddressCubit>(context)
                                               .updateCoords(
-                                                  coords,
-                                                  _currentOrder
-                                                      .client.address.id,
-                                                  _currentOrder.shortCode,
-                                                  _currentOrder.client.phone);
+                                            coords,
+                                            _currentOrder.client.address.id,
+                                            _currentOrder.shortCode,
+                                            _currentOrder.client.phone,
+                                          );
                                         }
                                       },
                                       child: const Text(

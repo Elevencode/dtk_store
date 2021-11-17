@@ -88,8 +88,10 @@ class _SecondMapWidgetBodyState extends State<SecondMapWidgetBody> {
             children: [
               GoogleMap(
                 markers: _markers,
-                myLocationEnabled: false,
                 mapType: MapType.normal,
+                scrollGesturesEnabled: false,
+                tiltGesturesEnabled: false,
+                rotateGesturesEnabled: false,
                 initialCameraPosition: CameraPosition(
                   target: LatLng(
                     widget.order.client.address.lat!,
@@ -195,9 +197,6 @@ class _SecondMapWidgetBodyState extends State<SecondMapWidgetBody> {
     }
   }
 
-  void _onMapCreated(GoogleMapController controller) {
-    _mapController = controller;
-
-    // _updateMap();
-  }
+  void _onMapCreated(GoogleMapController controller) =>
+      _mapController = controller;
 }
