@@ -29,8 +29,7 @@ class AddressCubit extends Cubit<AddressState> {
   void updateAddress(Address address, String shortCode, String phone) async {
     emit(AddressLoading());
     try {
-      await source.updateAddress(
-          shortCode: shortCode, phone: phone, address: address);
+      await source.updateAddress(shortCode: shortCode, phone: phone, address: address);
       // shortCode: '137', phone: '+555555975', address: address);
       getDriver(shortCode, phone, DateTime.now());
     } catch (e) {

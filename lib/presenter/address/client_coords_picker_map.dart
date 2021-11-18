@@ -165,7 +165,7 @@ class _ClientCoordsPickerMapState extends State<ClientCoordsPickerMap> {
         Navigator.pop(context);
       },
     );
-
+    
     if (deniedForever) {
       content = "Has prohibido el acceso a tu ubicación para siempre. "
           "Es necesario para identificar su ubicación y entregar "
@@ -203,7 +203,6 @@ class _ClientCoordsPickerMapState extends State<ClientCoordsPickerMap> {
   }
 
   void _setCurrentCoords() async {
-    {
       var locationData = await Geolocator.getCurrentPosition();
 
       _mapController.moveCamera(
@@ -222,7 +221,6 @@ class _ClientCoordsPickerMapState extends State<ClientCoordsPickerMap> {
           locationData.longitude,
         ),
       );
-    }
   }
 
   void _setDistrictCameraPosition() async {
