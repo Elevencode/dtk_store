@@ -1,10 +1,13 @@
 import 'package:dtk_store/model/order.dart';
 import 'package:dtk_store/presenter/order/cubit/order_cubit.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_maps_webservice/places.dart'
     show GoogleMapsPlaces, PlacesSearchResponse;
+import 'package:url_launcher/url_launcher.dart';
 
 class ClientCoordsPickerMap extends StatefulWidget {
   const ClientCoordsPickerMap({
@@ -22,6 +25,12 @@ class ClientCoordsPickerMap extends StatefulWidget {
   State<ClientCoordsPickerMap> createState() => _ClientCoordsPickerMapState();
 }
 
+enum ClientLocationPermissions {
+  allowed,
+  denied,
+  deniedForever,
+}
+
 class _ClientCoordsPickerMapState extends State<ClientCoordsPickerMap> {
   late GoogleMapController _mapController;
 
@@ -30,7 +39,8 @@ class _ClientCoordsPickerMapState extends State<ClientCoordsPickerMap> {
     zoom: 17.0,
   );
 
-  bool _serviceEnabled = false;
+  ClientLocationPermissions _locationPermission =
+      ClientLocationPermissions.denied;
 
   late CameraPosition _position;
 
@@ -56,19 +66,17 @@ class _ClientCoordsPickerMapState extends State<ClientCoordsPickerMap> {
                 onCameraIdle: () => widget.onCoordsChange(_position.target),
               ),
               Align(
-                alignment: Alignment.centerRight,
-                child: CircleAvatar(
-                  radius: 25,
-                  backgroundColor: Colors.orange[400],
-                  child: IconButton(
-                    splashRadius: 1,
-                    icon: const Icon(
-                      Icons.location_searching,
-                      color: Colors.white,
+                alignment: const Alignment(1, .3),
+                child: Padding(
+                  padding: const EdgeInsets.only(right: 6),
+                  child: SizedBox(
+                    width: 48,
+                    height: 48,
+                    child: FloatingActionButton(
+                      onPressed: _onCurrentLocationButtonPressed,
+                      backgroundColor: Colors.white,
+                      child: _buildCurrentLocationIcon(),
                     ),
-                    onPressed: _serviceEnabled
-                        ? _setCurrentCoords
-                        : _requestPermissions,
                   ),
                 ),
               ),
@@ -87,30 +95,115 @@ class _ClientCoordsPickerMapState extends State<ClientCoordsPickerMap> {
     );
   }
 
-  void _requestPermissions() {
+  _onCurrentLocationButtonPressed() {
+    switch (_locationPermission) {
+      case ClientLocationPermissions.allowed:
+        _setCurrentCoords();
+        break;
+
+      case ClientLocationPermissions.denied:
+        _requestPermissions();
+        break;
+
+      case ClientLocationPermissions.deniedForever:
+        _requestPermissions(true);
+        break;
+    }
+  }
+
+  _buildCurrentLocationIcon() {
+    switch (_locationPermission) {
+      case ClientLocationPermissions.allowed:
+        return Icon(
+          Icons.my_location,
+          color: Theme.of(context).primaryColorDark,
+        );
+
+      case ClientLocationPermissions.denied:
+        return Stack(
+          children: const [
+            Icon(
+              Icons.location_searching,
+              color: Colors.red,
+            ),
+            Padding(
+              padding: EdgeInsets.all(1.0),
+              child: Icon(
+                Icons.help_rounded,
+                size: 22,
+                color: Colors.red,
+              ),
+            ),
+          ],
+        );
+
+      case ClientLocationPermissions.deniedForever:
+        return const Icon(
+          Icons.location_disabled,
+          color: Colors.red,
+        );
+    }
+  }
+
+  void _requestPermissions([bool deniedForever = false]) {
+    var content = "Para acceder a su ubicación actual, "
+        "permita el acceso a la geolocalización";
+
+    var contentLink = InkWell(
+      child: Text(
+        "https://support.google.com/chrome/answer/142065?hl=es-419",
+        style: TextStyle(
+          color: Colors.lightBlue[300],
+          decoration: TextDecoration.underline,
+        ),
+      ),
+      onTap: () {
+        launch(
+          "https://support.google.com/chrome/answer/142065?hl=es-419",
+        );
+
+        Navigator.pop(context);
+      },
+    );
+
+    if (deniedForever) {
+      content = "Has prohibido el acceso a tu ubicación para siempre. "
+          "Es necesario para identificar su ubicación y entregar "
+          "el producto a la dirección correcta lo antes posible. "
+          "Para continuar, habilite el seguimiento de "
+          "ubicación en la configuración de su navegador.\n";
+    }
+
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
         title: const Text("Geolocalización deshabilitada"),
-        content: const Text(
-          "Para acceder a su ubicación actual, permita el acceso a la geolocalización",
-        ),
-        actions: [
-          OutlinedButton(
-            onPressed: () {
-              _checkLocationPermissions();
-
-              Navigator.pop(context);
-            },
-            child: const Text("Solicitar permisos"),
-          ),
-        ],
+        content: !deniedForever
+            ? Text(content)
+            : SizedBox(
+                height: 200,
+                child: Column(children: [
+                  Text(content),
+                  contentLink,
+                ]),
+              ),
+        actions: deniedForever
+            ? null
+            : [
+                OutlinedButton(
+                  onPressed: () {
+                    _checkLocationPermissions();
+                    Navigator.pop(context);
+                  },
+                  child: const Text("Solicitar permisos"),
+                ),
+              ],
       ),
     );
   }
 
   void _setCurrentCoords() async {
-    if (_serviceEnabled) {
+    {
       var locationData = await Geolocator.getCurrentPosition();
 
       _mapController.moveCamera(
@@ -155,25 +248,43 @@ class _ClientCoordsPickerMapState extends State<ClientCoordsPickerMap> {
   }
 
   void _checkLocationPermissions() async {
-    bool serviceEnabled;
     LocationPermission permission;
-
-    serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      Future.error("Location service is disabled");
-    }
 
     permission = await Geolocator.checkPermission();
 
+    //* Проверяем если получение местоположения запрещено сейчас,
+    //* то запрашиваем разрешение.
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
 
+      //* Пользователь дал разрешение.
       if (permission == LocationPermission.always ||
           permission == LocationPermission.whileInUse) {
-        setState(() => _serviceEnabled = true);
+        setState(
+          () {
+            _locationPermission = ClientLocationPermissions.allowed;
+            _setCurrentCoords();
+          },
+        );
       }
-    } else {
-      setState(() => _serviceEnabled = true);
+
+      //* Пользователь запретил навсегда.
+      else if (permission == LocationPermission.deniedForever) {
+        setState(
+          () => _locationPermission = ClientLocationPermissions.deniedForever,
+        );
+      }
+    }
+
+    //* Запрещено получение геолокации по умолчанию.
+    else if (permission == LocationPermission.deniedForever) {
+      setState(
+          () => _locationPermission = ClientLocationPermissions.deniedForever);
+    }
+
+    //* Разрешено по умолчанию.
+    else {
+      setState(() => _locationPermission = ClientLocationPermissions.allowed);
     }
   }
 
