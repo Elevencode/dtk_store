@@ -6,39 +6,39 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 part 'map_widget_state.dart';
 
-class AdressCubit extends Cubit<AdressState> {
-  AdressCubit() : super(AdressInitial());
+class AddressCubit extends Cubit<AddressState> {
+  AddressCubit() : super(AddressInitial());
 
   OrderDataSource source = sl();
 
   void getDriver(String shortCode, String phone, DateTime time) async {
-    emit(AdressLoading());
+    emit(AddressLoading());
     try {
       final Driver? driver = await source.getDriver(shortCode, phone, time);
       if (driver != null) {
-        //TODO создать новый стейт для загрузки драйвера
-        emit(AdressLoadSuccess(driver: driver));
+        emit(AddressLoadSuccess(driver: driver));
       } else {
         //Todo если водитель Null?
       }
     } catch (e) {
-      emit(AdressLoadFailure());
+      emit(AddressLoadFailure());
     }
   }
 
-  void updateAdress(Address address, String shortCode, String phone) async {
-    emit(AdressLoading());
+  void updateAddress(Address address, String shortCode, String phone) async {
+    emit(AddressLoading());
     try {
-      await source.updateAddress(shortCode: shortCode, phone: phone, address: address);
+      await source.updateAddress(
+          shortCode: shortCode, phone: phone, address: address);
       // shortCode: '137', phone: '+555555975', address: address);
       getDriver(shortCode, phone, DateTime.now());
     } catch (e) {
-      emit(AdressLoadFailure());
+      emit(AddressLoadFailure());
     }
   }
 
   void updateCoords(coords, addressId, String shortCode, String phone) async {
-    emit(AdressLoading());
+    emit(AddressLoading());
     try {
       await source.updateCoords(
           lat: coords.latitude,
@@ -48,7 +48,7 @@ class AdressCubit extends Cubit<AdressState> {
           phone: phone);
       getDriver(shortCode, phone, DateTime.now());
     } catch (e) {
-      emit(AdressLoadFailure());
+      emit(AddressLoadFailure());
     }
   }
 }
