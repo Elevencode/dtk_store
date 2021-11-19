@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:dtk_store/model/order.dart';
 import 'package:dtk_store/presenter/order/cubit/order_cubit.dart';
 import 'package:flutter/cupertino.dart';
@@ -39,15 +41,15 @@ class _ClientCoordsPickerMapState extends State<ClientCoordsPickerMap> {
     zoom: 17.0,
   );
 
-  ClientLocationPermissions _locationPermission =
-      ClientLocationPermissions.denied;
+  late ClientLocationPermissions _locationPermission;
 
   late CameraPosition _position;
 
   @override
   void initState() {
     super.initState();
-    _checkLocationPermissions();
+
+    _locationPermission = ClientLocationPermissions.denied;
   }
 
   @override
@@ -60,6 +62,7 @@ class _ClientCoordsPickerMapState extends State<ClientCoordsPickerMap> {
               GoogleMap(
                 mapType: MapType.normal,
                 initialCameraPosition: _initialCameraPosition,
+                myLocationButtonEnabled: true,
                 myLocationEnabled: false,
                 onMapCreated: _onMapCreated,
                 onCameraMove: (position) => _position = position,
@@ -124,14 +127,14 @@ class _ClientCoordsPickerMapState extends State<ClientCoordsPickerMap> {
           children: const [
             Icon(
               Icons.location_searching,
-              color: Colors.red,
+              color: Colors.orange,
             ),
             Padding(
               padding: EdgeInsets.all(1.0),
               child: Icon(
                 Icons.help_rounded,
                 size: 22,
-                color: Colors.red,
+                color: Colors.orange,
               ),
             ),
           ],
@@ -146,47 +149,37 @@ class _ClientCoordsPickerMapState extends State<ClientCoordsPickerMap> {
   }
 
   void _requestPermissions([bool deniedForever = false]) {
-    var content = "Para acceder a su ubicación actual, "
-        "permita el acceso a la geolocalización";
-
-    var contentLink = InkWell(
-      child: Text(
-        "https://support.google.com/chrome/answer/142065?hl=es-419",
-        style: TextStyle(
-          color: Colors.lightBlue[300],
-          decoration: TextDecoration.underline,
-        ),
-      ),
-      onTap: () {
-        launch(
-          "https://support.google.com/chrome/answer/142065?hl=es-419",
-        );
-
-        Navigator.pop(context);
-      },
+    Widget content = const Text(
+      "Para acceder a su ubicación actual, "
+      "permita el acceso a la geolocalización",
     );
-    
+
+    var url = "https://support.google.com/chrome/answer/142065?hl=es-419";
+
     if (deniedForever) {
-      content = "Has prohibido el acceso a tu ubicación para siempre. "
-          "Es necesario para identificar su ubicación y entregar "
-          "el producto a la dirección correcta lo antes posible. "
-          "Para continuar, habilite el seguimiento de "
-          "ubicación en la configuración de su navegador.\n";
+      content = Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Text(
+            "Has prohibido el acceso a tu ubicación para siempre. "
+            "Es necesario para identificar su ubicación y entregar "
+            "el producto a la dirección correcta lo antes posible. "
+            "Para continuar, habilite el seguimiento de "
+            "ubicación en la configuración de su navegador.\n",
+          ),
+          TextButton(
+            child: Text(url),
+            onPressed: () => launch(url),
+          ),
+        ],
+      );
     }
 
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
         title: const Text("Geolocalización deshabilitada"),
-        content: !deniedForever
-            ? Text(content)
-            : SizedBox(
-                height: 200,
-                child: Column(children: [
-                  Text(content),
-                  contentLink,
-                ]),
-              ),
+        content: content,
         actions: deniedForever
             ? null
             : [
@@ -203,34 +196,34 @@ class _ClientCoordsPickerMapState extends State<ClientCoordsPickerMap> {
   }
 
   void _setCurrentCoords() async {
-      var locationData = await Geolocator.getCurrentPosition();
+    var locationData = await Geolocator.getCurrentPosition();
 
-      _mapController.moveCamera(
-        CameraUpdate.newLatLngZoom(
-          LatLng(
-            locationData.latitude,
-            locationData.longitude,
-          ),
-          17.0,
-        ),
-      );
-
-      widget.onCoordsChange(
+    _mapController.moveCamera(
+      CameraUpdate.newLatLngZoom(
         LatLng(
           locationData.latitude,
           locationData.longitude,
         ),
-      );
+        17.0,
+      ),
+    );
+
+    widget.onCoordsChange(
+      LatLng(
+        locationData.latitude,
+        locationData.longitude,
+      ),
+    );
   }
 
   void _setDistrictCameraPosition() async {
-    final places =
-        GoogleMapsPlaces(apiKey: "AIzaSyDK6a99pqYap3FeLbJ2m0rwnsGEb9qIpts");
+    final places = GoogleMapsPlaces(
+      apiKey: "AIzaSyDK6a99pqYap3FeLbJ2m0rwnsGEb9qIpts",
+    );
 
-    var districtName = widget.order.client.district.name;
+    var query = '${widget.order.client.district.name}, Peru';
 
-    PlacesSearchResponse response =
-        await places.searchByText("$districtName, Peru");
+    PlacesSearchResponse response = await places.searchByText(query);
 
     _mapController.moveCamera(
       CameraUpdate.newCameraPosition(
@@ -277,18 +270,48 @@ class _ClientCoordsPickerMapState extends State<ClientCoordsPickerMap> {
     //* Запрещено получение геолокации по умолчанию.
     else if (permission == LocationPermission.deniedForever) {
       setState(
-          () => _locationPermission = ClientLocationPermissions.deniedForever);
+        () => _locationPermission = ClientLocationPermissions.deniedForever,
+      );
     }
 
     //* Разрешено по умолчанию.
     else {
-      setState(() => _locationPermission = ClientLocationPermissions.allowed);
+      setState(
+        () {
+          _locationPermission = ClientLocationPermissions.allowed;
+          _setCurrentCoords();
+        },
+      );
     }
   }
 
-  void _onMapCreated(controller) {
+  void _onMapCreated(GoogleMapController controller) {
     _mapController = controller;
+    _mapController.setMapStyle(jsonEncode(gMapStyle));
 
+    _checkLocationPermissions();
     _setDistrictCameraPosition();
   }
 }
+
+const gMapStyle = [
+  {
+    "featureType": "administrative",
+    "elementType": "geometry",
+    "stylers": [
+      {"visibility": "off"}
+    ]
+  },
+  {
+    "featureType": "poi",
+    "stylers": [
+      {"visibility": "off"}
+    ]
+  },
+  {
+    "featureType": "transit",
+    "stylers": [
+      {"visibility": "off"}
+    ]
+  }
+];

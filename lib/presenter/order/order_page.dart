@@ -1,13 +1,12 @@
+import 'package:dtk_store/core/static/product_image_path.dart';
 import 'package:dtk_store/core/utils/get_time_range.dart';
 import 'package:dtk_store/model/order.dart';
 import 'package:dtk_store/presenter/address/client_coords_picker_map.dart';
 import 'package:dtk_store/presenter/address/cubit/map_widget_cubit.dart';
 import 'package:dtk_store/presenter/address/second_map_widget.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
 
@@ -15,6 +14,8 @@ import '/presenter/order/cubit/order_cubit.dart';
 import '/presenter/order/modal_sheet/edit_address_modal.dart';
 
 import 'modal_sheet/cubit/modal_sheet_cubit.dart';
+import 'widgets/cart.dart';
+import 'widgets/contact.dart';
 
 const timeRanges = [
   ['08:30', '10:00'],
@@ -106,23 +107,11 @@ class OrderPageBody extends StatefulWidget {
   final bool isAirstrikeLoading;
 
   @override
-  State<OrderPageBody> createState() => _OrderPageBodyState();
+  State<OrderPageBody> createState() => OrderPageBodyState();
 }
 
-class _OrderPageBodyState extends State<OrderPageBody> {
-  final ScrollController _positionsScrollContorller = ScrollController();
-
-  final Map productImagePath = {
-    'Alpha Man': 'assets/images/Alphaman_small.png',
-    'Bioprost': 'assets/images/Bioprost_bottle_big.png',
-    'Cardiox': 'assets/images/Cardiox_bottle_big.png',
-    'Flexacil': 'assets/images/Flexacil_es2.png',
-    'Glyconorm': 'assets/images/Glyconorm_bottle_small.png',
-    'Turboslim': 'assets/images/Turboslim_20.png',
-    'Gialuron Revita': 'assets/images/Placeholder.png',
-  };
+class OrderPageBodyState extends State<OrderPageBody> {
   late LatLng coords;
-  bool _isMapVisible = true;
   String _currentTimeRange = '';
   late Order _currentOrder;
 
@@ -144,335 +133,13 @@ class _OrderPageBodyState extends State<OrderPageBody> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                //Todo(Жандос) вынести в виджет Cart
-                Container(
-                  color: Colors.white,
-                  child: Column(
-                    children: [
-                      Center(
-                        child: Column(
-                          children: [
-                            const SizedBox(height: 12),
-                            Text(
-                              'TU PEDIDO #${_currentOrder.shortCode}',
-                              style: const TextStyle(
-                                fontSize: 32,
-                                color: Color(0XFF557EF1),
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            widget.isConfirmed == true
-                                ? const Text(
-                                    'la entrega del pedido!',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      color: Colors.blue,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  )
-                                : Container(),
-                            const Divider(),
-                            Wrap(
-                              alignment: WrapAlignment.center,
-                              children: [
-                                ..._currentOrder.positions.asMap().entries.map(
-                                  (item) {
-                                    int itemIndex = item.key;
-                                    String productName =
-                                        item.value.product.name.toUpperCase();
-                                    return Text(
-                                      '$productName${itemIndex == _currentOrder.positions.length - 1 ? '' : ' + '}',
-                                      style: const TextStyle(
-                                        fontSize: 24,
-                                        color: Color(0XFF557EF1),
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    );
-                                  },
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          Column(
-                            children: [
-                              Text(
-                                'PRECIO REGULAR',
-                                style: GoogleFonts.oswald(
-                                  fontSize: 18,
-                                  color: Colors.red,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              Text(
-                                '${(_currentOrder.totalCents * 2.8).round()}/s',
-                                style: GoogleFonts.oswald(
-                                  height: 1.1,
-                                  fontSize: 52,
-                                  color: Colors.red,
-                                  fontWeight: FontWeight.bold,
-                                  decoration: TextDecoration.lineThrough,
-                                ),
-                              ),
-                            ],
-                          ),
-                          Column(
-                            children: [
-                              Text(
-                                'PRECIO PARA TI',
-                                style: GoogleFonts.oswald(
-                                  fontSize: 18,
-                                  color: Colors.green,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              Text(
-                                '${_currentOrder.totalCents.round()}/s',
-                                style: GoogleFonts.oswald(
-                                  height: 1.1,
-                                  fontSize: 52,
-                                  color: Colors.green,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 32),
-                      Stack(
-                        clipBehavior: Clip.none,
-                        children: [
-                          SizedBox(
-                            width: 480,
-                            height: 220,
-                            child: ScrollConfiguration(
-                              behavior: PositionsScrollBehavior(),
-                              child: ListView(
-                                scrollDirection: Axis.horizontal,
-                                clipBehavior: Clip.none,
-                                controller: _positionsScrollContorller,
-                                physics: const PageScrollPhysics(),
-                                children: [
-                                  ..._currentOrder.positions
-                                      .map(
-                                        (items) => Stack(
-                                          clipBehavior: Clip.none,
-                                          children: [
-                                            Image.asset(
-                                              productImagePath[
-                                                  items.product.name],
-                                              width: 145,
-                                              height: 240,
-                                            ),
-                                            Positioned(
-                                              top: -10,
-                                              left: 15,
-                                              child: CircleAvatar(
-                                                radius: 20,
-                                                child: Text(
-                                                  'x${items.quantity}',
-                                                  style: const TextStyle(
-                                                    fontSize: 20,
-                                                    fontWeight: FontWeight.w500,
-                                                    color: Colors.white,
-                                                  ),
-                                                ),
-                                                backgroundColor:
-                                                    const Color(0xFF73B488),
-                                              ),
-                                            )
-                                          ],
-                                        ),
-                                      )
-                                      .toList(),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
+                Cart(
+                  order: _currentOrder,
+                  isConfirmed: widget.isConfirmed,
+                  productImagePath: productImagePath,
                 ),
                 const SizedBox(height: 12),
-                //TODO:(Жандос) Вернуть 40 когда вернем PromoBox
-                //Todo(Жандос) вынести в виджет Contact
-                Container(
-                  padding: const EdgeInsets.all(16),
-                  width: MediaQuery.of(context).size.width,
-                  color: Colors.grey[200],
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      RichText(
-                        text: TextSpan(
-                          children: [
-                            const TextSpan(
-                              text: 'Nombre: ',
-                              style: TextStyle(
-                                height: 1.41,
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black,
-                              ),
-                            ),
-                            TextSpan(
-                              text: _currentOrder.client.fullname,
-                              style: const TextStyle(
-                                fontSize: 18,
-                                color: Colors.black,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      RichText(
-                        text: TextSpan(
-                          children: [
-                            const TextSpan(
-                              text: 'Distrito: ',
-                              style: TextStyle(
-                                height: 1.41,
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black,
-                              ),
-                            ),
-                            TextSpan(
-                              text: _currentOrder.client.address.district,
-                              style: const TextStyle(
-                                fontSize: 18,
-                                color: Colors.black,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      RichText(
-                        text: TextSpan(
-                          children: [
-                            const TextSpan(
-                              text: 'Province: ',
-                              style: TextStyle(
-                                height: 1.41,
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black,
-                              ),
-                            ),
-                            TextSpan(
-                              text: _currentOrder.client.address.city,
-                              style: const TextStyle(
-                                fontSize: 18,
-                                color: Colors.black,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      RichText(
-                        text: TextSpan(
-                          children: [
-                            const TextSpan(
-                              text: 'Direccion: ',
-                              style: TextStyle(
-                                height: 1.41,
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black,
-                              ),
-                            ),
-                            TextSpan(
-                              text: _currentOrder.client.address.street,
-                              style: const TextStyle(
-                                fontSize: 18,
-                                color: Colors.black,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      RichText(
-                        text: TextSpan(
-                          children: [
-                            const TextSpan(
-                              text: 'Referencia: ',
-                              style: TextStyle(
-                                height: 1.41,
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black,
-                              ),
-                            ),
-                            TextSpan(
-                              text: _currentOrder.client.address.country,
-                              style: const TextStyle(
-                                fontSize: 18,
-                                color: Colors.black,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Column(
-                            children: [
-                              const Text(
-                                'Fecha prevista',
-                                style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              (_currentOrder.plannedDate != null)
-                                  ? Text(
-                                      '${DateFormat.MMMMd().format(_currentOrder.plannedDate!)} ${_currentOrder.plannedDate == DateTime.now() ? '(Hoy)' : ''}',
-                                      textAlign: TextAlign.end,
-                                      style: const TextStyle(
-                                        fontSize: 18,
-                                      ),
-                                    )
-                                  : const Text('Por favor, confirme'),
-                            ],
-                          ),
-                          Column(
-                            children: [
-                              const Text(
-                                'Tiempo previsto',
-                                style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              (_currentOrder.plannedDate != null)
-                                  ? Text(
-                                      getTimeRange(
-                                        _currentOrder.plannedDate!,
-                                        _currentOrder.plannedDateDuration!,
-                                        ' - ',
-                                      ),
-                                      textAlign: TextAlign.end,
-                                      style: const TextStyle(
-                                        fontSize: 18,
-                                      ),
-                                    )
-                                  : const Text('Por favor, confirme'),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
+                Contact(order: _currentOrder),
                 //Todo(Жандос) вынести в виджет ContactButton
                 Container(
                   color: Colors.grey[200],
@@ -483,7 +150,7 @@ class _OrderPageBodyState extends State<OrderPageBody> {
                       Padding(
                         padding: const EdgeInsets.symmetric(
                             horizontal: 16, vertical: 8.0),
-                        child: widget.isConfirmed == false
+                        child: !widget.isConfirmed
                             ? ElevatedButton(
                                 onPressed: () => _showEditAddressPopup(),
                                 child: const Text(
@@ -514,7 +181,7 @@ class _OrderPageBodyState extends State<OrderPageBody> {
                   padding: const EdgeInsets.all(16),
                   child: Column(
                     children: [
-                      widget.isConfirmed == true
+                      widget.isConfirmed
                           // Заголовок карты Отслеживания
                           ? Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -528,8 +195,10 @@ class _OrderPageBodyState extends State<OrderPageBody> {
                                   ),
                                 ),
                                 Text(
-                                  getTimeRange(_currentOrder.plannedDate!,
-                                      _currentOrder.plannedDateDuration!),
+                                  getTimeRange(
+                                    _currentOrder.plannedDate!,
+                                    _currentOrder.plannedDateDuration!,
+                                  ),
                                   style: const TextStyle(
                                     fontSize: 24,
                                     fontWeight: FontWeight.bold,
@@ -560,22 +229,17 @@ class _OrderPageBodyState extends State<OrderPageBody> {
                         width: 480,
                         height: 400,
                         child: Center(
-                          //Скрываем карту когда открыто меню выбора времени,
-                          //Так как у карты всегда самый высокий Z-index
-                          child: Visibility(
-                            visible: _isMapVisible,
-                            child: widget.isConfirmed
-                                ? SecondMapWidget(
-                                    order: widget.order,
-                                  )
-                                : ClientCoordsPickerMap(
-                                    order: widget.order,
-                                    orderCubit:
-                                        BlocProvider.of<OrderCubit>(context),
-                                    onCoordsChange: (newCoords) =>
-                                        coords = newCoords,
-                                  ),
-                          ),
+                          child: widget.isConfirmed
+                              ? SecondMapWidget(
+                                  order: widget.order,
+                                )
+                              : ClientCoordsPickerMap(
+                                  order: widget.order,
+                                  orderCubit:
+                                      BlocProvider.of<OrderCubit>(context),
+                                  onCoordsChange: (newCoords) =>
+                                      coords = newCoords,
+                                ),
                         ),
                       ),
                       const SizedBox(height: 16),
@@ -584,7 +248,7 @@ class _OrderPageBodyState extends State<OrderPageBody> {
                       // Лучше вынести проверку эту как можно выше и сделать 2 больших виджета:
                       // ПодтверждениеКоординатыКлиента
                       // ОтслеживаниеКурьера
-                      widget.isConfirmed == false
+                      !widget.isConfirmed
                           ? Card(
                               margin: EdgeInsets.zero,
                               child: Padding(
@@ -637,12 +301,7 @@ class _OrderPageBodyState extends State<OrderPageBody> {
                                           side: const BorderSide(
                                               color: Color(0XFF557EF1)),
                                         ),
-                                        onPressed: () {
-                                          setState(() {
-                                            _isMapVisible = false;
-                                          });
-                                          _showTimeRangesPopup();
-                                        },
+                                        onPressed: () => _showTimeRangesPopup(),
                                       ),
                                     ),
 
@@ -669,7 +328,7 @@ class _OrderPageBodyState extends State<OrderPageBody> {
                             )
                           : Container(),
                       Padding(
-                        padding: widget.isConfirmed == false
+                        padding: !widget.isConfirmed
                             ? const EdgeInsets.fromLTRB(12, 96, 12, 48)
                             : const EdgeInsets.fromLTRB(12, 36, 12, 48),
                         //* Кнопка запроса поддержки
@@ -750,12 +409,7 @@ class _OrderPageBodyState extends State<OrderPageBody> {
         cancelButton: CupertinoActionSheetAction(
           child: const Text('Cancel'),
           isDefaultAction: true,
-          onPressed: () {
-            setState(() {
-              _isMapVisible = true;
-            });
-            Navigator.pop(context);
-          },
+          onPressed: () => Navigator.pop(context),
         ),
       ),
     );
@@ -777,6 +431,10 @@ class _OrderPageBodyState extends State<OrderPageBody> {
           ),
           actions: <Widget>[
             TextButton(
+              child: const Text('No'),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+            ElevatedButton(
               child: const Text('Sí'),
               onPressed: () {
                 //TODO: добавить progress indicator пока идет отправка, добавить таймер для дизейблд кнопки
@@ -786,12 +444,6 @@ class _OrderPageBodyState extends State<OrderPageBody> {
                   order: _currentOrder,
                   isConfirmed: widget.isConfirmed,
                 );
-                Navigator.of(context).pop();
-              },
-            ),
-            ElevatedButton(
-              child: const Text('No'),
-              onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
@@ -817,6 +469,10 @@ class _OrderPageBodyState extends State<OrderPageBody> {
           ),
           actions: <Widget>[
             TextButton(
+              child: const Text('No'),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+            ElevatedButton(
               child: const Text('Sí'),
               onPressed: () {
                 //TODO: Добавить progress indicator пока идет отправка, добавить таймер для дизейблд кнопки
@@ -840,12 +496,6 @@ class _OrderPageBodyState extends State<OrderPageBody> {
                 Navigator.of(context).pop();
               },
             ),
-            ElevatedButton(
-              child: const Text('No'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
           ],
         );
       },
@@ -859,7 +509,6 @@ class _OrderPageBodyState extends State<OrderPageBody> {
     String fromTime = timeRange.split(' - ')[0];
 
     setState(() {
-      _isMapVisible = true;
       _currentTimeRange = timeRange;
       String _formatedDate = DateFormat('yyyy-M-dd').format(
         _currentOrder.plannedDate!,
@@ -871,13 +520,4 @@ class _OrderPageBodyState extends State<OrderPageBody> {
       );
     });
   }
-}
-
-//*Без этого класса не работает скролл в ListView
-class PositionsScrollBehavior extends MaterialScrollBehavior {
-  @override
-  Set<PointerDeviceKind> get dragDevices => {
-        PointerDeviceKind.touch,
-        PointerDeviceKind.mouse,
-      };
 }

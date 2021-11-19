@@ -6,7 +6,8 @@ import 'package:url_strategy/url_strategy.dart';
 import 'package:dtk_store/injection.dart' show init, sl;
 import 'package:dtk_store/presenter/order/order_page.dart';
 
-//Convention: при импорте файлов проекта использовать короткую форму записи, без 'package:...'
+//* Convention: при импорте файлов проекта использовать короткую форму записи,
+//* без 'package:...'
 import 'injection.dart' show init, sl;
 import 'presenter/address/cubit/map_widget_cubit.dart';
 import 'presenter/order/modal_sheet/cubit/modal_sheet_cubit.dart';
