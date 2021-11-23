@@ -15,7 +15,7 @@ class _PromoBoxState extends State<PromoBox> {
   int _seconds = 59;
 
   _timerStart() {
-    var _timer = Timer.periodic(Duration(seconds: 1), (_) {
+    var _timer = Timer.periodic(const Duration(seconds: 1), (_) {
       setState(() {
         if (_seconds >= 1) {
           _seconds -= 1;
@@ -95,7 +95,7 @@ class _PromoBoxState extends State<PromoBox> {
                   'PAGUE AHORA CON UNA TARJETA\nY OBTENGA 4 FRASCAS EN LUGAR\nDE 3 POR EL MISMO PRECIO BAJO',
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
-                SizedBox(width: 24),
+                const SizedBox(width: 24),
                 Text(
                   (_seconds == 0 && _minutes == 0)
                       ? 'Sorry\nPromo time is out!'
@@ -108,14 +108,14 @@ class _PromoBoxState extends State<PromoBox> {
                 ),
               ],
             ),
-            SizedBox(height: 12),
+            const SizedBox(height: 12),
             _minutes == 0 && _seconds == 0
-                ? SizedBox()
+                ? const SizedBox()
                 : ElevatedButton(
                     onPressed: () {},
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
+                      children: const [
                         Icon(Icons.credit_card),
                         Text(
                           '279/S PAGAR PARA IZIPAY',
@@ -129,7 +129,7 @@ class _PromoBoxState extends State<PromoBox> {
                     ),
                     style: ElevatedButton.styleFrom(
                       primary: Colors.red,
-                      minimumSize: Size(80, 60),
+                      minimumSize: const Size(80, 60),
                     ),
                   ),
           ],

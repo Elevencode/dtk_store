@@ -1,6 +1,8 @@
 import 'package:dtk_store/model/address.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
+import 'district.dart';
+
 part 'client.freezed.dart';
 part 'client.g.dart';
 
@@ -12,6 +14,7 @@ abstract class Client implements _$Client {
     required String phone,
     required String fullname,
     required Address address,
+    required District district,
     required int id,
   }) = _Client;
 
