@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:dtk_store/core/utils/get_time_range.dart';
 import 'package:dtk_store/model/order.dart';
 import 'package:dtk_store/presenter/address/client_coords_picker_map.dart';
@@ -114,6 +115,7 @@ class _OrderPageBodyState extends State<OrderPageBody> {
   String _currentTimeRange = '';
   late Order _newOrder;
   late Order _currentOrder;
+  var _textGroup = AutoSizeGroup();
 
   @override
   void initState() {
@@ -471,60 +473,51 @@ class _OrderPageBodyState extends State<OrderPageBody> {
                 Container(
                   color: Colors.grey[200],
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
-                  child: Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 16, vertical: 8.0),
-                        child: widget.isConfirmed == false
-                            ? ElevatedButton(
-                                onPressed: () {
-                                  showModalBottomSheet(
-                                    isScrollControlled: true,
-                                    context: context,
-                                    builder: (context) =>
-                                        BlocProvider<ModalSheetCubit>(
-                                      create: (context) => ModalSheetCubit(),
-                                      child: EditAddressModalBottomSheet(
-                                        order: _currentOrder,
-                                        orderCubit: BlocProvider.of<OrderCubit>(
-                                            context),
-                                      ),
-                                    ),
-                                  );
-                                },
-                                child: const Text(
-                                  'EDITAR LA DIRECCION',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                  child: widget.isConfirmed == false
+                      ? ElevatedButton(
+                          onPressed: () {
+                            showModalBottomSheet(
+                              isScrollControlled: true,
+                              context: context,
+                              builder: (context) =>
+                                  BlocProvider<ModalSheetCubit>(
+                                create: (context) => ModalSheetCubit(),
+                                child: EditAddressModalBottomSheet(
+                                  order: _currentOrder,
+                                  orderCubit: BlocProvider.of<OrderCubit>(
+                                      context),
                                 ),
-                                style: ElevatedButton.styleFrom(
-                                  minimumSize: Size(
-                                      MediaQuery.of(context).size.width, 60),
-                                  primary: Colors.white,
-                                  onPrimary: const Color(0XFF557EF1),
-                                  side: const BorderSide(
-                                      color: Color(0XFF557EF1)),
-                                ),
-                              )
-                            : Container(),
-                      ),
-                      const SizedBox(width: 24),
-                    ],
-                  ),
+                              ),
+                            );
+                          },
+                          child: const Text(
+                            'EDITAR LA DIRECCION',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            minimumSize: Size(
+                                MediaQuery.of(context).size.width, 60),
+                            primary: Colors.white,
+                            onPrimary: const Color(0XFF557EF1),
+                            side: const BorderSide(
+                                color: Color(0XFF557EF1)),
+                          ),
+                        )
+                      : Container(),
                 ),
                 //Todo(Жандос) вынести в виджет MapWrapper
-                Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    children: [
-                      widget.isConfirmed == true
-                          // Заголовок карты Отслеживания
-                          ? Row(
+                Column(
+                  children: [
+                    widget.isConfirmed == true
+                        // Заголовок карты Отслеживания
+                        ? Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
@@ -545,71 +538,88 @@ class _OrderPageBodyState extends State<OrderPageBody> {
                                   ),
                                 ),
                               ],
-                            )
-                          // Заголовок карты Выбора координаты клиента
-                          : Row(
+                            ),
+                          )
+                        // Заголовок карты Выбора координаты клиента
+                        : Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Icon(Icons.arrow_downward),
-                                Text(
-                                  'POR FAVOR AYUDANOS A ENCONTRAR\nTU UBICACION EXACTA',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
+                                Flexible(
+                                  child: FittedBox(
+                                    child: AutoSizeText(
+                                      'POR FAVOR AYUDANOS A ENCONTRAR\nTU UBICACION EXACTA',
+                                      group: _textGroup,
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
                                   ),
                                 ),
                                 Icon(Icons.arrow_downward),
                               ],
                             ),
-                      const SizedBox(height: 12),
-                      Container(
-                        width: 480,
-                        height: 400,
-                        child: Center(
-                          //Скрываем карту когда открыто меню выбора времени,
-                          //Так как у карты всегда самый высокий Z-index
-                          child: Visibility(
-                            visible: _isMapVisible,
-                            child: widget.isConfirmed
-                                ? SecondMapWidget(
-                                    order: widget.order,
-                                  )
-                                : ClientCoordsPickerMap(
-                                    order: widget.order,
-                                    orderCubit:
-                                        BlocProvider.of<OrderCubit>(context),
-                                    onCoordsChange: (newCoords) =>
-                                        coords = newCoords,
-                                  ),
                           ),
+                    const SizedBox(height: 12),
+                    SizedBox(
+                      width: 480,
+                      height: MediaQuery.of(context).size.height * 0.45,
+                      child: Center(
+                        //Скрываем карту когда открыто меню выбора времени,
+                        //Так как у карты всегда самый высокий Z-index
+                        child: Visibility(
+                          visible: _isMapVisible,
+                          child: widget.isConfirmed
+                              ? SecondMapWidget(
+                                  order: widget.order,
+                                )
+                              : ClientCoordsPickerMap(
+                                  order: widget.order,
+                                  orderCubit:
+                                      BlocProvider.of<OrderCubit>(context),
+                                  onCoordsChange: (newCoords) =>
+                                      coords = newCoords,
+                                ),
                         ),
                       ),
-                      const SizedBox(height: 16),
-                      //todo Жанодос Структура неудобная.. Но надо подумать стоит ли!!!
-                      // Видишь везде куски отдельные проверяют подтвержден или нет заказ [isConfirmed].
-                      // Лучше вынести проверку эту как можно выше и сделать 2 больших виджета:
-                      // ПодтверждениеКоординатыКлиента
-                      // ОтслеживаниеКурьера
-                      widget.isConfirmed == false
-                          ? Card(
+                    ),
+                    const SizedBox(height: 16),
+                    //todo Жанодос Структура неудобная.. Но надо подумать стоит ли!!!
+                    // Видишь везде куски отдельные проверяют подтвержден или нет заказ [isConfirmed].
+                    // Лучше вынести проверку эту как можно выше и сделать 2 больших виджета:
+                    // ПодтверждениеКоординатыКлиента
+                    // ОтслеживаниеКурьера
+                    widget.isConfirmed == false
+                        ? Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            child: Card(
                               margin: EdgeInsets.zero,
                               child: Padding(
-                                padding:
-                                    const EdgeInsets.fromLTRB(16, 16, 16, 8),
+                                padding: const EdgeInsets.all(16),
                                 child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.stretch,
                                   children: [
                                     Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceBetween,
-                                      children: const [
+                                      children: [
                                         Icon(Icons.arrow_downward),
-                                        Text(
-                                          'POR FAVOR, ELIJA UNA HORA\nDE ENTREGA CONVENIENTE',
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold,
+                                        Flexible(
+                                          child: FittedBox(
+                                            fit: BoxFit.contain,
+                                            child: AutoSizeText(
+                                              'POR FAVOR, ELIJA UNA HORA\nDE ENTREGA CONVENIENTE',
+                                              group: _textGroup,
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
                                           ),
                                         ),
                                         Icon(Icons.arrow_downward),
@@ -838,8 +848,9 @@ class _OrderPageBodyState extends State<OrderPageBody> {
                                                   _currentOrder.client.phone);
                                         }
                                       },
-                                      child: const Text(
-                                        'POR FAVOR, CONFIRME LA HORA DE ENTREGA Y LA DIRECCIÓN',
+                                      child: Text(
+                                        'POR FAVOR, CONFIRME LA HORA\nDE ENTREGA Y LA DIRECCIÓN',
+                                        maxLines: 2,
                                         textAlign: TextAlign.center,
                                         style: TextStyle(
                                           fontSize: 18,
@@ -854,87 +865,84 @@ class _OrderPageBodyState extends State<OrderPageBody> {
                                   ],
                                 ),
                               ),
-                            )
-                          : Container(),
-                      Padding(
-                        padding: widget.isConfirmed == false
-                            ? const EdgeInsets.fromLTRB(12, 96, 12, 48)
-                            : const EdgeInsets.fromLTRB(12, 36, 12, 48),
-                        //* Кнопка запроса поддержки
-                        child: ElevatedButton(
-                          onPressed: widget.isAirstrikeLoading
-                              ? () {}
-                              : () {
-                                  showDialog<void>(
-                                    context: context,
-                                    barrierDismissible:
-                                        false, // user must tap button!
-                                    builder: (BuildContext context) {
-                                      return AlertDialog(
-                                        title:
-                                            const Text('Solicitar asistencia'),
-                                        content: SingleChildScrollView(
-                                          child: ListBody(
-                                            children: const <Widget>[
-                                              Text(
-                                                  '¿Seguro que quieres contactar con el operador?'),
-                                            ],
-                                          ),
-                                        ),
-                                        actions: <Widget>[
-                                          TextButton(
-                                            child: const Text('Sí'),
-                                            onPressed: () {
-                                              //TODO: добавить progress indicator пока идет отправка, добавить таймер для дизейблд кнопки
-                                              BlocProvider.of<OrderCubit>(
-                                                      context)
-                                                  .createNotification(
-                                                shortCode:
-                                                    _currentOrder.shortCode,
-                                                phone:
-                                                    _currentOrder.client.phone,
-                                                order: _currentOrder,
-                                                isConfirmed: widget.isConfirmed,
-                                              );
-                                              Navigator.of(context).pop();
-                                            },
-                                          ),
-                                          ElevatedButton(
-                                            child: const Text('No'),
-                                            onPressed: () {
-                                              Navigator.of(context).pop();
-                                            },
-                                          ),
-                                        ],
-                                      );
-                                    },
-                                  );
-                                },
-                          child: widget.isAirstrikeLoading
-                              ? const CircularProgressIndicator(
-                                  color: Colors.white,
-                                )
-                              : const Text(
-                                  'LLAMA A MI  ACCESOR',
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                          style: ElevatedButton.styleFrom(
-                            minimumSize: Size(
-                                MediaQuery.of(context).size.width - 20, 50),
-                            primary: const Color(0XFF557EF1),
-                            onPrimary: Colors.white,
-                            side: const BorderSide(
-                              width: 1,
-                              color: Color(0XFF557EF1),
                             ),
+                          )
+                        : Container(),
+                    Padding(
+                      padding: widget.isConfirmed == false
+                          ? const EdgeInsets.fromLTRB(16, 96, 16, 48)
+                          : const EdgeInsets.fromLTRB(16, 36, 16, 48),
+                      //* Кнопка запроса поддержки
+                      child: ElevatedButton(
+                        onPressed: widget.isAirstrikeLoading
+                            ? () {}
+                            : () {
+                                showDialog<void>(
+                                  context: context,
+                                  barrierDismissible:
+                                      false, // user must tap button!
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      title: const Text('Solicitar asistencia'),
+                                      content: SingleChildScrollView(
+                                        child: ListBody(
+                                          children: const <Widget>[
+                                            Text(
+                                                '¿Seguro que quieres contactar con el operador?'),
+                                          ],
+                                        ),
+                                      ),
+                                      actions: <Widget>[
+                                        TextButton(
+                                          child: const Text('Sí'),
+                                          onPressed: () {
+                                            //TODO: добавить progress indicator пока идет отправка, добавить таймер для дизейблд кнопки
+                                            BlocProvider.of<OrderCubit>(context)
+                                                .createNotification(
+                                              shortCode:
+                                                  _currentOrder.shortCode,
+                                              phone: _currentOrder.client.phone,
+                                              order: _currentOrder,
+                                              isConfirmed: widget.isConfirmed,
+                                            );
+                                            Navigator.of(context).pop();
+                                          },
+                                        ),
+                                        ElevatedButton(
+                                          child: const Text('No'),
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                          },
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                );
+                              },
+                        child: widget.isAirstrikeLoading
+                            ? const CircularProgressIndicator(
+                                color: Colors.white,
+                              )
+                            : const Text(
+                                'LLAMA A MI  ACCESOR',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                        style: ElevatedButton.styleFrom(
+                          minimumSize:
+                              Size(MediaQuery.of(context).size.width - 20, 50),
+                          primary: const Color(0XFF557EF1),
+                          onPrimary: Colors.white,
+                          side: const BorderSide(
+                            width: 1,
+                            color: Color(0XFF557EF1),
                           ),
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ],
             ),

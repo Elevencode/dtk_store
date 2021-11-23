@@ -19,7 +19,7 @@ void main() async {
   await init();
   await initializeDateFormatting('pt_BR', null);
   setPathUrlStrategy();
-  debugger();
+  // debugger();
 
   runApp(MyApp());
 }
