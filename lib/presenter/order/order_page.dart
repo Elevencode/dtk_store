@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:dtk_store/core/static/product_image_path.dart';
 import 'package:dtk_store/core/utils/get_time_range.dart';
 import 'package:dtk_store/model/order.dart';
@@ -114,6 +115,7 @@ class OrderPageBodyState extends State<OrderPageBody> {
   late LatLng coords;
   String _currentTimeRange = '';
   late Order _currentOrder;
+  var _textGroup = AutoSizeGroup();
 
   @override
   void initState() {
@@ -170,11 +172,8 @@ class OrderPageBodyState extends State<OrderPageBody> {
                                       color: Color(0XFF557EF1)),
                                 ),
                               )
-                            : Container(),
-                      ),
-                      const SizedBox(width: 24),
-                    ],
-                  ),
+                            
+                      : Container(),
                 ),
                 //Todo(Жандос) вынести в виджет MapWrapper
                 Padding(
@@ -207,22 +206,29 @@ class OrderPageBodyState extends State<OrderPageBody> {
                                 ),
                               ],
                             )
-                          // Заголовок карты Выбора координаты клиента
-                          : Row(
+                        // Заголовок карты Выбора координаты клиента
+                        : Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: const [
-                                Icon(Icons.arrow_downward),
-                                Text(
-                                  'POR FAVOR AYUDANOS A ENCONTRAR\nTU UBICACION EXACTA',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
+                              children:  [
+                                const Icon(Icons.arrow_downward),
+                                Flexible(
+                                  child: FittedBox(
+                                    child: AutoSizeText(
+                                      'POR FAVOR AYUDANOS A ENCONTRAR\nTU UBICACION EXACTA',
+                                      group: _textGroup,
+                                      textAlign: TextAlign.center,
+                                      style: const TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
                                   ),
                                 ),
-                                Icon(Icons.arrow_downward),
+                                const Icon(Icons.arrow_downward),
                               ],
-                            ),
+                            ),),
                       const SizedBox(height: 12),
 
                       SizedBox(
@@ -252,21 +258,27 @@ class OrderPageBodyState extends State<OrderPageBody> {
                           ? Card(
                               margin: EdgeInsets.zero,
                               child: Padding(
-                                padding:
-                                    const EdgeInsets.fromLTRB(16, 16, 16, 8),
+                                padding: const EdgeInsets.all(16),
                                 child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.stretch,
                                   children: [
                                     Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceBetween,
-                                      children: const [
+                                      children: [
                                         Icon(Icons.arrow_downward),
-                                        Text(
-                                          'POR FAVOR, ELIJA UNA HORA\nDE ENTREGA CONVENIENTE',
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold,
+                                        Flexible(
+                                          child: FittedBox(
+                                            fit: BoxFit.contain,
+                                            child: AutoSizeText(
+                                              'POR FAVOR, ELIJA UNA HORA\nDE ENTREGA CONVENIENTE',
+                                              group: _textGroup,
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
                                           ),
                                         ),
                                         Icon(Icons.arrow_downward),
@@ -347,27 +359,31 @@ class OrderPageBodyState extends State<OrderPageBody> {
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
-                          style: ElevatedButton.styleFrom(
-                            minimumSize: Size(
-                                MediaQuery.of(context).size.width - 20, 50),
-                            primary: const Color(0XFF557EF1),
-                            onPrimary: Colors.white,
-                            side: const BorderSide(
-                              width: 1,
-                              color: Color(0XFF557EF1),
-                            ),
+                              
+                        style: ElevatedButton.styleFrom(
+                          minimumSize:
+                              Size(MediaQuery.of(context).size.width - 20, 50),
+                          primary: const Color(0XFF557EF1),
+                          onPrimary: Colors.white,
+                          side: const BorderSide(
+                            width: 1,
+                            color: Color(0XFF557EF1),
                           ),
+                        ),
                         ),
                       ),
                     ],
-                  ),
-                ),
+                    ),
+                    ),
+                  ],
+                ),),
               ],
             ),
           ),
+         
         ),
       ),
-    );
+      );
   }
 
   Future<dynamic> _showEditAddressPopup() {
