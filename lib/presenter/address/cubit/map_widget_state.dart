@@ -1,14 +1,14 @@
 part of 'map_widget_cubit.dart';
 
-abstract class AdressState {}
+abstract class AddressState {}
 
-class AdressInitial implements AdressState {}
+class AddressInitial implements AddressState {}
 
-class AdressLoading implements AdressState {}
+class AddressLoading implements AddressState {}
 
-class AdressLoadSuccess implements AdressState {
-  AdressLoadSuccess({required this.driver});
+class AddressLoadSuccess implements AddressState {
+  AddressLoadSuccess({required this.driver});
   final Driver driver;
 }
 
-class AdressLoadFailure implements AdressState {}
+class AddressLoadFailure implements AddressState {}

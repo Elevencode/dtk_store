@@ -1,18 +1,12 @@
-import 'dart:async';
-
 import 'package:dtk_store/model/order.dart';
 import 'package:dtk_store/presenter/address/cubit/map_widget_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:open_route_service/open_route_service.dart';
+import 'package:google_maps_webservice/places.dart';
 
 class SecondMapWidget extends StatefulWidget {
-  const SecondMapWidget({
-    Key? key,
-    required this.order,
-  }) : super(key: key);
+  const SecondMapWidget({Key? key, required this.order}) : super(key: key);
 
   final Order order;
 
@@ -23,7 +17,7 @@ class SecondMapWidget extends StatefulWidget {
 class _SecondMapWidgetState extends State<SecondMapWidget> {
   @override
   void initState() {
-    BlocProvider.of<AdressCubit>(context).getDriver(
+    BlocProvider.of<AddressCubit>(context).getDriver(
       widget.order.shortCode,
       widget.order.client.phone,
       DateTime.now(),
@@ -33,20 +27,22 @@ class _SecondMapWidgetState extends State<SecondMapWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AdressCubit, AdressState>(builder: (context, state) {
-      if (state is AdressLoadSuccess) {
+    return BlocBuilder<AddressCubit, AddressState>(
+      builder: (context, state) {
+        if (state is AddressLoadSuccess) {
+          return SecondMapWidgetBody(
+            order: widget.order,
+            driverCoords: LatLng(
+              state.driver.lat,
+              state.driver.lng,
+            ),
+          );
+        }
         return SecondMapWidgetBody(
           order: widget.order,
-          driverCoords: LatLng(
-            state.driver.lat,
-            state.driver.lng,
-          ),
         );
-      }
-      return SecondMapWidgetBody(
-        order: widget.order,
-      );
-    });
+      },
+    );
   }
 }
 
@@ -75,7 +71,7 @@ class _SecondMapWidgetBodyState extends State<SecondMapWidgetBody> {
 
   late BitmapDescriptor _orderIcon;
 
-  Set<Marker> _markers = {};
+  final Set<Marker> _markers = {};
 
   @override
   void initState() {
@@ -93,6 +89,9 @@ class _SecondMapWidgetBodyState extends State<SecondMapWidgetBody> {
               GoogleMap(
                 markers: _markers,
                 mapType: MapType.normal,
+                scrollGesturesEnabled: false,
+                tiltGesturesEnabled: false,
+                rotateGesturesEnabled: false,
                 initialCameraPosition: CameraPosition(
                   target: LatLng(
                     widget.order.client.address.lat!,
@@ -158,9 +157,9 @@ class _SecondMapWidgetBodyState extends State<SecondMapWidgetBody> {
     );
   }
 
-  void _setupLocation() {
-    // TODO?: Возможно стоит убрать проверку, ибо вызывается виджет только после получения координат
-    if (widget.order.client.address.lat != null && widget.order.client.address.lng != null) {
+  Future<void> _setupLocation() async {
+    if (widget.order.client.address.lat != null &&
+        widget.order.client.address.lng != null) {
       setState(
         () {
           if (widget.driverCoords != null) {
@@ -173,12 +172,31 @@ class _SecondMapWidgetBodyState extends State<SecondMapWidgetBody> {
           );
         },
       );
+    } else if (widget.order.client.address.lat == null &&
+        widget.order.client.address.lng == null) {
+      final places =
+          GoogleMapsPlaces(apiKey: "AIzaSyDK6a99pqYap3FeLbJ2m0rwnsGEb9qIpts");
+
+      var districtName = widget.order.client.district.name;
+
+      PlacesSearchResponse response =
+          await places.searchByText("$districtName, Peru");
+
+      setState(
+        () {
+          if (widget.driverCoords != null) {
+            _driverCoords = widget.driverCoords!;
+          }
+
+          _clientCoords = LatLng(
+            response.results.first.geometry!.location.lat,
+            response.results.first.geometry!.location.lng,
+          );
+        },
+      );
     }
   }
 
-  void _onMapCreated(GoogleMapController controller) {
-    _mapController = controller;
-
-    // _updateMap();
-  }
+  void _onMapCreated(GoogleMapController controller) =>
+      _mapController = controller;
 }
