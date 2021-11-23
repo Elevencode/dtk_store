@@ -143,10 +143,10 @@ class OrderPageBodyState extends State<OrderPageBody> {
                 const SizedBox(height: 12),
                 Contact(order: _currentOrder),
                 //Todo(Жандос) вынести в виджет ContactButton
+
                 Container(
                   color: Colors.grey[200],
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+                  padding: const EdgeInsets.symmetric(vertical: 12),
                   child: Column(
                     children: [
                       Padding(
@@ -172,218 +172,224 @@ class OrderPageBodyState extends State<OrderPageBody> {
                                       color: Color(0XFF557EF1)),
                                 ),
                               )
-                            
-                      : Container(),
-                ),
-                //Todo(Жандос) вынести в виджет MapWrapper
-                Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    children: [
-                      widget.isConfirmed
-                          // Заголовок карты Отслеживания
-                          ? Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                const Text(
-                                  'TU PEDIDO ESTA\nEN CAMINO',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    fontSize: 24,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                Text(
-                                  getTimeRange(
-                                    _currentOrder.plannedDate!,
-                                    _currentOrder.plannedDateDuration!,
-                                  ),
-                                  style: const TextStyle(
-                                    fontSize: 24,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.green,
-                                  ),
-                                ),
-                              ],
-                            )
-                        // Заголовок карты Выбора координаты клиента
-                        : Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 16),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children:  [
-                                const Icon(Icons.arrow_downward),
-                                Flexible(
-                                  child: FittedBox(
-                                    child: AutoSizeText(
-                                      'POR FAVOR AYUDANOS A ENCONTRAR\nTU UBICACION EXACTA',
-                                      group: _textGroup,
+                            : Container(),
+                      ),
+                      //Todo(Жандос) вынести в виджет MapWrapper
+                      Column(
+                        children: [
+                          widget.isConfirmed
+                              // Заголовок карты Отслеживания
+                              ? Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    const Text(
+                                      'TU PEDIDO ESTA\nEN CAMINO',
                                       textAlign: TextAlign.center,
-                                      style: const TextStyle(
-                                        fontSize: 16,
+                                      style: TextStyle(
+                                        fontSize: 24,
                                         fontWeight: FontWeight.bold,
                                       ),
                                     ),
-                                  ),
-                                ),
-                                const Icon(Icons.arrow_downward),
-                              ],
-                            ),),
-                      const SizedBox(height: 12),
-
-                      SizedBox(
-                        width: 480,
-                        height: 400,
-                        child: Center(
-                          child: widget.isConfirmed
-                              ? SecondMapWidget(
-                                  order: widget.order,
-                                )
-                              : ClientCoordsPickerMap(
-                                  order: widget.order,
-                                  orderCubit:
-                                      BlocProvider.of<OrderCubit>(context),
-                                  onCoordsChange: (newCoords) =>
-                                      coords = newCoords,
-                                ),
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      //todo Жанодос Структура неудобная.. Но надо подумать стоит ли!!!
-                      // Видишь везде куски отдельные проверяют подтвержден или нет заказ [isConfirmed].
-                      // Лучше вынести проверку эту как можно выше и сделать 2 больших виджета:
-                      // ПодтверждениеКоординатыКлиента
-                      // ОтслеживаниеКурьера
-                      !widget.isConfirmed
-                          ? Card(
-                              margin: EdgeInsets.zero,
-                              child: Padding(
-                                padding: const EdgeInsets.all(16),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                                  children: [
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Icon(Icons.arrow_downward),
-                                        Flexible(
-                                          child: FittedBox(
-                                            fit: BoxFit.contain,
-                                            child: AutoSizeText(
-                                              'POR FAVOR, ELIJA UNA HORA\nDE ENTREGA CONVENIENTE',
-                                              group: _textGroup,
-                                              textAlign: TextAlign.center,
-                                              style: TextStyle(
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                        Icon(Icons.arrow_downward),
-                                      ],
-                                    ),
-                                    //TODO: (Жандос) сделать текст через getRangeTime после добавления функционала кнопки
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 24),
-                                      child: ElevatedButton(
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Text(
-                                              _currentTimeRange == ''
-                                                  ? '${DateFormat.Hm().format(_currentOrder.plannedDate!)} - ${DateFormat.Hm().format(_currentOrder.plannedDate!.add(const Duration(minutes: 90)))}'
-                                                  : _currentTimeRange,
-                                              style: const TextStyle(
-                                                  fontSize: 18,
-                                                  fontWeight: FontWeight.w600),
-                                            ),
-                                            const Icon(Icons.arrow_drop_down)
-                                          ],
-                                        ),
-                                        style: ElevatedButton.styleFrom(
-                                          minimumSize: const Size(120, 50),
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 12),
-                                          primary: Colors.white,
-                                          onPrimary: const Color(0XFF557EF1),
-                                          side: const BorderSide(
-                                              color: Color(0XFF557EF1)),
-                                        ),
-                                        onPressed: () => _showTimeRangesPopup(),
+                                    Text(
+                                      getTimeRange(
+                                        _currentOrder.plannedDate!,
+                                        _currentOrder.plannedDateDuration!,
                                       ),
-                                    ),
-
-                                    //* Кнопка подтверждения координаты и времени
-                                    ElevatedButton(
-                                      onPressed: () =>
-                                          _showCoordsAndTimeConfirmationDialog(),
-                                      child: const Text(
-                                        'POR FAVOR, CONFIRME LA HORA DE ENTREGA Y LA DIRECCIÓN',
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      style: ElevatedButton.styleFrom(
-                                        padding: const EdgeInsets.all(16),
-                                        primary: const Color(0XFF67C99C),
+                                      style: const TextStyle(
+                                        fontSize: 24,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.green,
                                       ),
                                     ),
                                   ],
-                                ),
-                              ),
-                            )
-                          : Container(),
-                      Padding(
-                        padding: !widget.isConfirmed
-                            ? const EdgeInsets.fromLTRB(12, 96, 12, 48)
-                            : const EdgeInsets.fromLTRB(12, 36, 12, 48),
-                        //* Кнопка запроса поддержки
-                        child: ElevatedButton(
-                          onPressed: widget.isAirstrikeLoading
-                              ? null
-                              : () => _showAirstrikeConfirmationDialog(),
-                          child: widget.isAirstrikeLoading
-                              ? const CircularProgressIndicator(
-                                  color: Colors.white,
                                 )
-                              : const Text(
-                                  'LLAMA A MI  ACCESOR',
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
+                              // Заголовок карты Выбора координаты клиента
+                              : Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 12),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      const Icon(Icons.arrow_downward),
+                                      Flexible(
+                                        child: FittedBox(
+                                          child: AutoSizeText(
+                                            'POR FAVOR AYUDANOS A ENCONTRAR\nTU UBICACION EXACTA',
+                                            group: _textGroup,
+                                            textAlign: TextAlign.center,
+                                            style: const TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      const Icon(Icons.arrow_downward),
+                                    ],
                                   ),
                                 ),
-                              
-                        style: ElevatedButton.styleFrom(
-                          minimumSize:
-                              Size(MediaQuery.of(context).size.width - 20, 50),
-                          primary: const Color(0XFF557EF1),
-                          onPrimary: Colors.white,
-                          side: const BorderSide(
-                            width: 1,
-                            color: Color(0XFF557EF1),
+                          const SizedBox(height: 12),
+
+                          SizedBox(
+                            width: 480,
+                            height: 400,
+                            child: Center(
+                              child: widget.isConfirmed
+                                  ? SecondMapWidget(
+                                      order: widget.order,
+                                    )
+                                  : ClientCoordsPickerMap(
+                                      order: widget.order,
+                                      orderCubit:
+                                          BlocProvider.of<OrderCubit>(context),
+                                      onCoordsChange: (newCoords) =>
+                                          coords = newCoords,
+                                    ),
+                            ),
                           ),
-                        ),
-                        ),
+                          const SizedBox(height: 16),
+                          //todo Жанодос Структура неудобная.. Но надо подумать стоит ли!!!
+                          // Видишь везде куски отдельные проверяют подтвержден или нет заказ [isConfirmed].
+                          // Лучше вынести проверку эту как можно выше и сделать 2 больших виджета:
+                          // ПодтверждениеКоординатыКлиента
+                          // ОтслеживаниеКурьера
+                          !widget.isConfirmed
+                              ? Card(
+                                  margin: EdgeInsets.symmetric(horizontal: 16),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(16),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.stretch,
+                                      children: [
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Icon(Icons.arrow_downward),
+                                            Flexible(
+                                              child: FittedBox(
+                                                fit: BoxFit.contain,
+                                                child: AutoSizeText(
+                                                  'POR FAVOR, ELIJA UNA HORA\nDE ENTREGA CONVENIENTE',
+                                                  group: _textGroup,
+                                                  textAlign: TextAlign.center,
+                                                  style: TextStyle(
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                            Icon(Icons.arrow_downward),
+                                          ],
+                                        ),
+                                        //TODO: (Жандос) сделать текст через getRangeTime после добавления функционала кнопки
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 24),
+                                          child: ElevatedButton(
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                Text(
+                                                  _currentTimeRange == ''
+                                                      ? '${DateFormat.Hm().format(_currentOrder.plannedDate!)} - ${DateFormat.Hm().format(_currentOrder.plannedDate!.add(const Duration(minutes: 90)))}'
+                                                      : _currentTimeRange,
+                                                  style: const TextStyle(
+                                                      fontSize: 18,
+                                                      fontWeight:
+                                                          FontWeight.w600),
+                                                ),
+                                                const Icon(
+                                                    Icons.arrow_drop_down)
+                                              ],
+                                            ),
+                                            style: ElevatedButton.styleFrom(
+                                              minimumSize: const Size(120, 50),
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 12),
+                                              primary: Colors.white,
+                                              onPrimary:
+                                                  const Color(0XFF557EF1),
+                                              side: const BorderSide(
+                                                  color: Color(0XFF557EF1)),
+                                            ),
+                                            onPressed: () =>
+                                                _showTimeRangesPopup(),
+                                          ),
+                                        ),
+
+                                        //* Кнопка подтверждения координаты и времени
+                                        ElevatedButton(
+                                          onPressed: () =>
+                                              _showCoordsAndTimeConfirmationDialog(),
+                                          child: const Text(
+                                            'POR FAVOR, CONFIRME LA HORA DE ENTREGA Y LA DIRECCIÓN',
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          style: ElevatedButton.styleFrom(
+                                            padding: const EdgeInsets.all(16),
+                                            primary: const Color(0XFF67C99C),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                )
+                              : Container(),
+                          Padding(
+                            padding: !widget.isConfirmed
+                                ? const EdgeInsets.fromLTRB(12, 96, 12, 48)
+                                : const EdgeInsets.fromLTRB(12, 36, 12, 48),
+                            //* Кнопка запроса поддержки
+                            child: ElevatedButton(
+                              onPressed: widget.isAirstrikeLoading
+                                  ? null
+                                  : () => _showAirstrikeConfirmationDialog(),
+                              child: widget.isAirstrikeLoading
+                                  ? const CircularProgressIndicator(
+                                      color: Colors.white,
+                                    )
+                                  : const Text(
+                                      'LLAMA A MI  ACCESOR',
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                              style: ElevatedButton.styleFrom(
+                                minimumSize: Size(
+                                    MediaQuery.of(context).size.width - 20, 50),
+                                primary: const Color(0XFF557EF1),
+                                onPrimary: Colors.white,
+                                side: const BorderSide(
+                                  width: 1,
+                                  color: Color(0XFF557EF1),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ],
-                    ),
-                    ),
-                  ],
-                ),),
+                  ),
+                ),
               ],
             ),
           ),
-         
         ),
       ),
-      );
+    );
   }
 
   Future<dynamic> _showEditAddressPopup() {
