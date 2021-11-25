@@ -24,8 +24,8 @@ class _$ClientTearOff {
   _Client call(
       {required String phone,
       required String fullname,
-      required Address address,
-      required District district,
+      Address? address,
+      District? district,
       required int id}) {
     return _Client(
       phone: phone,
@@ -48,8 +48,8 @@ const $Client = _$ClientTearOff();
 mixin _$Client {
   String get phone => throw _privateConstructorUsedError;
   String get fullname => throw _privateConstructorUsedError;
-  Address get address => throw _privateConstructorUsedError;
-  District get district => throw _privateConstructorUsedError;
+  Address? get address => throw _privateConstructorUsedError;
+  District? get district => throw _privateConstructorUsedError;
   int get id => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -64,12 +64,12 @@ abstract class $ClientCopyWith<$Res> {
   $Res call(
       {String phone,
       String fullname,
-      Address address,
-      District district,
+      Address? address,
+      District? district,
       int id});
 
-  $AddressCopyWith<$Res> get address;
-  $DistrictCopyWith<$Res> get district;
+  $AddressCopyWith<$Res>? get address;
+  $DistrictCopyWith<$Res>? get district;
 }
 
 /// @nodoc
@@ -100,11 +100,11 @@ class _$ClientCopyWithImpl<$Res> implements $ClientCopyWith<$Res> {
       address: address == freezed
           ? _value.address
           : address // ignore: cast_nullable_to_non_nullable
-              as Address,
+              as Address?,
       district: district == freezed
           ? _value.district
           : district // ignore: cast_nullable_to_non_nullable
-              as District,
+              as District?,
       id: id == freezed
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
@@ -113,15 +113,23 @@ class _$ClientCopyWithImpl<$Res> implements $ClientCopyWith<$Res> {
   }
 
   @override
-  $AddressCopyWith<$Res> get address {
-    return $AddressCopyWith<$Res>(_value.address, (value) {
+  $AddressCopyWith<$Res>? get address {
+    if (_value.address == null) {
+      return null;
+    }
+
+    return $AddressCopyWith<$Res>(_value.address!, (value) {
       return _then(_value.copyWith(address: value));
     });
   }
 
   @override
-  $DistrictCopyWith<$Res> get district {
-    return $DistrictCopyWith<$Res>(_value.district, (value) {
+  $DistrictCopyWith<$Res>? get district {
+    if (_value.district == null) {
+      return null;
+    }
+
+    return $DistrictCopyWith<$Res>(_value.district!, (value) {
       return _then(_value.copyWith(district: value));
     });
   }
@@ -135,14 +143,14 @@ abstract class _$ClientCopyWith<$Res> implements $ClientCopyWith<$Res> {
   $Res call(
       {String phone,
       String fullname,
-      Address address,
-      District district,
+      Address? address,
+      District? district,
       int id});
 
   @override
-  $AddressCopyWith<$Res> get address;
+  $AddressCopyWith<$Res>? get address;
   @override
-  $DistrictCopyWith<$Res> get district;
+  $DistrictCopyWith<$Res>? get district;
 }
 
 /// @nodoc
@@ -174,11 +182,11 @@ class __$ClientCopyWithImpl<$Res> extends _$ClientCopyWithImpl<$Res>
       address: address == freezed
           ? _value.address
           : address // ignore: cast_nullable_to_non_nullable
-              as Address,
+              as Address?,
       district: district == freezed
           ? _value.district
           : district // ignore: cast_nullable_to_non_nullable
-              as District,
+              as District?,
       id: id == freezed
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
@@ -193,8 +201,8 @@ class _$_Client extends _Client {
   _$_Client(
       {required this.phone,
       required this.fullname,
-      required this.address,
-      required this.district,
+      this.address,
+      this.district,
       required this.id})
       : super._();
 
@@ -206,9 +214,9 @@ class _$_Client extends _Client {
   @override
   final String fullname;
   @override
-  final Address address;
+  final Address? address;
   @override
-  final District district;
+  final District? district;
   @override
   final int id;
 
@@ -250,8 +258,8 @@ abstract class _Client extends Client {
   factory _Client(
       {required String phone,
       required String fullname,
-      required Address address,
-      required District district,
+      Address? address,
+      District? district,
       required int id}) = _$_Client;
   _Client._() : super._();
 
@@ -262,9 +270,9 @@ abstract class _Client extends Client {
   @override
   String get fullname;
   @override
-  Address get address;
+  Address? get address;
   @override
-  District get district;
+  District? get district;
   @override
   int get id;
   @override

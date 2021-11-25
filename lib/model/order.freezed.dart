@@ -26,6 +26,7 @@ class _$OrderTearOff {
       DateTime? plannedDate,
       int? plannedDateDuration,
       required String shortCode,
+      String? statusName,
       required int totalCents,
       int? shipmentId,
       required List<OrderPosition> positions,
@@ -35,6 +36,7 @@ class _$OrderTearOff {
       plannedDate: plannedDate,
       plannedDateDuration: plannedDateDuration,
       shortCode: shortCode,
+      statusName: statusName,
       totalCents: totalCents,
       shipmentId: shipmentId,
       positions: positions,
@@ -60,9 +62,9 @@ mixin _$Order {
   int? get plannedDateDuration => throw _privateConstructorUsedError; //
 // DateTime? deliveredDate,
 // String? umbrellaID,
-  String get shortCode =>
-      throw _privateConstructorUsedError; // String? statusName,
-// String? reasonRefusal,
+  String get shortCode => throw _privateConstructorUsedError;
+  String? get statusName =>
+      throw _privateConstructorUsedError; // String? reasonRefusal,
 // String? driverID,
   int get totalCents => throw _privateConstructorUsedError;
   int? get shipmentId =>
@@ -84,6 +86,7 @@ abstract class $OrderCopyWith<$Res> {
       DateTime? plannedDate,
       int? plannedDateDuration,
       String shortCode,
+      String? statusName,
       int totalCents,
       int? shipmentId,
       List<OrderPosition> positions,
@@ -106,6 +109,7 @@ class _$OrderCopyWithImpl<$Res> implements $OrderCopyWith<$Res> {
     Object? plannedDate = freezed,
     Object? plannedDateDuration = freezed,
     Object? shortCode = freezed,
+    Object? statusName = freezed,
     Object? totalCents = freezed,
     Object? shipmentId = freezed,
     Object? positions = freezed,
@@ -128,6 +132,10 @@ class _$OrderCopyWithImpl<$Res> implements $OrderCopyWith<$Res> {
           ? _value.shortCode
           : shortCode // ignore: cast_nullable_to_non_nullable
               as String,
+      statusName: statusName == freezed
+          ? _value.statusName
+          : statusName // ignore: cast_nullable_to_non_nullable
+              as String?,
       totalCents: totalCents == freezed
           ? _value.totalCents
           : totalCents // ignore: cast_nullable_to_non_nullable
@@ -165,6 +173,7 @@ abstract class _$OrderCopyWith<$Res> implements $OrderCopyWith<$Res> {
       DateTime? plannedDate,
       int? plannedDateDuration,
       String shortCode,
+      String? statusName,
       int totalCents,
       int? shipmentId,
       List<OrderPosition> positions,
@@ -189,6 +198,7 @@ class __$OrderCopyWithImpl<$Res> extends _$OrderCopyWithImpl<$Res>
     Object? plannedDate = freezed,
     Object? plannedDateDuration = freezed,
     Object? shortCode = freezed,
+    Object? statusName = freezed,
     Object? totalCents = freezed,
     Object? shipmentId = freezed,
     Object? positions = freezed,
@@ -211,6 +221,10 @@ class __$OrderCopyWithImpl<$Res> extends _$OrderCopyWithImpl<$Res>
           ? _value.shortCode
           : shortCode // ignore: cast_nullable_to_non_nullable
               as String,
+      statusName: statusName == freezed
+          ? _value.statusName
+          : statusName // ignore: cast_nullable_to_non_nullable
+              as String?,
       totalCents: totalCents == freezed
           ? _value.totalCents
           : totalCents // ignore: cast_nullable_to_non_nullable
@@ -239,6 +253,7 @@ class _$_Order extends _Order {
       this.plannedDate,
       this.plannedDateDuration,
       required this.shortCode,
+      this.statusName,
       required this.totalCents,
       this.shipmentId,
       required this.positions,
@@ -261,8 +276,9 @@ class _$_Order extends _Order {
 // DateTime? deliveredDate,
 // String? umbrellaID,
   final String shortCode;
-  @override // String? statusName,
-// String? reasonRefusal,
+  @override
+  final String? statusName;
+  @override // String? reasonRefusal,
 // String? driverID,
   final int totalCents;
   @override
@@ -274,7 +290,7 @@ class _$_Order extends _Order {
 
   @override
   String toString() {
-    return 'Order(id: $id, plannedDate: $plannedDate, plannedDateDuration: $plannedDateDuration, shortCode: $shortCode, totalCents: $totalCents, shipmentId: $shipmentId, positions: $positions, client: $client)';
+    return 'Order(id: $id, plannedDate: $plannedDate, plannedDateDuration: $plannedDateDuration, shortCode: $shortCode, statusName: $statusName, totalCents: $totalCents, shipmentId: $shipmentId, positions: $positions, client: $client)';
   }
 
   @override
@@ -289,6 +305,8 @@ class _$_Order extends _Order {
                 other.plannedDateDuration == plannedDateDuration) &&
             (identical(other.shortCode, shortCode) ||
                 other.shortCode == shortCode) &&
+            (identical(other.statusName, statusName) ||
+                other.statusName == statusName) &&
             (identical(other.totalCents, totalCents) ||
                 other.totalCents == totalCents) &&
             (identical(other.shipmentId, shipmentId) ||
@@ -304,6 +322,7 @@ class _$_Order extends _Order {
       plannedDate,
       plannedDateDuration,
       shortCode,
+      statusName,
       totalCents,
       shipmentId,
       const DeepCollectionEquality().hash(positions),
@@ -326,6 +345,7 @@ abstract class _Order extends Order {
       DateTime? plannedDate,
       int? plannedDateDuration,
       required String shortCode,
+      String? statusName,
       required int totalCents,
       int? shipmentId,
       required List<OrderPosition> positions,
@@ -347,8 +367,9 @@ abstract class _Order extends Order {
 // DateTime? deliveredDate,
 // String? umbrellaID,
   String get shortCode;
-  @override // String? statusName,
-// String? reasonRefusal,
+  @override
+  String? get statusName;
+  @override // String? reasonRefusal,
 // String? driverID,
   int get totalCents;
   @override

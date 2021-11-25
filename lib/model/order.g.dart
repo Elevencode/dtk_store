@@ -13,6 +13,7 @@ _$_Order _$$_OrderFromJson(Map<String, dynamic> json) => _$_Order(
           : DateTime.parse(json['plannedDate'] as String),
       plannedDateDuration: json['plannedDateDuration'] as int?,
       shortCode: json['shortCode'] as String,
+      statusName: json['statusName'] as String?,
       totalCents: json['totalCents'] as int,
       shipmentId: json['shipmentId'] as int?,
       positions: (json['positions'] as List<dynamic>)
@@ -26,6 +27,7 @@ Map<String, dynamic> _$$_OrderToJson(_$_Order instance) => <String, dynamic>{
       'plannedDate': instance.plannedDate?.toIso8601String(),
       'plannedDateDuration': instance.plannedDateDuration,
       'shortCode': instance.shortCode,
+      'statusName': instance.statusName,
       'totalCents': instance.totalCents,
       'shipmentId': instance.shipmentId,
       'positions': instance.positions,

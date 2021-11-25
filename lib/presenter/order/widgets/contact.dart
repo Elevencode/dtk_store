@@ -56,7 +56,7 @@ class Contact extends StatelessWidget {
                   ),
                 ),
                 TextSpan(
-                  text: order.client.address.district,
+                  text: order.client.address!.district,
                   style: const TextStyle(
                     fontSize: 18,
                     color: Colors.black,
@@ -78,7 +78,7 @@ class Contact extends StatelessWidget {
                   ),
                 ),
                 TextSpan(
-                  text: order.client.address.city,
+                  text: order.client.address!.city,
                   style: const TextStyle(
                     fontSize: 18,
                     color: Colors.black,
@@ -100,7 +100,7 @@ class Contact extends StatelessWidget {
                   ),
                 ),
                 TextSpan(
-                  text: order.client.address.street,
+                  text: order.client.address!.street,
                   style: const TextStyle(
                     fontSize: 18,
                     color: Colors.black,
@@ -122,7 +122,7 @@ class Contact extends StatelessWidget {
                   ),
                 ),
                 TextSpan(
-                  text: order.client.address.country,
+                  text: order.client.address!.country,
                   style: const TextStyle(
                     fontSize: 18,
                     color: Colors.black,

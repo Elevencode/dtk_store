@@ -13,8 +13,8 @@ abstract class Client implements _$Client {
   factory Client({
     required String phone,
     required String fullname,
-    required Address address,
-    required District district,
+    Address? address,
+    District? district,
     required int id,
   }) = _Client;
 
