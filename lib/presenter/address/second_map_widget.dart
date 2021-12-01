@@ -94,8 +94,8 @@ class _SecondMapWidgetBodyState extends State<SecondMapWidgetBody> {
                 rotateGesturesEnabled: false,
                 initialCameraPosition: CameraPosition(
                   target: LatLng(
-                    widget.order.client.address.lat!,
-                    widget.order.client.address.lng!,
+                    widget.order.client.address!.lat!,
+                    widget.order.client.address!.lng!,
                   ),
                   zoom: 17.0,
                 ),
@@ -158,8 +158,8 @@ class _SecondMapWidgetBodyState extends State<SecondMapWidgetBody> {
   }
 
   Future<void> _setupLocation() async {
-    if (widget.order.client.address.lat != null &&
-        widget.order.client.address.lng != null) {
+    if (widget.order.client.address!.lat != null &&
+        widget.order.client.address!.lng != null) {
       setState(
         () {
           if (widget.driverCoords != null) {
@@ -167,17 +167,17 @@ class _SecondMapWidgetBodyState extends State<SecondMapWidgetBody> {
           }
 
           _clientCoords = LatLng(
-            widget.order.client.address.lat!,
-            widget.order.client.address.lng!,
+            widget.order.client.address!.lat!,
+            widget.order.client.address!.lng!,
           );
         },
       );
-    } else if (widget.order.client.address.lat == null &&
-        widget.order.client.address.lng == null) {
+    } else if (widget.order.client.address!.lat == null &&
+        widget.order.client.address!.lng == null) {
       final places =
           GoogleMapsPlaces(apiKey: "AIzaSyDK6a99pqYap3FeLbJ2m0rwnsGEb9qIpts");
 
-      var districtName = widget.order.client.district.name;
+      var districtName = widget.order.client.district!.name;
 
       PlacesSearchResponse response =
           await places.searchByText("$districtName, Peru");

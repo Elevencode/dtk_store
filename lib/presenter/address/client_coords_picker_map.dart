@@ -221,7 +221,7 @@ class _ClientCoordsPickerMapState extends State<ClientCoordsPickerMap> {
       apiKey: "AIzaSyDK6a99pqYap3FeLbJ2m0rwnsGEb9qIpts",
     );
 
-    var query = '${widget.order.client.district.name}, Peru';
+    var query = '${widget.order.client.district!.name}, Peru';
 
     PlacesSearchResponse response = await places.searchByText(query);
 

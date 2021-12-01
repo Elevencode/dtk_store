@@ -28,7 +28,7 @@ abstract class Order implements _$Order {
     // DateTime? deliveredDate,
     // String? umbrellaID,
     required String shortCode,
-    // String? statusName,
+    String? statusName,
     // String? reasonRefusal,
     // String? driverID,
     required int totalCents,

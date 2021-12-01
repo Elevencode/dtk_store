@@ -23,7 +23,7 @@ class OrderCubit extends Cubit<OrderState> {
     try {
       final result = await repository.getOrder(localShortCode, localPhone);
       var order = result;
-      if (order.client.address.lat == null && order.client.address.lng == null) {
+      if (order.client.address!.lat == null && order.client.address!.lng == null) {
         emit(OrderLoadSuccessState(order: order, isConfirmed: false));
       } else {
         emit(OrderLoadSuccessState(order: order, isConfirmed: true));

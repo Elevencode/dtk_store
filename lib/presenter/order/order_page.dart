@@ -115,12 +115,14 @@ class OrderPageBodyState extends State<OrderPageBody> {
   late LatLng coords;
   String _currentTimeRange = '';
   late Order _currentOrder;
+  late bool isConfirmed;
   var _textGroup = AutoSizeGroup();
 
   @override
   void initState() {
     super.initState();
     _currentOrder = widget.order;
+    isConfirmed = widget.isConfirmed;
   }
 
   @override
@@ -137,7 +139,8 @@ class OrderPageBodyState extends State<OrderPageBody> {
               children: [
                 Cart(
                   order: _currentOrder,
-                  isConfirmed: widget.isConfirmed,
+                  // isConfirmed: widget.isConfirmed,
+                  isConfirmed: isConfirmed,
                   productImagePath: productImagePath,
                 ),
                 const SizedBox(height: 12),
@@ -152,7 +155,8 @@ class OrderPageBodyState extends State<OrderPageBody> {
                       Padding(
                         padding: const EdgeInsets.symmetric(
                             horizontal: 16, vertical: 8.0),
-                        child: !widget.isConfirmed
+                        // child: !widget.isConfirmed
+                        child: !isConfirmed
                             ? ElevatedButton(
                                 onPressed: () => _showEditAddressPopup(),
                                 child: const Text(
@@ -177,7 +181,8 @@ class OrderPageBodyState extends State<OrderPageBody> {
                       //Todo(Жандос) вынести в виджет MapWrapper
                       Column(
                         children: [
-                          widget.isConfirmed
+                          // widget.isConfirmed
+                          isConfirmed
                               // Заголовок карты Отслеживания
                               ? Row(
                                   mainAxisAlignment:
@@ -236,10 +241,9 @@ class OrderPageBodyState extends State<OrderPageBody> {
                             width: 480,
                             height: 400,
                             child: Center(
-                              child: widget.isConfirmed
-                                  ? SecondMapWidget(
-                                      order: widget.order,
-                                    )
+                              // child: widget.isConfirmed
+                              child: isConfirmed
+                                  ? SecondMapWidget(order: widget.order)
                                   : ClientCoordsPickerMap(
                                       order: widget.order,
                                       orderCubit:
@@ -255,7 +259,8 @@ class OrderPageBodyState extends State<OrderPageBody> {
                           // Лучше вынести проверку эту как можно выше и сделать 2 больших виджета:
                           // ПодтверждениеКоординатыКлиента
                           // ОтслеживаниеКурьера
-                          !widget.isConfirmed
+                          // !widget.isConfirmed
+                          !isConfirmed
                               ? Card(
                                   margin: EdgeInsets.symmetric(horizontal: 16),
                                   child: Padding(
@@ -298,7 +303,16 @@ class OrderPageBodyState extends State<OrderPageBody> {
                                               children: [
                                                 Text(
                                                   _currentTimeRange == ''
-                                                      ? '${DateFormat.Hm().format(_currentOrder.plannedDate!)} - ${DateFormat.Hm().format(_currentOrder.plannedDate!.add(const Duration(minutes: 90)))}'
+                                                      ? '${DateFormat.Hm().format(_currentOrder.plannedDate!)} - ${DateFormat.Hm().format(
+                                                          _currentOrder
+                                                              .plannedDate!
+                                                              .add(
+                                                            Duration(
+                                                                minutes:
+                                                                    _currentOrder
+                                                                        .plannedDateDuration!),
+                                                          ),
+                                                        )}'
                                                       : _currentTimeRange,
                                                   style: const TextStyle(
                                                       fontSize: 18,
@@ -347,8 +361,42 @@ class OrderPageBodyState extends State<OrderPageBody> {
                                   ),
                                 )
                               : Container(),
+                          isConfirmed &&
+                                  (_currentOrder.statusName !=
+                                          'DriverOnTheWay' ||
+                                      _currentOrder.statusName != 'Delivered')
+                              ? Padding(
+                                  padding:
+                                      const EdgeInsets.fromLTRB(12, 18, 12, 0),
+                                  child: ElevatedButton(
+                                    onPressed: () {
+                                      setState(() {
+                                        isConfirmed = false;
+                                      });
+                                    },
+                                    child: const Text(
+                                      'EDITAR DETALLES DEL PEDIDO',
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    style: ElevatedButton.styleFrom(
+                                      minimumSize: Size(
+                                          MediaQuery.of(context).size.width,
+                                          60),
+                                      primary: Colors.white,
+                                      onPrimary: const Color(0XFF557EF1),
+                                      side: const BorderSide(
+                                          color: Color(0XFF557EF1)),
+                                    ),
+                                  ),
+                                )
+                              : Container(),
                           Padding(
-                            padding: !widget.isConfirmed
+                            // padding: !widget.isConfirmed
+                            padding: !isConfirmed
                                 ? const EdgeInsets.fromLTRB(12, 96, 12, 48)
                                 : const EdgeInsets.fromLTRB(12, 36, 12, 48),
                             //* Кнопка запроса поддержки
@@ -414,6 +462,21 @@ class OrderPageBodyState extends State<OrderPageBody> {
         actions: timeRanges.map((range) {
           var value = range.join(" - ");
 
+          var timeFrom = range.first.split(':');
+          var timeTo = range.last.split(':');
+
+          var minutesTo = Duration(
+            hours: int.parse(timeTo.first),
+            minutes: int.parse(timeTo.last),
+          ).inMinutes;
+
+          var minutesFrom = Duration(
+            hours: int.parse(timeFrom.first),
+            minutes: int.parse(timeFrom.last),
+          ).inMinutes;
+
+          var duration = minutesTo - minutesFrom;
+
           return Container(
             color: Colors.white,
             child: CupertinoActionSheetAction(
@@ -421,7 +484,7 @@ class OrderPageBodyState extends State<OrderPageBody> {
               onPressed: () {
                 _onPressedCupertinoActionTimeItem(
                   value,
-                  90,
+                  duration,
                 );
                 Navigator.pop(context);
               },
@@ -464,7 +527,8 @@ class OrderPageBodyState extends State<OrderPageBody> {
                   shortCode: _currentOrder.shortCode,
                   phone: _currentOrder.client.phone,
                   order: _currentOrder,
-                  isConfirmed: widget.isConfirmed,
+                  // isConfirmed: widget.isConfirmed,
+                  isConfirmed: isConfirmed,
                 );
                 Navigator.of(context).pop();
               },
@@ -501,7 +565,7 @@ class OrderPageBodyState extends State<OrderPageBody> {
                 BlocProvider.of<OrderCubit>(context).updateOrder(
                   _currentOrder.copyWith(
                     client: _currentOrder.client.copyWith(
-                      address: _currentOrder.client.address.copyWith(
+                      address: _currentOrder.client.address!.copyWith(
                         lat: coords.latitude,
                         lng: coords.longitude,
                       ),
@@ -510,7 +574,7 @@ class OrderPageBodyState extends State<OrderPageBody> {
                 );
                 BlocProvider.of<AddressCubit>(context).updateCoords(
                   coords,
-                  _currentOrder.client.address.id,
+                  _currentOrder.client.address!.id,
                   _currentOrder.shortCode,
                   _currentOrder.client.phone,
                 );
