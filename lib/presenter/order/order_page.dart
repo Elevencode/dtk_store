@@ -303,7 +303,16 @@ class OrderPageBodyState extends State<OrderPageBody> {
                                               children: [
                                                 Text(
                                                   _currentTimeRange == ''
-                                                      ? '${DateFormat.Hm().format(_currentOrder.plannedDate!)} - ${DateFormat.Hm().format(_currentOrder.plannedDate!.add(const Duration(minutes: 90)))}'
+                                                      ? '${DateFormat.Hm().format(_currentOrder.plannedDate!)} - ${DateFormat.Hm().format(
+                                                          _currentOrder
+                                                              .plannedDate!
+                                                              .add(
+                                                            Duration(
+                                                                minutes:
+                                                                    _currentOrder
+                                                                        .plannedDateDuration!),
+                                                          ),
+                                                        )}'
                                                       : _currentTimeRange,
                                                   style: const TextStyle(
                                                       fontSize: 18,
@@ -357,8 +366,9 @@ class OrderPageBodyState extends State<OrderPageBody> {
                                           'DriverOnTheWay' ||
                                       _currentOrder.statusName != 'Delivered')
                               ? Padding(
-                                padding:  const EdgeInsets.fromLTRB(12, 18, 12, 0),
-                                child: ElevatedButton(
+                                  padding:
+                                      const EdgeInsets.fromLTRB(12, 18, 12, 0),
+                                  child: ElevatedButton(
                                     onPressed: () {
                                       setState(() {
                                         isConfirmed = false;
@@ -374,14 +384,15 @@ class OrderPageBodyState extends State<OrderPageBody> {
                                     ),
                                     style: ElevatedButton.styleFrom(
                                       minimumSize: Size(
-                                          MediaQuery.of(context).size.width, 60),
+                                          MediaQuery.of(context).size.width,
+                                          60),
                                       primary: Colors.white,
                                       onPrimary: const Color(0XFF557EF1),
                                       side: const BorderSide(
                                           color: Color(0XFF557EF1)),
                                     ),
                                   ),
-                              )
+                                )
                               : Container(),
                           Padding(
                             // padding: !widget.isConfirmed
@@ -451,6 +462,21 @@ class OrderPageBodyState extends State<OrderPageBody> {
         actions: timeRanges.map((range) {
           var value = range.join(" - ");
 
+          var timeFrom = range.first.split(':');
+          var timeTo = range.last.split(':');
+
+          var minutesTo = Duration(
+            hours: int.parse(timeTo.first),
+            minutes: int.parse(timeTo.last),
+          ).inMinutes;
+
+          var minutesFrom = Duration(
+            hours: int.parse(timeFrom.first),
+            minutes: int.parse(timeFrom.last),
+          ).inMinutes;
+
+          var duration = minutesTo - minutesFrom;
+
           return Container(
             color: Colors.white,
             child: CupertinoActionSheetAction(
@@ -458,7 +484,7 @@ class OrderPageBodyState extends State<OrderPageBody> {
               onPressed: () {
                 _onPressedCupertinoActionTimeItem(
                   value,
-                  90,
+                  duration,
                 );
                 Navigator.pop(context);
               },
