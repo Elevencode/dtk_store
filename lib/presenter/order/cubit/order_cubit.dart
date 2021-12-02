@@ -19,13 +19,11 @@ class OrderCubit extends Cubit<OrderState> {
   }
 
   void getOrder() async {
-    late Order order;
     emit(OrderLoadingState());
     try {
       final result = await repository.getOrder(localShortCode, localPhone);
-      order = result;
-      if (order.client.address.lat == null &&
-          order.client.address.lng == null) {
+      var order = result;
+      if (order.client.address!.lat == null && order.client.address!.lng == null) {
         emit(OrderLoadSuccessState(order: order, isConfirmed: false));
       } else {
         emit(OrderLoadSuccessState(order: order, isConfirmed: true));
@@ -39,32 +37,48 @@ class OrderCubit extends Cubit<OrderState> {
     emit(OrderLoadingState());
     try {
       await repository.updateOrderTime(
-          shortCode: localShortCode,
-          phone: localPhone,
-          plannedDate: order.plannedDate!,
-          duration: order.plannedDateDuration!);
-      emit(OrderLoadSuccessState(order: order, isConfirmed: true));
+        shortCode: localShortCode,
+        phone: localPhone,
+        plannedDate: order.plannedDate!,
+        duration: order.plannedDateDuration!,
+      );
+      emit(
+        OrderLoadSuccessState(order: order, isConfirmed: true),
+      );
     } catch (e) {
       emit(OrderLoadFailedState(e.toString()));
     }
   }
 
-  void createNotification(
-      {required String shortCode,
-      required String phone,
-      required Order order,
-      required bool isConfirmed}) async {
-    emit(OrderLoadSuccessState(
-        order: order, isConfirmed: isConfirmed, isAirstrikeLoading: true));
+  void createNotification({
+    required String shortCode,
+    required String phone,
+    required Order order,
+    required bool isConfirmed,
+  }) async {
+    emit(
+      OrderLoadSuccessState(
+        order: order,
+        isConfirmed: isConfirmed,
+        isAirstrikeLoading: true,
+      ),
+    );
     try {
       await repository.createNotificationOperator(
-          shortCode: shortCode, phone: phone);
+        shortCode: shortCode,
+        phone: phone,
+      );
 
       emit(AirstrikeSendSuccessState());
     } catch (e) {
       emit(AirstrikeSendFailureState());
     }
-    emit(OrderLoadSuccessState(
-        order: order, isConfirmed: isConfirmed, isAirstrikeLoading: false));
+    emit(
+      OrderLoadSuccessState(
+        order: order,
+        isConfirmed: isConfirmed,
+        isAirstrikeLoading: false,
+      ),
+    );
   }
 }
